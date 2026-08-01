@@ -1,4 +1,4 @@
-# robots.txt for the POS & Inventory Management System
+# robots.txt for the CorPOS & IMS
 #
 # IMPORTANT: replace https://your-domain.com below with your real deployed
 # domain (also update it in sitemap.xml and the canonical/og:url tags in

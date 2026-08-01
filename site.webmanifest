@@ -1,6 +1,6 @@
 {
-  "name": "POS & Inventory Management System",
-  "short_name": "POS Manager",
+  "name": "CorPOS & IMS",
+  "short_name": "CorPOS",
   "description": "All-in-one POS, inventory, customers, HR & payroll, accounting, reports, and AI assistant for retail, restaurants, pharmacies, and SMEs.",
   "start_url": "/dashboard.html",
   "scope": "/",
