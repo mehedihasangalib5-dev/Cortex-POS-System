@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="index, follow" name="robots"/>
+<title>Features · POS &amp; Inventory Management System</title>
+<meta content="Explore every module: point of sale, multi-warehouse inventory, customers &amp; loyalty, HR &amp; payroll, accounting, AI assistant, and reporting." name="description"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CDN (configured with our design tokens) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: { DEFAULT: '#2454FF', dark: '#1638C4' },
+                    emerald: '#10B981',
+                    amber: '#F5A623',
+                },
+                fontFamily: {
+                    display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    sans: ['"Inter"', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'monospace'],
+                },
+                borderRadius: { xl: '1rem', '2xl': '1.25rem' },
+            }
+        }
+    };
+</script>
+<!-- Font Awesome -->
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
+<!-- Core design system -->
+<link href="assets/css/style.css" rel="stylesheet"/>
+<!-- AOS animation library -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+<!-- Apply saved theme before paint to avoid a light/dark flash -->
+<script>
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+</head>
+<body class="font-sans">
+<header class="sticky top-0 z-40 surface-glass" style="border-radius:0; border-left:0; border-right:0; border-top:0;">
+<nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+<a class="flex items-center gap-2.5 shrink-0" href="index.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white">
+<i class="fa-solid fa-layer-group text-sm"></i>
+</div>
+<span class="font-display font-bold text-lg" data-i18n="k000">POS &amp; Inventory Management System</span>
+</a>
+<div class="hidden lg:flex items-center gap-1">
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k001" href="index.html" style="color:var(--text-secondary)">Home</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium text-primary" data-i18n="k002" href="features.html">Features</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k003" href="pricing.html" style="color:var(--text-secondary)">Pricing</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k004" href="blog.html" style="color:var(--text-secondary)">Blog</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k005" href="faq.html" style="color:var(--text-secondary)">FAQ</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k006" href="contact.html" style="color:var(--text-secondary)">Contact</a>
+</div>
+<div class="hidden lg:flex items-center gap-3">
+<button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()">
+<i class="fa-solid fa-moon dark:hidden"></i>
+<i class="fa-solid fa-sun hidden dark:inline"></i>
+</button>
+<span class="flex items-center gap-3" data-auth="out">
+<a class="px-3.5 py-2 text-sm font-medium" data-i18n="k007" href="login.html" style="color:var(--text-secondary)">Sign In</a>
+<a class="btn-primary text-sm !py-2 !px-4" data-i18n="k008" href="register.html">Start Free Trial</a>
+</span>
+<span class="hidden-auth items-center gap-3 flex" data-auth="in">
+<a class="btn-primary text-sm !py-2 !px-4" data-i18n="k009" href="dashboard.html">Go to Dashboard</a>
+<button class="px-3.5 py-2 text-sm font-medium" data-i18n="k010" data-logout="" style="color:var(--text-secondary)">Logout</button>
+</span>
+</div>
+<div class="flex items-center rounded-full p-0.5 text-xs font-semibold shrink-0" data-lang-toggle="" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)"><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="en" type="button">EN</button><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="bn" type="button">বাং</button></div><button class="lg:hidden text-lg" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
+<i class="fa-solid fa-bars"></i>
+</button>
+</nav>
+<div class="hidden lg:hidden border-t px-6 py-4 space-y-1" id="mobileNav" style="border-color:var(--border-subtle)">
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k001" href="index.html">Home</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium text-primary bg-primary/5" data-i18n="k002" href="features.html">Features</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k003" href="pricing.html">Pricing</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k004" href="blog.html">Blog</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k005" href="faq.html">FAQ</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k006" href="contact.html">Contact</a>
+<div class="pt-3 mt-2 border-t flex flex-col gap-2" style="border-color:var(--border-subtle)">
+<div class="flex flex-col gap-2" data-auth="out">
+<a class="text-center px-3.5 py-2 text-sm font-medium" data-i18n="k007" href="login.html">Sign In</a>
+<a class="btn-primary text-sm text-center" data-i18n="k008" href="register.html">Start Free Trial</a>
+</div>
+<div class="hidden-auth flex-col gap-2 flex" data-auth="in">
+<a class="btn-primary text-sm text-center" data-i18n="k009" href="dashboard.html">Go to Dashboard</a>
+<button class="text-center px-3.5 py-2 text-sm font-medium" data-i18n="k010" data-logout="">Logout</button>
+</div>
+</div>
+</div>
+</header>
+<section class="max-w-4xl mx-auto px-6 pt-16 pb-10 text-center">
+<h1 class="font-display text-4xl font-extrabold mb-4" data-aos="fade-up" data-i18n="k078">Everything you need, in one place</h1>
+<p class="text-lg" data-aos="fade-up" data-aos-delay="75" data-i18n="k079" style="color:var(--text-secondary)">
+        Eight connected modules built around one real database — no duplicate data entry, no reconciling exports between tools.
+    </p>
+</section>
+<section class="max-w-6xl mx-auto px-6 pb-20 space-y-8">
+<div class="surface p-7 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="0">
+<div class="md:col-span-1">
+<div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-cash-register text-lg"></i>
+</div>
+<h2 class="font-display text-xl font-bold" data-i18n="k048">Point of Sale</h2>
+</div>
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k080">Barcode scanning with keyboard-wedge scanners</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k081">Split payments: cash, card, mobile wallet, bank transfer</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k082">Hold and resume parked sales</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k083">Coupons and order-level discounts</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k084">Printable receipts with CODE128 barcodes</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k085">Full and partial returns with automatic restock</span>
+</div>
+</div>
+</div>
+<div class="surface p-7 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="40">
+<div class="md:col-span-1">
+<div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-warehouse text-lg"></i>
+</div>
+<h2 class="font-display text-xl font-bold" data-i18n="k086">Inventory &amp; Products</h2>
+</div>
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k087">Categories, brands, and barcode label printing</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k088">Stock tracked independently per warehouse</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k089">Locked, atomic stock transfers between locations</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k090">Automated low-stock notifications (de-duplicated)</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k091">Soft-delete keeps sales history intact forever</span>
+</div>
+</div>
+</div>
+<div class="surface p-7 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="80">
+<div class="md:col-span-1">
+<div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-users text-lg"></i>
+</div>
+<h2 class="font-display text-xl font-bold" data-i18n="k051">Customers</h2>
+</div>
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k092">Customer groups with bulk discounts</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k093">Loyalty points earned automatically on every sale</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k094">Full purchase history and lifetime spend per customer</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k095">Fast customer lookup right from the POS screen</span>
+</div>
+</div>
+</div>
+<div class="surface p-7 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="120">
+<div class="md:col-span-1">
+<div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-id-badge text-lg"></i>
+</div>
+<h2 class="font-display text-xl font-bold" data-i18n="k052">HR &amp; Payroll</h2>
+</div>
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k096">Employee records with optional linked login accounts</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k097">Daily attendance with check-in/check-out tracking</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k098">Leave requests with an approve/reject workflow</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k099">One-click payroll generation, safe to run twice</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k100">Custom roles with module-by-module permission control</span>
+</div>
+</div>
+</div>
+<div class="surface p-7 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="160">
+<div class="md:col-span-1">
+<div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-scale-balanced text-lg"></i>
+</div>
+<h2 class="font-display text-xl font-bold" data-i18n="k053">Accounting</h2>
+</div>
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k101">Income and expense ledgers with categories</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k102">Receipt photo uploads on expenses</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k103">Date-ranged profit &amp; loss and cash-flow charts</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k104">Combines real POS revenue with manually logged income</span>
+</div>
+</div>
+</div>
+<div class="surface p-7 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+<div class="md:col-span-1">
+<div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+</div>
+<h2 class="font-display text-xl font-bold" data-i18n="k105">AI Business Assistant</h2>
+</div>
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k106">Connect OpenAI or Gemini with your own API key</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k107">Every answer is grounded in your real sales and stock data</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k108">Quick actions: sales predictions, restock advice, expense analysis</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k109">Marketing ideas and plain-English report summaries</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k110">Full conversation history, saved per team member</span>
+</div>
+</div>
+</div>
+<div class="surface p-7 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+<div class="md:col-span-1">
+<div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-chart-line text-lg"></i>
+</div>
+<h2 class="font-display text-xl font-bold" data-i18n="k055">Reports</h2>
+</div>
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k111">Sales, inventory, expense, and customer reports</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k112">Export to PDF, Excel (.xlsx), or CSV in one click</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k113">The same numbers you see on screen are what you export</span>
+</div>
+</div>
+</div>
+<div class="surface p-7 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+<div class="md:col-span-1">
+<div class="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-shield-halved text-lg"></i>
+</div>
+<h2 class="font-display text-xl font-bold" data-i18n="k114">Security</h2>
+</div>
+<div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k115">Role-based access control on every action</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k116">CSRF protection on every state-changing request</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k117">Rate-limited logins and hardened session handling</span>
+</div>
+<div class="flex items-start gap-2 text-sm">
+<i class="fa-solid fa-check text-emerald mt-1 text-xs"></i>
+<span data-i18n="k118">Full audit log of who did what, and when</span>
+</div>
+</div>
+</div>
+</section>
+<section class="max-w-4xl mx-auto px-6 pb-20 text-center" data-aos="fade-up">
+<h2 class="font-display text-2xl font-bold mb-4" data-i18n="k119">See it all working together</h2>
+<a class="btn-primary px-7 py-3.5 inline-block" href="register.html"><span data-i18n="k008">Start Free Trial</span><i class="fa-solid fa-arrow-right ml-1 text-sm"></i></a>
+</section>
+<footer class="border-t mt-20" style="border-color:var(--border-subtle)">
+<div class="max-w-7xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-5 gap-8">
+<div class="col-span-2">
+<a class="flex items-center gap-2.5 mb-3" href="index.html">
+<div class="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white">
+<i class="fa-solid fa-layer-group text-xs"></i>
+</div>
+<span class="font-display font-bold" data-i18n="k000">POS &amp; Inventory Management System</span>
+</a>
+<p class="text-sm max-w-xs" data-i18n="k022" style="color:var(--text-secondary)">
+                All-in-one POS, inventory, and business management for retail stores, restaurants, pharmacies, and SMEs.
+            </p>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k023" style="color:var(--text-secondary)">Product</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k002" href="features.html">Features</a>
+<a class="block hover:text-primary" data-i18n="k003" href="pricing.html">Pricing</a>
+<a class="block hover:text-primary" data-i18n="k024" href="testimonials.html">Testimonials</a>
+<a class="block hover:text-primary" data-i18n="k008" href="register.html">Start Free Trial</a>
+</div>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k025" style="color:var(--text-secondary)">Company</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k026" href="about.html">About Us</a>
+<a class="block hover:text-primary" data-i18n="k004" href="blog.html">Blog</a>
+<a class="block hover:text-primary" data-i18n="k006" href="contact.html">Contact</a>
+<a class="block hover:text-primary" data-i18n="k005" href="faq.html">FAQ</a>
+</div>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k027" style="color:var(--text-secondary)">Legal</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k028" href="privacy-policy.html">Privacy Policy</a>
+<a class="block hover:text-primary" data-i18n="k029" href="terms.html">Terms &amp; Conditions</a>
+</div>
+</div>
+</div>
+<div class="border-t py-6" style="border-color:var(--border-subtle)">
+<div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm" style="color:var(--text-secondary)">
+<p data-i18n="k030">© 2026 POS &amp; Inventory Management System. All rights reserved.</p>
+<div class="flex items-center gap-4">
+<a aria-label="Facebook" class="hover:text-primary" href="#"><i class="fa-brands fa-facebook"></i></a>
+<a aria-label="X (Twitter)" class="hover:text-primary" href="#"><i class="fa-brands fa-x-twitter"></i></a>
+<a aria-label="LinkedIn" class="hover:text-primary" href="#"><i class="fa-brands fa-linkedin"></i></a>
+<a aria-label="Instagram" class="hover:text-primary" href="#"><i class="fa-brands fa-instagram"></i></a>
+</div>
+</div>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+<script src="assets/js/main.js"></script>
+<script>AOS.init({ duration: 500, once: true });</script>
+<script src="assets/js/site-auth.js" type="module"></script>
+<script src="assets/js/i18n.js"></script></body>
+</html>

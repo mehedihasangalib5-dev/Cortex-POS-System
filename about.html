@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="index, follow" name="robots"/>
+<title>About Us · POS &amp; Inventory Management System</title>
+<meta content="Why we built an all-in-one business management platform for shops, restaurants, pharmacies, and SMEs." name="description"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CDN (configured with our design tokens) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: { DEFAULT: '#2454FF', dark: '#1638C4' },
+                    emerald: '#10B981',
+                    amber: '#F5A623',
+                },
+                fontFamily: {
+                    display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    sans: ['"Inter"', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'monospace'],
+                },
+                borderRadius: { xl: '1rem', '2xl': '1.25rem' },
+            }
+        }
+    };
+</script>
+<!-- Font Awesome -->
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
+<!-- Core design system -->
+<link href="assets/css/style.css" rel="stylesheet"/>
+<!-- AOS animation library -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+<!-- Apply saved theme before paint to avoid a light/dark flash -->
+<script>
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+</head>
+<body class="font-sans">
+<header class="sticky top-0 z-40 surface-glass" style="border-radius:0; border-left:0; border-right:0; border-top:0;">
+<nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+<a class="flex items-center gap-2.5 shrink-0" href="index.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white">
+<i class="fa-solid fa-layer-group text-sm"></i>
+</div>
+<span class="font-display font-bold text-lg" data-i18n="k000">POS &amp; Inventory Management System</span>
+</a>
+<div class="hidden lg:flex items-center gap-1">
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k001" href="index.html" style="color:var(--text-secondary)">Home</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k002" href="features.html" style="color:var(--text-secondary)">Features</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k003" href="pricing.html" style="color:var(--text-secondary)">Pricing</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k004" href="blog.html" style="color:var(--text-secondary)">Blog</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k005" href="faq.html" style="color:var(--text-secondary)">FAQ</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k006" href="contact.html" style="color:var(--text-secondary)">Contact</a>
+</div>
+<div class="hidden lg:flex items-center gap-3">
+<button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()">
+<i class="fa-solid fa-moon dark:hidden"></i>
+<i class="fa-solid fa-sun hidden dark:inline"></i>
+</button>
+<span class="flex items-center gap-3" data-auth="out">
+<a class="px-3.5 py-2 text-sm font-medium" data-i18n="k007" href="login.html" style="color:var(--text-secondary)">Sign In</a>
+<a class="btn-primary text-sm !py-2 !px-4" data-i18n="k008" href="register.html">Start Free Trial</a>
+</span>
+<span class="hidden-auth items-center gap-3 flex" data-auth="in">
+<a class="btn-primary text-sm !py-2 !px-4" data-i18n="k009" href="dashboard.html">Go to Dashboard</a>
+<button class="px-3.5 py-2 text-sm font-medium" data-i18n="k010" data-logout="" style="color:var(--text-secondary)">Logout</button>
+</span>
+</div>
+<div class="flex items-center rounded-full p-0.5 text-xs font-semibold shrink-0" data-lang-toggle="" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)"><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="en" type="button">EN</button><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="bn" type="button">বাং</button></div><button class="lg:hidden text-lg" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
+<i class="fa-solid fa-bars"></i>
+</button>
+</nav>
+<div class="hidden lg:hidden border-t px-6 py-4 space-y-1" id="mobileNav" style="border-color:var(--border-subtle)">
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k001" href="index.html">Home</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k002" href="features.html">Features</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k003" href="pricing.html">Pricing</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k004" href="blog.html">Blog</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k005" href="faq.html">FAQ</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k006" href="contact.html">Contact</a>
+<div class="pt-3 mt-2 border-t flex flex-col gap-2" style="border-color:var(--border-subtle)">
+<div class="flex flex-col gap-2" data-auth="out">
+<a class="text-center px-3.5 py-2 text-sm font-medium" data-i18n="k007" href="login.html">Sign In</a>
+<a class="btn-primary text-sm text-center" data-i18n="k008" href="register.html">Start Free Trial</a>
+</div>
+<div class="hidden-auth flex-col gap-2 flex" data-auth="in">
+<a class="btn-primary text-sm text-center" data-i18n="k009" href="dashboard.html">Go to Dashboard</a>
+<button class="text-center px-3.5 py-2 text-sm font-medium" data-i18n="k010" data-logout="">Logout</button>
+</div>
+</div>
+</div>
+</header>
+<section class="max-w-3xl mx-auto px-6 pt-16 pb-14">
+<h1 class="font-display text-4xl font-extrabold mb-6 text-center" data-aos="fade-up" data-i18n="k011">Built for the business behind the counter</h1>
+<div class="space-y-5 text-base leading-relaxed" data-aos="fade-up" data-aos-delay="75" style="color:var(--text-secondary)">
+<p data-i18n="k012">Most small and mid-sized businesses end up running on a patchwork: one app for the till, a spreadsheet for stock, a notebook for staff hours, and a separate tool for the books. Every reconciliation between them costs time — and every gap between them costs money.</p>
+<p data-i18n="k013">POS &amp; Inventory Management System exists to close those gaps. Sales, inventory, customers, staff, and accounting all read from and write to the same database, in real time. When a sale happens at the till, stock updates immediately, loyalty points post to the right customer, and the numbers on your accounting dashboard are already current — no export, import, or end-of-day reconciliation required.</p>
+<p data-i18n="k014">We built it for the businesses that actually run this way day to day: retail shops, restaurants, pharmacies, and small institutions that need something dependable, not a bloated enterprise suite designed for a different kind of company.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-12" data-aos="fade-up" data-aos-delay="150">
+<div class="surface p-6 text-center">
+<i class="fa-solid fa-bullseye text-primary text-xl mb-3"></i>
+<h3 class="font-semibold mb-1.5" data-i18n="k015">Our Focus</h3>
+<p class="text-sm" data-i18n="k016" style="color:var(--text-secondary)">One connected system, not a bundle of disconnected tools.</p>
+</div>
+<div class="surface p-6 text-center">
+<i class="fa-solid fa-shield-halved text-primary text-xl mb-3"></i>
+<h3 class="font-semibold mb-1.5" data-i18n="k017">Our Standard</h3>
+<p class="text-sm" data-i18n="k018" style="color:var(--text-secondary)">Security and data integrity treated as requirements, not afterthoughts.</p>
+</div>
+<div class="surface p-6 text-center">
+<i class="fa-solid fa-hand-holding-heart text-primary text-xl mb-3"></i>
+<h3 class="font-semibold mb-1.5" data-i18n="k019">Our Approach</h3>
+<p class="text-sm" data-i18n="k020" style="color:var(--text-secondary)">Built with real operators' workflows in mind, not just a features checklist.</p>
+</div>
+</div>
+<div class="text-center mt-12" data-aos="fade-up">
+<a class="btn-primary px-7 py-3.5 inline-block" href="register.html"><span data-i18n="k021">Start Your Free Trial</span><i class="fa-solid fa-arrow-right ml-1 text-sm"></i></a>
+</div>
+</section>
+<footer class="border-t mt-20" style="border-color:var(--border-subtle)">
+<div class="max-w-7xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-5 gap-8">
+<div class="col-span-2">
+<a class="flex items-center gap-2.5 mb-3" href="index.html">
+<div class="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white">
+<i class="fa-solid fa-layer-group text-xs"></i>
+</div>
+<span class="font-display font-bold" data-i18n="k000">POS &amp; Inventory Management System</span>
+</a>
+<p class="text-sm max-w-xs" data-i18n="k022" style="color:var(--text-secondary)">
+                All-in-one POS, inventory, and business management for retail stores, restaurants, pharmacies, and SMEs.
+            </p>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k023" style="color:var(--text-secondary)">Product</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k002" href="features.html">Features</a>
+<a class="block hover:text-primary" data-i18n="k003" href="pricing.html">Pricing</a>
+<a class="block hover:text-primary" data-i18n="k024" href="testimonials.html">Testimonials</a>
+<a class="block hover:text-primary" data-i18n="k008" href="register.html">Start Free Trial</a>
+</div>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k025" style="color:var(--text-secondary)">Company</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k026" href="about.html">About Us</a>
+<a class="block hover:text-primary" data-i18n="k004" href="blog.html">Blog</a>
+<a class="block hover:text-primary" data-i18n="k006" href="contact.html">Contact</a>
+<a class="block hover:text-primary" data-i18n="k005" href="faq.html">FAQ</a>
+</div>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k027" style="color:var(--text-secondary)">Legal</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k028" href="privacy-policy.html">Privacy Policy</a>
+<a class="block hover:text-primary" data-i18n="k029" href="terms.html">Terms &amp; Conditions</a>
+</div>
+</div>
+</div>
+<div class="border-t py-6" style="border-color:var(--border-subtle)">
+<div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm" style="color:var(--text-secondary)">
+<p data-i18n="k030">© 2026 POS &amp; Inventory Management System. All rights reserved.</p>
+<div class="flex items-center gap-4">
+<a aria-label="Facebook" class="hover:text-primary" href="#"><i class="fa-brands fa-facebook"></i></a>
+<a aria-label="X (Twitter)" class="hover:text-primary" href="#"><i class="fa-brands fa-x-twitter"></i></a>
+<a aria-label="LinkedIn" class="hover:text-primary" href="#"><i class="fa-brands fa-linkedin"></i></a>
+<a aria-label="Instagram" class="hover:text-primary" href="#"><i class="fa-brands fa-instagram"></i></a>
+</div>
+</div>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+<script src="assets/js/main.js"></script>
+<script>AOS.init({ duration: 500, once: true });</script>
+<script src="assets/js/site-auth.js" type="module"></script>
+<script src="assets/js/i18n.js"></script></body>
+</html>

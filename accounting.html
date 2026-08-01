@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="noindex, nofollow" name="robots"/>
+<title>Accounting · POS &amp; Inventory Management System</title>
+<meta content="Track income and expenses." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: { DEFAULT: '#2454FF', dark: '#1638C4' },
+                    emerald: '#10B981',
+                    amber: '#F5A623',
+                },
+                fontFamily: {
+                    display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    sans: ['"Inter"', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'monospace'],
+                },
+                borderRadius: { xl: '1rem', '2xl': '1.25rem' },
+            }
+        }
+    };
+</script>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
+<link href="assets/css/style.css" rel="stylesheet"/>
+<script>
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+</head>
+<body class="font-sans" data-page="accounting">
+<header class="surface-glass sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between gap-4" style="border-radius:0">
+<a class="flex items-center gap-2.5 shrink-0" href="index.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white"><i class="fa-solid fa-layer-group text-sm"></i></div>
+<span class="font-display font-bold text-lg hidden sm:inline">POS &amp; Inventory Management System</span>
+</a>
+<div class="flex items-center gap-3 ml-auto">
+<button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()" title="Toggle dark mode">
+<i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:inline"></i>
+</button>
+<div class="flex items-center gap-2.5 pl-3 border-l" style="border-color:var(--border-subtle)">
+<div class="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm" data-user-initial="">?</div>
+<div class="hidden sm:block leading-tight">
+<p class="text-sm font-semibold" data-user-name=""> </p>
+<p class="text-xs" data-user-email="" style="color:var(--text-secondary)"> </p>
+</div>
+</div>
+<button class="px-3.5 py-2 text-sm font-medium rounded-lg hover:bg-black/5 dark:hover:bg-white/5" data-logout="" style="color:var(--text-secondary)">
+<i class="fa-solid fa-right-from-bracket mr-1"></i><span>Logout</span></button>
+</div>
+</header>
+
+<div class="lg:hidden flex items-center gap-1.5 overflow-x-auto px-4 py-2.5 border-b" style="border-color:var(--border-subtle)">
+<a class="nav-link shrink-0" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a class="nav-link shrink-0" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register"></i><span>POS</span></a>
+<a class="nav-link shrink-0" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse"></i><span>Inventory</span></a>
+<a class="nav-link shrink-0" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced"></i><span>Accounting</span></a>
+<a class="nav-link shrink-0" data-nav="customers" href="customers.html"><i class="fa-solid fa-users"></i><span>Customers</span></a>
+<a class="nav-link shrink-0" data-nav="hr-payroll" href="hr-payroll.html"><i class="fa-solid fa-id-badge"></i><span>HR &amp; Payroll</span></a>
+<a class="nav-link shrink-0" data-nav="reports" href="reports.html"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+<a class="nav-link shrink-0" data-nav="ai-assistant" href="ai-assistant.html"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Assistant</span></a>
+<a class="nav-link shrink-0" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+
+<div class="flex items-start max-w-7xl mx-auto">
+<aside class="sidebar hidden lg:flex flex-col w-60 shrink-0 min-h-[calc(100vh-65px)] p-4 gap-1 sticky top-[65px]">
+<a class="nav-link" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge w-4 text-center"></i><span>Dashboard</span></a>
+<a class="nav-link" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register w-4 text-center"></i><span>Point of Sale</span></a>
+<a class="nav-link" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse w-4 text-center"></i><span>Inventory</span></a>
+<a class="nav-link" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced w-4 text-center"></i><span>Accounting</span></a>
+<div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
+<a class="nav-link" data-nav="customers" href="customers.html"><i class="fa-solid fa-users w-4 text-center"></i><span>Customers</span></a>
+<a class="nav-link" data-nav="hr-payroll" href="hr-payroll.html"><i class="fa-solid fa-id-badge w-4 text-center"></i><span>HR &amp; Payroll</span></a>
+<a class="nav-link" data-nav="reports" href="reports.html"><i class="fa-solid fa-chart-line w-4 text-center"></i><span>Reports</span></a>
+<a class="nav-link" data-nav="ai-assistant" href="ai-assistant.html"><i class="fa-solid fa-wand-magic-sparkles w-4 text-center"></i><span>AI Assistant</span></a>
+<div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
+<a class="nav-link" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear w-4 text-center"></i><span>Settings</span></a>
+</aside>
+
+<main class="flex-1 min-w-0 px-6 py-8 w-full">
+<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+<div>
+<h1 class="font-display text-2xl font-bold mb-1">Accounting</h1>
+<p class="text-sm" style="color:var(--text-secondary)">Income from sales, expenses you log, and your net profit.</p>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center rounded-full p-0.5 text-xs font-semibold" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)">
+<button class="range-btn lang-toggle-btn px-3 py-1.5 rounded-full transition lang-active" data-range="month" type="button">This Month</button>
+<button class="range-btn lang-toggle-btn px-3 py-1.5 rounded-full transition" data-range="all" type="button">All Time</button>
+</div>
+<button class="btn-primary text-sm !py-2.5 !px-4" id="addExpenseBtn"><i class="fa-solid fa-plus mr-1.5"></i>Add Expense</button>
+</div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+<div class="kpi-card">
+<div class="h-10 w-10 rounded-xl bg-emerald/10 text-emerald flex items-center justify-center mb-3"><i class="fa-solid fa-arrow-trend-up"></i></div>
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Total Income</p>
+<p class="font-display text-xl font-bold font-mono-fig" id="sumIncome">৳0</p>
+</div>
+<div class="kpi-card">
+<div class="h-10 w-10 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center mb-3"><i class="fa-solid fa-arrow-trend-down"></i></div>
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Total Expenses</p>
+<p class="font-display text-xl font-bold font-mono-fig" id="sumExpense">৳0</p>
+</div>
+<div class="kpi-card">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-scale-balanced"></i></div>
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Net Profit</p>
+<p class="font-display text-xl font-bold font-mono-fig" id="sumNet">৳0</p>
+</div>
+</div>
+
+<div class="surface overflow-x-auto">
+<div class="px-4 py-3 border-b flex items-center justify-between" style="border-color:var(--border-subtle)">
+<h2 class="font-display text-base font-bold">Transactions</h2>
+<span class="text-xs" id="txCountLabel" style="color:var(--text-secondary)"></span>
+</div>
+<table class="w-full text-sm">
+<thead>
+<tr class="border-b text-left" style="border-color:var(--border-subtle)">
+<th class="px-4 py-3 font-semibold">Date</th>
+<th class="px-4 py-3 font-semibold">Type</th>
+<th class="px-4 py-3 font-semibold">Description</th>
+<th class="px-4 py-3 font-semibold text-right">Amount</th>
+<th class="px-4 py-3 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody id="txTableBody">
+<tr><td class="px-4 py-6 text-center" colspan="5" style="color:var(--text-secondary)">Loading...</td></tr>
+</tbody>
+</table>
+</div>
+</main>
+</div>
+
+<!-- Add Expense Modal -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center p-4" id="expenseModal" style="background:rgba(15,23,42,0.5)">
+<div class="surface w-full max-w-md p-6">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-display text-lg font-bold">Add Expense</h2>
+<button class="h-8 w-8 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" id="closeExpenseModal" type="button"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="expenseFormError"></div>
+<form id="expenseForm">
+<div class="mb-3">
+<label class="block text-sm font-medium mb-1.5">Category</label>
+<select class="input-field" id="eCategory">
+<option>Rent</option>
+<option>Utilities</option>
+<option>Salary</option>
+<option>Supplies</option>
+<option>Transport</option>
+<option>Marketing</option>
+<option>Other</option>
+</select>
+</div>
+<div class="mb-3">
+<label class="block text-sm font-medium mb-1.5">Amount (৳)</label>
+<input class="input-field" id="eAmount" min="0" required="" step="0.01" type="number"/>
+</div>
+<div class="mb-3">
+<label class="block text-sm font-medium mb-1.5">Date</label>
+<input class="input-field" id="eDate" required="" type="date"/>
+</div>
+<div class="mb-5">
+<label class="block text-sm font-medium mb-1.5">Note (optional)</label>
+<input class="input-field" id="eNote" type="text"/>
+</div>
+<button class="btn-primary w-full" id="expenseSubmitBtn" type="submit">Save Expense</button>
+</form>
+</div>
+</div>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/accounting.js" type="module"></script>
+<script src="assets/js/i18n.js"></script></body>
+</html>

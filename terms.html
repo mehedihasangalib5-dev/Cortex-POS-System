@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="index, follow" name="robots"/>
+<title>Terms &amp; Conditions · POS &amp; Inventory Management System</title>
+<meta content="The terms governing your use of the platform." name="description"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CDN (configured with our design tokens) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: { DEFAULT: '#2454FF', dark: '#1638C4' },
+                    emerald: '#10B981',
+                    amber: '#F5A623',
+                },
+                fontFamily: {
+                    display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    sans: ['"Inter"', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'monospace'],
+                },
+                borderRadius: { xl: '1rem', '2xl': '1.25rem' },
+            }
+        }
+    };
+</script>
+<!-- Font Awesome -->
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
+<!-- Core design system -->
+<link href="assets/css/style.css" rel="stylesheet"/>
+<!-- AOS animation library -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+<!-- Apply saved theme before paint to avoid a light/dark flash -->
+<script>
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+</head>
+<body class="font-sans">
+<header class="sticky top-0 z-40 surface-glass" style="border-radius:0; border-left:0; border-right:0; border-top:0;">
+<nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+<a class="flex items-center gap-2.5 shrink-0" href="index.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white">
+<i class="fa-solid fa-layer-group text-sm"></i>
+</div>
+<span class="font-display font-bold text-lg" data-i18n="k000">POS &amp; Inventory Management System</span>
+</a>
+<div class="hidden lg:flex items-center gap-1">
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k001" href="index.html" style="color:var(--text-secondary)">Home</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k002" href="features.html" style="color:var(--text-secondary)">Features</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k003" href="pricing.html" style="color:var(--text-secondary)">Pricing</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k004" href="blog.html" style="color:var(--text-secondary)">Blog</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k005" href="faq.html" style="color:var(--text-secondary)">FAQ</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k006" href="contact.html" style="color:var(--text-secondary)">Contact</a>
+</div>
+<div class="hidden lg:flex items-center gap-3">
+<button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()">
+<i class="fa-solid fa-moon dark:hidden"></i>
+<i class="fa-solid fa-sun hidden dark:inline"></i>
+</button>
+<span class="flex items-center gap-3" data-auth="out">
+<a class="px-3.5 py-2 text-sm font-medium" data-i18n="k007" href="login.html" style="color:var(--text-secondary)">Sign In</a>
+<a class="btn-primary text-sm !py-2 !px-4" data-i18n="k008" href="register.html">Start Free Trial</a>
+</span>
+<span class="hidden-auth items-center gap-3 flex" data-auth="in">
+<a class="btn-primary text-sm !py-2 !px-4" data-i18n="k009" href="dashboard.html">Go to Dashboard</a>
+<button class="px-3.5 py-2 text-sm font-medium" data-i18n="k010" data-logout="" style="color:var(--text-secondary)">Logout</button>
+</span>
+</div>
+<div class="flex items-center rounded-full p-0.5 text-xs font-semibold shrink-0" data-lang-toggle="" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)"><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="en" type="button">EN</button><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="bn" type="button">বাং</button></div><button class="lg:hidden text-lg" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
+<i class="fa-solid fa-bars"></i>
+</button>
+</nav>
+<div class="hidden lg:hidden border-t px-6 py-4 space-y-1" id="mobileNav" style="border-color:var(--border-subtle)">
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k001" href="index.html">Home</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k002" href="features.html">Features</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k003" href="pricing.html">Pricing</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k004" href="blog.html">Blog</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k005" href="faq.html">FAQ</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k006" href="contact.html">Contact</a>
+<div class="pt-3 mt-2 border-t flex flex-col gap-2" style="border-color:var(--border-subtle)">
+<div class="flex flex-col gap-2" data-auth="out">
+<a class="text-center px-3.5 py-2 text-sm font-medium" data-i18n="k007" href="login.html">Sign In</a>
+<a class="btn-primary text-sm text-center" data-i18n="k008" href="register.html">Start Free Trial</a>
+</div>
+<div class="hidden-auth flex-col gap-2 flex" data-auth="in">
+<a class="btn-primary text-sm text-center" data-i18n="k009" href="dashboard.html">Go to Dashboard</a>
+<button class="text-center px-3.5 py-2 text-sm font-medium" data-i18n="k010" data-logout="">Logout</button>
+</div>
+</div>
+</div>
+</header>
+<section class="max-w-3xl mx-auto px-6 pt-16 pb-20">
+<h1 class="font-display text-3xl font-extrabold mb-2" data-i18n="k029">Terms &amp; Conditions</h1>
+<p class="text-sm mb-10" data-i18n="k209" style="color:var(--text-secondary)">Last updated: July 31, 2026</p>
+<div class="space-y-8 text-sm leading-relaxed" style="color:var(--text-secondary)">
+<div>
+<h2 class="font-display text-lg font-bold mb-2" data-i18n="k230" style="color:var(--text-primary)">1. Acceptance of Terms</h2>
+<p data-i18n="k231">By creating an account or using this platform, you agree to these terms. If you are using the platform on behalf of a business, you confirm you have the authority to bind that business to these terms.</p>
+</div>
+<div>
+<h2 class="font-display text-lg font-bold mb-2" data-i18n="k232" style="color:var(--text-primary)">2. Account Responsibilities</h2>
+<p data-i18n="k233">You are responsible for maintaining the confidentiality of your login credentials and for all activity under your account. Notify us immediately of any unauthorized use. Business owners are responsible for the roles and permissions they grant to team members.</p>
+</div>
+<div>
+<h2 class="font-display text-lg font-bold mb-2" data-i18n="k234" style="color:var(--text-primary)">3. Acceptable Use</h2>
+<p data-i18n="k235">You agree not to use the platform to store or process unlawful content, to attempt to gain unauthorized access to other accounts or systems, or to interfere with the platform's normal operation.</p>
+</div>
+<div>
+<h2 class="font-display text-lg font-bold mb-2" data-i18n="k236" style="color:var(--text-primary)">4. Your Data</h2>
+<p data-i18n="k237">You retain all rights to the business data you enter into the platform — products, sales, customer records, and financial data. We act only as the operator of the system storing that data on your behalf.</p>
+</div>
+<div>
+<h2 class="font-display text-lg font-bold mb-2" data-i18n="k238" style="color:var(--text-primary)">5. Third-Party AI Providers</h2>
+<p data-i18n="k239">The AI Business Assistant feature, when enabled, sends the prompts you submit (along with a summary of relevant business data) to a third-party AI provider (OpenAI or Google Gemini) using an API key you supply and control. Use of that provider's service is subject to its own terms, and you are responsible for any usage costs billed by that provider.</p>
+</div>
+<div>
+<h2 class="font-display text-lg font-bold mb-2" data-i18n="k240" style="color:var(--text-primary)">6. Subscription &amp; Billing</h2>
+<p>Paid plans are billed in advance on a recurring basis as described on the <a class="text-primary font-medium" data-i18n="k241" href="pricing.html">pricing page</a>. You may cancel at any time; access continues through the end of the current billing period.</p>
+</div>
+<div>
+<h2 class="font-display text-lg font-bold mb-2" data-i18n="k242" style="color:var(--text-primary)">7. Service Availability</h2>
+<p data-i18n="k243">We aim for high availability but do not guarantee uninterrupted access. Scheduled maintenance and unforeseen issues may occasionally affect service.</p>
+</div>
+<div>
+<h2 class="font-display text-lg font-bold mb-2" data-i18n="k244" style="color:var(--text-primary)">8. Limitation of Liability</h2>
+<p data-i18n="k245">The platform is provided "as is." To the fullest extent permitted by law, we are not liable for indirect, incidental, or consequential damages arising from your use of the service.</p>
+</div>
+<div>
+<h2 class="font-display text-lg font-bold mb-2" data-i18n="k246" style="color:var(--text-primary)">9. Changes to These Terms</h2>
+<p data-i18n="k247">We may update these terms from time to time. Continued use of the platform after changes take effect constitutes acceptance of the updated terms.</p>
+</div>
+<div>
+<h2 class="font-display text-lg font-bold mb-2" data-i18n="k248" style="color:var(--text-primary)">10. Contact</h2>
+<p>Questions about these terms can be sent via our <a class="text-primary font-medium" data-i18n="k225" href="contact.html">contact form</a>.</p>
+</div>
+</div>
+</section>
+<footer class="border-t mt-20" style="border-color:var(--border-subtle)">
+<div class="max-w-7xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-5 gap-8">
+<div class="col-span-2">
+<a class="flex items-center gap-2.5 mb-3" href="index.html">
+<div class="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white">
+<i class="fa-solid fa-layer-group text-xs"></i>
+</div>
+<span class="font-display font-bold" data-i18n="k000">POS &amp; Inventory Management System</span>
+</a>
+<p class="text-sm max-w-xs" data-i18n="k022" style="color:var(--text-secondary)">
+                All-in-one POS, inventory, and business management for retail stores, restaurants, pharmacies, and SMEs.
+            </p>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k023" style="color:var(--text-secondary)">Product</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k002" href="features.html">Features</a>
+<a class="block hover:text-primary" data-i18n="k003" href="pricing.html">Pricing</a>
+<a class="block hover:text-primary" data-i18n="k024" href="testimonials.html">Testimonials</a>
+<a class="block hover:text-primary" data-i18n="k008" href="register.html">Start Free Trial</a>
+</div>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k025" style="color:var(--text-secondary)">Company</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k026" href="about.html">About Us</a>
+<a class="block hover:text-primary" data-i18n="k004" href="blog.html">Blog</a>
+<a class="block hover:text-primary" data-i18n="k006" href="contact.html">Contact</a>
+<a class="block hover:text-primary" data-i18n="k005" href="faq.html">FAQ</a>
+</div>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k027" style="color:var(--text-secondary)">Legal</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k028" href="privacy-policy.html">Privacy Policy</a>
+<a class="block hover:text-primary" data-i18n="k029" href="terms.html">Terms &amp; Conditions</a>
+</div>
+</div>
+</div>
+<div class="border-t py-6" style="border-color:var(--border-subtle)">
+<div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm" style="color:var(--text-secondary)">
+<p data-i18n="k030">© 2026 POS &amp; Inventory Management System. All rights reserved.</p>
+<div class="flex items-center gap-4">
+<a aria-label="Facebook" class="hover:text-primary" href="#"><i class="fa-brands fa-facebook"></i></a>
+<a aria-label="X (Twitter)" class="hover:text-primary" href="#"><i class="fa-brands fa-x-twitter"></i></a>
+<a aria-label="LinkedIn" class="hover:text-primary" href="#"><i class="fa-brands fa-linkedin"></i></a>
+<a aria-label="Instagram" class="hover:text-primary" href="#"><i class="fa-brands fa-instagram"></i></a>
+</div>
+</div>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+<script src="assets/js/main.js"></script>
+<script>AOS.init({ duration: 500, once: true });</script>
+<script src="assets/js/site-auth.js" type="module"></script>
+<script src="assets/js/i18n.js"></script></body>
+</html>

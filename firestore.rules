@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Each signed-in user can read/create/update only their own profile doc,
+    // created at assets/js/auth-forms.js on registration.
+    match /users/{userId} {
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    // Anyone (even signed-out visitors) can submit the public contact form,
+    // but only signed-in users (the business owner/staff) can read, edit,
+    // or delete messages — matches assets/js/contact-firestore.js +
+    // assets/js/dashboard.js.
+    match /contactMessages/{messageId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // Inventory: any signed-in staff member can view and manage products.
+    // (Single-business setup — every signed-in user is treated as staff.
+    // If you later support multiple businesses, scope these by a
+    // businessId field instead.)
+    match /products/{productId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+
+    // Sales: created by the POS screen at checkout. Signed-in staff can
+    // read the sales log; edits/deletes are allowed for corrections but
+    // could be locked down further (e.g. to admins only) later.
+    match /sales/{saleId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+
+    // Accounting: manually logged expenses.
+    match /expenses/{expenseId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+
+    // Customers: contact info + running "due" (credit) balance.
+    match /customers/{customerId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+
+    // HR: staff records.
+    match /employees/{employeeId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+
+    // Payroll: monthly salary payment log (also mirrored into /expenses
+    // when marked paid — see assets/js/hr-payroll.js).
+    match /payrollRecords/{recordId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+
+    // Settings: single shared business-profile doc (id "business") plus
+    // room for future per-feature settings docs.
+    match /settings/{settingsId} {
+      allow read, create, update, delete: if request.auth != null;
+    }
+  }
+}

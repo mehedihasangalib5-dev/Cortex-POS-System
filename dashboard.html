@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="noindex, nofollow" name="robots"/>
+<title>Dashboard · POS &amp; Inventory Management System</title>
+<meta content="Your business dashboard." name="description"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CDN (configured with our design tokens) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: { DEFAULT: '#2454FF', dark: '#1638C4' },
+                    emerald: '#10B981',
+                    amber: '#F5A623',
+                },
+                fontFamily: {
+                    display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    sans: ['"Inter"', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'monospace'],
+                },
+                borderRadius: { xl: '1rem', '2xl': '1.25rem' },
+            }
+        }
+    };
+</script>
+<!-- Font Awesome -->
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
+<!-- Core design system -->
+<link href="assets/css/style.css" rel="stylesheet"/>
+<!-- Apply saved theme before paint to avoid a light/dark flash -->
+<script>
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+</head>
+<body class="font-sans" data-page="dashboard">
+<header class="surface-glass sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between gap-4" style="border-radius:0">
+<a class="flex items-center gap-2.5 shrink-0" href="index.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white">
+<i class="fa-solid fa-layer-group text-sm"></i>
+</div>
+<span class="font-display font-bold text-lg hidden sm:inline" data-i18n="k000">POS &amp; Inventory Management System</span>
+</a>
+<div class="flex items-center gap-3 ml-auto">
+<div class="flex items-center rounded-full p-0.5 text-xs font-semibold shrink-0" data-lang-toggle="" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)"><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="en" type="button">EN</button><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="bn" type="button">বাং</button></div><button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()" title="Toggle dark mode">
+<i class="fa-solid fa-moon dark:hidden"></i>
+<i class="fa-solid fa-sun hidden dark:inline"></i>
+</button>
+<div class="flex items-center gap-2.5 pl-3 border-l" style="border-color:var(--border-subtle)">
+<div class="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm" data-user-initial="">?</div>
+<div class="hidden sm:block leading-tight">
+<p class="text-sm font-semibold" data-user-name=""> </p>
+<p class="text-xs" data-user-email="" style="color:var(--text-secondary)"> </p>
+</div>
+</div>
+<button class="px-3.5 py-2 text-sm font-medium rounded-lg hover:bg-black/5 dark:hover:bg-white/5" data-logout="" style="color:var(--text-secondary)">
+<i class="fa-solid fa-right-from-bracket mr-1"></i><span data-i18n="k010">Logout</span></button>
+</div>
+</header>
+
+<!-- Mobile nav -->
+<div class="lg:hidden flex items-center gap-1.5 overflow-x-auto px-4 py-2.5 border-b" style="border-color:var(--border-subtle)">
+<a class="nav-link shrink-0" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a class="nav-link shrink-0" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register"></i><span>POS</span></a>
+<a class="nav-link shrink-0" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse"></i><span>Inventory</span></a>
+<a class="nav-link shrink-0" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced"></i><span>Accounting</span></a>
+<a class="nav-link shrink-0" data-nav="customers" href="customers.html"><i class="fa-solid fa-users"></i><span>Customers</span></a>
+<a class="nav-link shrink-0" data-nav="hr-payroll" href="hr-payroll.html"><i class="fa-solid fa-id-badge"></i><span>HR &amp; Payroll</span></a>
+<a class="nav-link shrink-0" data-nav="reports" href="reports.html"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+<a class="nav-link shrink-0" data-nav="ai-assistant" href="ai-assistant.html"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Assistant</span></a>
+<a class="nav-link shrink-0" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+
+<div class="flex items-start max-w-7xl mx-auto">
+<aside class="sidebar hidden lg:flex flex-col w-60 shrink-0 min-h-[calc(100vh-65px)] p-4 gap-1 sticky top-[65px]">
+<a class="nav-link" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge w-4 text-center"></i><span>Dashboard</span></a>
+<a class="nav-link" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register w-4 text-center"></i><span>Point of Sale</span></a>
+<a class="nav-link" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse w-4 text-center"></i><span>Inventory</span></a>
+<a class="nav-link" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced w-4 text-center"></i><span>Accounting</span></a>
+<div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
+<a class="nav-link" data-nav="customers" href="customers.html"><i class="fa-solid fa-users w-4 text-center"></i><span>Customers</span></a>
+<a class="nav-link" data-nav="hr-payroll" href="hr-payroll.html"><i class="fa-solid fa-id-badge w-4 text-center"></i><span>HR &amp; Payroll</span></a>
+<a class="nav-link" data-nav="reports" href="reports.html"><i class="fa-solid fa-chart-line w-4 text-center"></i><span>Reports</span></a>
+<a class="nav-link" data-nav="ai-assistant" href="ai-assistant.html"><i class="fa-solid fa-wand-magic-sparkles w-4 text-center"></i><span>AI Assistant</span></a>
+<div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
+<a class="nav-link" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear w-4 text-center"></i><span>Settings</span></a>
+</aside>
+
+<main class="flex-1 min-w-0 px-6 py-8 w-full">
+<h1 class="font-display text-2xl font-bold mb-1"><span data-i18n="welcome_prefix">Welcome back,</span> <span data-user-name="">there</span> 👋</h1>
+<p class="text-sm mb-8" style="color:var(--text-secondary)">Here's what's happening in your business today.</p>
+
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="kpi-card">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-sack-dollar"></i></div>
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Today's Sales</p>
+<p class="font-display text-xl font-bold font-mono-fig" id="kpiTodaySales">৳0</p>
+<p class="text-xs mt-1" id="kpiTodayCount" style="color:var(--text-secondary)">0 sales</p>
+</div>
+<div class="kpi-card">
+<div class="h-10 w-10 rounded-xl bg-emerald/10 text-emerald flex items-center justify-center mb-3"><i class="fa-solid fa-boxes-stacked"></i></div>
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Products</p>
+<p class="font-display text-xl font-bold font-mono-fig" id="kpiProductCount">0</p>
+<p class="text-xs mt-1" style="color:var(--text-secondary)">in inventory</p>
+</div>
+<div class="kpi-card">
+<div class="h-10 w-10 rounded-xl bg-amber/10 text-amber flex items-center justify-center mb-3"><i class="fa-solid fa-triangle-exclamation"></i></div>
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Low Stock</p>
+<p class="font-display text-xl font-bold font-mono-fig" id="kpiLowStock">0</p>
+<p class="text-xs mt-1" style="color:var(--text-secondary)">items need restock</p>
+</div>
+<div class="kpi-card">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-scale-balanced"></i></div>
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Net Profit (30d)</p>
+<p class="font-display text-xl font-bold font-mono-fig" id="kpiNetProfit">৳0</p>
+<p class="text-xs mt-1" style="color:var(--text-secondary)">income − expenses</p>
+</div>
+</div>
+
+<div class="grid lg:grid-cols-3 gap-6 mb-8">
+<a class="surface p-5 flex flex-col hover:shadow-lg transition" href="pos.html">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-cash-register"></i></div>
+<h3 class="font-semibold mb-1 text-sm">Point of Sale</h3>
+<p class="text-xs" style="color:var(--text-secondary)">Ring up a new sale</p>
+</a>
+<a class="surface p-5 flex flex-col hover:shadow-lg transition" href="inventory.html">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-warehouse"></i></div>
+<h3 class="font-semibold mb-1 text-sm">Inventory</h3>
+<p class="text-xs" style="color:var(--text-secondary)">Manage products &amp; stock</p>
+</a>
+<a class="surface p-5 flex flex-col hover:shadow-lg transition" href="accounting.html">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-scale-balanced"></i></div>
+<h3 class="font-semibold mb-1 text-sm">Accounting</h3>
+<p class="text-xs" style="color:var(--text-secondary)">Track income &amp; expenses</p>
+</a>
+</div>
+
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-10">
+<a class="surface p-5 flex flex-col hover:shadow-lg transition" href="customers.html">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-users"></i></div>
+<h3 class="font-semibold mb-1 text-sm">Customers</h3>
+<p class="text-xs" style="color:var(--text-secondary)">Manage customers &amp; dues</p>
+</a>
+<a class="surface p-5 flex flex-col hover:shadow-lg transition" href="hr-payroll.html">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-id-badge"></i></div>
+<h3 class="font-semibold mb-1 text-sm">HR &amp; Payroll</h3>
+<p class="text-xs" style="color:var(--text-secondary)">Staff &amp; salaries</p>
+</a>
+<a class="surface p-5 flex flex-col hover:shadow-lg transition" href="reports.html">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-chart-line"></i></div>
+<h3 class="font-semibold mb-1 text-sm">Reports</h3>
+<p class="text-xs" style="color:var(--text-secondary)">Sales &amp; expense trends</p>
+</a>
+<a class="surface p-5 flex flex-col hover:shadow-lg transition" href="ai-assistant.html">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+<h3 class="font-semibold mb-1 text-sm">AI Assistant</h3>
+<p class="text-xs" style="color:var(--text-secondary)">Ask about your business</p>
+</a>
+<a class="surface p-5 flex flex-col hover:shadow-lg transition" href="settings.html">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3"><i class="fa-solid fa-gear"></i></div>
+<h3 class="font-semibold mb-1 text-sm">Settings</h3>
+<p class="text-xs" style="color:var(--text-secondary)">Business &amp; profile</p>
+</a>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-6">
+<div class="surface p-6">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-display text-lg font-bold">Recent Sales</h2>
+<a class="text-xs text-primary font-medium" href="pos.html">New sale →</a>
+</div>
+<div id="recentSalesList"><p class="text-sm" style="color:var(--text-secondary)">Loading...</p></div>
+</div>
+<div class="surface p-6">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-display text-lg font-bold" data-i18n="k057">Recent Contact Messages</h2>
+<span class="text-xs" data-i18n="k058" style="color:var(--text-secondary)">Live from Firestore</span>
+</div>
+<div id="recentMessagesList">
+<p class="text-sm" data-i18n="k059" style="color:var(--text-secondary)">Loading...</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/dashboard.js" type="module"></script>
+<script src="assets/js/i18n.js"></script></body>
+</html>

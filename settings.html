@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="noindex, nofollow" name="robots"/>
+<title>Settings · POS &amp; Inventory Management System</title>
+<meta content="Business profile, your account, and app preferences." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: { DEFAULT: '#2454FF', dark: '#1638C4' },
+                    emerald: '#10B981',
+                    amber: '#F5A623',
+                },
+                fontFamily: {
+                    display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    sans: ['"Inter"', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'monospace'],
+                },
+                borderRadius: { xl: '1rem', '2xl': '1.25rem' },
+            }
+        }
+    };
+</script>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
+<link href="assets/css/style.css" rel="stylesheet"/>
+<script>
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+</head>
+<body class="font-sans" data-page="settings">
+<header class="surface-glass sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between gap-4" style="border-radius:0">
+<a class="flex items-center gap-2.5 shrink-0" href="index.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white"><i class="fa-solid fa-layer-group text-sm"></i></div>
+<span class="font-display font-bold text-lg hidden sm:inline">POS &amp; Inventory Management System</span>
+</a>
+<div class="flex items-center gap-3 ml-auto">
+<button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()" title="Toggle dark mode">
+<i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:inline"></i>
+</button>
+<div class="flex items-center gap-2.5 pl-3 border-l" style="border-color:var(--border-subtle)">
+<div class="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm" data-user-initial="">?</div>
+<div class="hidden sm:block leading-tight">
+<p class="text-sm font-semibold" data-user-name=""> </p>
+<p class="text-xs" data-user-email="" style="color:var(--text-secondary)"> </p>
+</div>
+</div>
+<button class="px-3.5 py-2 text-sm font-medium rounded-lg hover:bg-black/5 dark:hover:bg-white/5" data-logout="" style="color:var(--text-secondary)">
+<i class="fa-solid fa-right-from-bracket mr-1"></i><span>Logout</span></button>
+</div>
+</header>
+
+<div class="lg:hidden flex items-center gap-1.5 overflow-x-auto px-4 py-2.5 border-b" style="border-color:var(--border-subtle)">
+<a class="nav-link shrink-0" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a class="nav-link shrink-0" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register"></i><span>POS</span></a>
+<a class="nav-link shrink-0" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse"></i><span>Inventory</span></a>
+<a class="nav-link shrink-0" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced"></i><span>Accounting</span></a>
+<a class="nav-link shrink-0" data-nav="customers" href="customers.html"><i class="fa-solid fa-users"></i><span>Customers</span></a>
+<a class="nav-link shrink-0" data-nav="hr-payroll" href="hr-payroll.html"><i class="fa-solid fa-id-badge"></i><span>HR &amp; Payroll</span></a>
+<a class="nav-link shrink-0" data-nav="reports" href="reports.html"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+<a class="nav-link shrink-0" data-nav="ai-assistant" href="ai-assistant.html"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Assistant</span></a>
+<a class="nav-link shrink-0" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+
+<div class="flex items-start max-w-7xl mx-auto">
+<aside class="sidebar hidden lg:flex flex-col w-60 shrink-0 min-h-[calc(100vh-65px)] p-4 gap-1 sticky top-[65px]">
+<a class="nav-link" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge w-4 text-center"></i><span>Dashboard</span></a>
+<a class="nav-link" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register w-4 text-center"></i><span>Point of Sale</span></a>
+<a class="nav-link" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse w-4 text-center"></i><span>Inventory</span></a>
+<a class="nav-link" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced w-4 text-center"></i><span>Accounting</span></a>
+<div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
+<a class="nav-link" data-nav="customers" href="customers.html"><i class="fa-solid fa-users w-4 text-center"></i><span>Customers</span></a>
+<a class="nav-link" data-nav="hr-payroll" href="hr-payroll.html"><i class="fa-solid fa-id-badge w-4 text-center"></i><span>HR &amp; Payroll</span></a>
+<a class="nav-link" data-nav="reports" href="reports.html"><i class="fa-solid fa-chart-line w-4 text-center"></i><span>Reports</span></a>
+<a class="nav-link" data-nav="ai-assistant" href="ai-assistant.html"><i class="fa-solid fa-wand-magic-sparkles w-4 text-center"></i><span>AI Assistant</span></a>
+<div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
+<a class="nav-link" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear w-4 text-center"></i><span>Settings</span></a>
+</aside>
+
+<main class="flex-1 min-w-0 px-6 py-8 w-full max-w-3xl">
+<div class="mb-6">
+<h1 class="font-display text-2xl font-bold mb-1">Settings</h1>
+<p class="text-sm" style="color:var(--text-secondary)">Your business profile, account, and app preferences.</p>
+</div>
+
+<!-- Business Profile -->
+<div class="surface p-6 mb-6">
+<h2 class="font-display text-lg font-bold mb-1">Business Profile</h2>
+<p class="text-sm mb-4" style="color:var(--text-secondary)">Shared across everyone signed in to this business.</p>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="businessFormError"></div>
+<form id="businessForm">
+<div class="mb-3">
+<label class="block text-sm font-medium mb-1.5">Business Name</label>
+<input class="input-field" id="bizName" type="text"/>
+</div>
+<div class="grid sm:grid-cols-2 gap-3 mb-3">
+<div>
+<label class="block text-sm font-medium mb-1.5">Phone</label>
+<input class="input-field" id="bizPhone" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1.5">Currency Symbol</label>
+<input class="input-field" id="bizCurrency" maxlength="3" type="text"/>
+</div>
+</div>
+<div class="mb-3">
+<label class="block text-sm font-medium mb-1.5">Address</label>
+<input class="input-field" id="bizAddress" type="text"/>
+</div>
+<div class="mb-5">
+<label class="block text-sm font-medium mb-1.5">Receipt Footer Note</label>
+<input class="input-field" id="bizReceiptNote" maxlength="120" placeholder="e.g. Thank you for shopping with us!" type="text"/>
+<p class="text-xs mt-1.5" style="color:var(--text-secondary)">A short line printed at the bottom of customer receipts.</p>
+</div>
+<button class="btn-primary" id="businessSubmitBtn" type="submit">Save Business Profile</button>
+</form>
+</div>
+
+<!-- Your Account -->
+<div class="surface p-6 mb-6">
+<h2 class="font-display text-lg font-bold mb-1">Your Account</h2>
+<p class="text-sm mb-4" style="color:var(--text-secondary)">Personal to your login.</p>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="accountFormError"></div>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-emerald/10 text-emerald border border-emerald/20" id="accountFormSuccess"></div>
+<form id="accountForm">
+<div class="mb-3">
+<label class="block text-sm font-medium mb-1.5">Display Name</label>
+<input class="input-field" id="accName" type="text"/>
+</div>
+<div class="mb-5">
+<label class="block text-sm font-medium mb-1.5">Email</label>
+<input class="input-field opacity-60" disabled="" id="accEmail" type="text"/>
+</div>
+<button class="btn-primary" id="accountSubmitBtn" type="submit">Save Profile</button>
+</form>
+</div>
+
+<!-- Preferences -->
+<div class="surface p-6">
+<h2 class="font-display text-lg font-bold mb-1">Preferences</h2>
+<p class="text-sm mb-4" style="color:var(--text-secondary)">Stored on this device.</p>
+<div class="flex items-center justify-between py-2">
+<div>
+<p class="text-sm font-medium">Dark Mode</p>
+<p class="text-xs" style="color:var(--text-secondary)">Toggle the app's color theme.</p>
+</div>
+<button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()" style="border:1px solid var(--border-subtle)" type="button">
+<i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:inline"></i>
+</button>
+</div>
+</div>
+</main>
+</div>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/settings.js" type="module"></script>
+<script src="assets/js/i18n.js"></script></body>
+</html>

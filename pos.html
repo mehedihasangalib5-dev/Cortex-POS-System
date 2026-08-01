@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="noindex, nofollow" name="robots"/>
+<title>Point of Sale · POS &amp; Inventory Management System</title>
+<meta content="Ring up a new sale." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: { DEFAULT: '#2454FF', dark: '#1638C4' },
+                    emerald: '#10B981',
+                    amber: '#F5A623',
+                },
+                fontFamily: {
+                    display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    sans: ['"Inter"', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'monospace'],
+                },
+                borderRadius: { xl: '1rem', '2xl': '1.25rem' },
+            }
+        }
+    };
+</script>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
+<link href="assets/css/style.css" rel="stylesheet"/>
+<script>
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+</head>
+<body class="font-sans" data-page="pos">
+<header class="surface-glass sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between gap-4" style="border-radius:0">
+<a class="flex items-center gap-2.5 shrink-0" href="index.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white"><i class="fa-solid fa-layer-group text-sm"></i></div>
+<span class="font-display font-bold text-lg hidden sm:inline">POS &amp; Inventory Management System</span>
+</a>
+<div class="flex items-center gap-3 ml-auto">
+<button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()" title="Toggle dark mode">
+<i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:inline"></i>
+</button>
+<div class="flex items-center gap-2.5 pl-3 border-l" style="border-color:var(--border-subtle)">
+<div class="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm" data-user-initial="">?</div>
+<div class="hidden sm:block leading-tight">
+<p class="text-sm font-semibold" data-user-name=""> </p>
+<p class="text-xs" data-user-email="" style="color:var(--text-secondary)"> </p>
+</div>
+</div>
+<button class="px-3.5 py-2 text-sm font-medium rounded-lg hover:bg-black/5 dark:hover:bg-white/5" data-logout="" style="color:var(--text-secondary)">
+<i class="fa-solid fa-right-from-bracket mr-1"></i><span>Logout</span></button>
+</div>
+</header>
+
+<div class="lg:hidden flex items-center gap-1.5 overflow-x-auto px-4 py-2.5 border-b" style="border-color:var(--border-subtle)">
+<a class="nav-link shrink-0" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+<a class="nav-link shrink-0" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register"></i><span>POS</span></a>
+<a class="nav-link shrink-0" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse"></i><span>Inventory</span></a>
+<a class="nav-link shrink-0" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced"></i><span>Accounting</span></a>
+<a class="nav-link shrink-0" data-nav="customers" href="customers.html"><i class="fa-solid fa-users"></i><span>Customers</span></a>
+<a class="nav-link shrink-0" data-nav="hr-payroll" href="hr-payroll.html"><i class="fa-solid fa-id-badge"></i><span>HR &amp; Payroll</span></a>
+<a class="nav-link shrink-0" data-nav="reports" href="reports.html"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+<a class="nav-link shrink-0" data-nav="ai-assistant" href="ai-assistant.html"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Assistant</span></a>
+<a class="nav-link shrink-0" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</div>
+
+<div class="flex items-start max-w-7xl mx-auto">
+<aside class="sidebar hidden lg:flex flex-col w-60 shrink-0 min-h-[calc(100vh-65px)] p-4 gap-1 sticky top-[65px]">
+<a class="nav-link" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge w-4 text-center"></i><span>Dashboard</span></a>
+<a class="nav-link" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register w-4 text-center"></i><span>Point of Sale</span></a>
+<a class="nav-link" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse w-4 text-center"></i><span>Inventory</span></a>
+<a class="nav-link" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced w-4 text-center"></i><span>Accounting</span></a>
+<div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
+<a class="nav-link" data-nav="customers" href="customers.html"><i class="fa-solid fa-users w-4 text-center"></i><span>Customers</span></a>
+<a class="nav-link" data-nav="hr-payroll" href="hr-payroll.html"><i class="fa-solid fa-id-badge w-4 text-center"></i><span>HR &amp; Payroll</span></a>
+<a class="nav-link" data-nav="reports" href="reports.html"><i class="fa-solid fa-chart-line w-4 text-center"></i><span>Reports</span></a>
+<a class="nav-link" data-nav="ai-assistant" href="ai-assistant.html"><i class="fa-solid fa-wand-magic-sparkles w-4 text-center"></i><span>AI Assistant</span></a>
+<div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
+<a class="nav-link" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear w-4 text-center"></i><span>Settings</span></a>
+</aside>
+
+<main class="flex-1 min-w-0 px-4 sm:px-6 py-6 w-full">
+<h1 class="font-display text-2xl font-bold mb-4">Point of Sale</h1>
+
+<div class="grid lg:grid-cols-[1fr_360px] gap-6 items-start">
+<!-- Product picker -->
+<div>
+<div class="relative mb-4">
+<i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-sm" style="color:var(--text-secondary)"></i>
+<input class="input-field pl-9" id="posSearch" placeholder="Search products by name or SKU..." type="text"/>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="posProductGrid">
+<p class="col-span-full text-sm py-6 text-center" style="color:var(--text-secondary)">Loading products...</p>
+</div>
+</div>
+
+<!-- Cart -->
+<div class="surface p-5 lg:sticky lg:top-[85px]">
+<h2 class="font-display text-lg font-bold mb-3">Current Sale</h2>
+<div class="max-h-[40vh] overflow-y-auto mb-3 -mx-1 px-1" id="cartItems">
+<p class="text-sm py-4 text-center" style="color:var(--text-secondary)">Cart is empty. Tap a product to add it.</p>
+</div>
+<div class="border-t pt-3 space-y-2 text-sm mb-4" style="border-color:var(--border-subtle)">
+<div class="flex items-center justify-between">
+<span style="color:var(--text-secondary)">Subtotal</span>
+<span class="font-mono-fig" id="cartSubtotal">৳0</span>
+</div>
+<div class="flex items-center justify-between gap-2">
+<label style="color:var(--text-secondary)" for="cartDiscount">Discount (৳)</label>
+<input class="input-field !w-24 !py-1.5 text-right font-mono-fig" id="cartDiscount" min="0" step="0.01" type="number" value="0"/>
+</div>
+<div class="flex items-center justify-between font-bold text-base pt-1">
+<span>Total</span>
+<span class="font-mono-fig" id="cartTotal">৳0</span>
+</div>
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Payment Method</label>
+<select class="input-field" id="paymentMethod">
+<option value="cash">Cash</option>
+<option value="card">Card</option>
+<option value="mobile_banking">Mobile Banking (bKash/Nagad)</option>
+</select>
+</div>
+<button class="btn-primary w-full mb-2" disabled="" id="checkoutBtn"><i class="fa-solid fa-circle-check mr-1.5"></i>Checkout</button>
+<button class="w-full text-sm py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5" id="clearCartBtn" style="color:var(--text-secondary)" type="button">Clear cart</button>
+</div>
+</div>
+</main>
+</div>
+
+<!-- Success modal -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center p-4" id="saleSuccessModal" style="background:rgba(15,23,42,0.5)">
+<div class="surface w-full max-w-sm p-6 text-center">
+<div class="h-14 w-14 rounded-full bg-emerald/10 text-emerald flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-check"></i></div>
+<h2 class="font-display text-lg font-bold mb-1">Sale Completed</h2>
+<p class="text-sm mb-5" id="saleSuccessAmount" style="color:var(--text-secondary)"></p>
+<button class="btn-primary w-full" id="saleSuccessOk" type="button">New Sale</button>
+</div>
+</div>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/pos.js" type="module"></script>
+<script src="assets/js/i18n.js"></script></body>
+</html>

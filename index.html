@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="index, follow" name="robots"/>
+<title>All-in-One POS &amp; Business Management Platform · POS &amp; Inventory Management System</title>
+<meta content="Run sales, inventory, customers, HR, accounting, and an AI business assistant from one beautiful dashboard — built for retail, restaurants, pharmacies, and SMEs." name="description"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CDN (configured with our design tokens) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: { DEFAULT: '#2454FF', dark: '#1638C4' },
+                    emerald: '#10B981',
+                    amber: '#F5A623',
+                },
+                fontFamily: {
+                    display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    sans: ['"Inter"', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'monospace'],
+                },
+                borderRadius: { xl: '1rem', '2xl': '1.25rem' },
+            }
+        }
+    };
+</script>
+<!-- Font Awesome -->
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
+<!-- Core design system -->
+<link href="assets/css/style.css" rel="stylesheet"/>
+<!-- AOS animation library -->
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet"/>
+<!-- Apply saved theme before paint to avoid a light/dark flash -->
+<script>
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+</head>
+<body class="font-sans">
+<header class="sticky top-0 z-40 surface-glass" style="border-radius:0; border-left:0; border-right:0; border-top:0;">
+<nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+<a class="flex items-center gap-2.5 shrink-0" href="index.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white">
+<i class="fa-solid fa-layer-group text-sm"></i>
+</div>
+<span class="font-display font-bold text-lg" data-i18n="k000">POS &amp; Inventory Management System</span>
+</a>
+<div class="hidden lg:flex items-center gap-1">
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium text-primary" data-i18n="k001" href="index.html">Home</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k002" href="features.html" style="color:var(--text-secondary)">Features</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k003" href="pricing.html" style="color:var(--text-secondary)">Pricing</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k004" href="blog.html" style="color:var(--text-secondary)">Blog</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k005" href="faq.html" style="color:var(--text-secondary)">FAQ</a>
+<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k006" href="contact.html" style="color:var(--text-secondary)">Contact</a>
+</div>
+<div class="hidden lg:flex items-center gap-3">
+<button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()">
+<i class="fa-solid fa-moon dark:hidden"></i>
+<i class="fa-solid fa-sun hidden dark:inline"></i>
+</button>
+<span class="flex items-center gap-3" data-auth="out">
+<a class="px-3.5 py-2 text-sm font-medium" data-i18n="k007" href="login.html" style="color:var(--text-secondary)">Sign In</a>
+<a class="btn-primary text-sm !py-2 !px-4" data-i18n="k008" href="register.html">Start Free Trial</a>
+</span>
+<span class="hidden-auth items-center gap-3 flex" data-auth="in">
+<a class="btn-primary text-sm !py-2 !px-4" data-i18n="k009" href="dashboard.html">Go to Dashboard</a>
+<button class="px-3.5 py-2 text-sm font-medium" data-i18n="k010" data-logout="" style="color:var(--text-secondary)">Logout</button>
+</span>
+</div>
+<div class="flex items-center rounded-full p-0.5 text-xs font-semibold shrink-0" data-lang-toggle="" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)"><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="en" type="button">EN</button><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="bn" type="button">বাং</button></div><button class="lg:hidden text-lg" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
+<i class="fa-solid fa-bars"></i>
+</button>
+</nav>
+<div class="hidden lg:hidden border-t px-6 py-4 space-y-1" id="mobileNav" style="border-color:var(--border-subtle)">
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium text-primary bg-primary/5" data-i18n="k001" href="index.html">Home</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k002" href="features.html">Features</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k003" href="pricing.html">Pricing</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k004" href="blog.html">Blog</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k005" href="faq.html">FAQ</a>
+<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k006" href="contact.html">Contact</a>
+<div class="pt-3 mt-2 border-t flex flex-col gap-2" style="border-color:var(--border-subtle)">
+<div class="flex flex-col gap-2" data-auth="out">
+<a class="text-center px-3.5 py-2 text-sm font-medium" data-i18n="k007" href="login.html">Sign In</a>
+<a class="btn-primary text-sm text-center" data-i18n="k008" href="register.html">Start Free Trial</a>
+</div>
+<div class="hidden-auth flex-col gap-2 flex" data-auth="in">
+<a class="btn-primary text-sm text-center" data-i18n="k009" href="dashboard.html">Go to Dashboard</a>
+<button class="text-center px-3.5 py-2 text-sm font-medium" data-i18n="k010" data-logout="">Logout</button>
+</div>
+</div>
+</div>
+</header>
+<!-- Hero -->
+<section class="relative overflow-hidden">
+<div class="absolute inset-0 -z-10" style="background: radial-gradient(circle at 20% 10%, color-mix(in srgb, var(--color-primary) 14%, transparent), transparent 45%), radial-gradient(circle at 85% 30%, color-mix(in srgb, var(--color-emerald) 12%, transparent), transparent 40%);"></div>
+<div class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium mb-6 surface" data-aos="fade-down">
+<span class="h-1.5 w-1.5 rounded-full bg-emerald"></span> Built for retail, restaurants, pharmacies &amp; SMEs
+        </div>
+<h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6" data-aos="fade-up" data-i18n-html="hero_h1">
+            Run your entire business<br class="hidden sm:block"/> from <span class="text-primary" data-i18n="k126">one dashboard</span>
+</h1>
+<p class="text-lg max-w-2xl mx-auto mb-9" data-aos="fade-up" data-aos-delay="100" style="color:var(--text-secondary)">
+            POS, inventory, customers, HR, accounting, reports, and an AI business assistant —
+            in a single, secure platform. No plugins to stitch together, no spreadsheets to reconcile.
+        </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-3" data-aos="fade-up" data-aos-delay="200">
+<a class="btn-primary px-7 py-3.5 text-base w-full sm:w-auto" href="register.html"><span data-i18n="k008">Start Free Trial</span><i class="fa-solid fa-arrow-right ml-1 text-sm"></i></a>
+<a class="surface px-7 py-3.5 text-base font-medium w-full sm:w-auto text-center" data-i18n="k128" href="pricing.html">See Pricing</a>
+</div>
+<p class="text-xs mt-4" data-i18n="k129" style="color:var(--text-secondary)">No credit card required · Set up in minutes</p>
+</div>
+<div class="max-w-5xl mx-auto px-6 pb-20" data-aos="zoom-in" data-aos-delay="150">
+<div class="surface p-3 shadow-2xl" style="border-radius:1.5rem">
+<div class="rounded-2xl overflow-hidden border" style="border-color:var(--border-subtle)">
+<div class="px-4 py-2.5 flex items-center gap-1.5 border-b" style="border-color:var(--border-subtle); background:var(--bg-surface-alt)">
+<span class="h-2.5 w-2.5 rounded-full bg-red-400"></span>
+<span class="h-2.5 w-2.5 rounded-full bg-amber"></span>
+<span class="h-2.5 w-2.5 rounded-full bg-emerald"></span>
+</div>
+<div class="grid grid-cols-4 gap-3 p-5" style="background:var(--bg-surface-alt)">
+<div class="kpi-card !p-3">
+<i class="fa-solid fa-cash-register text-primary mb-2"></i>
+<p class="text-xs font-semibold" data-i18n="k048">Point of Sale</p>
+</div>
+<div class="kpi-card !p-3">
+<i class="fa-solid fa-warehouse text-primary mb-2"></i>
+<p class="text-xs font-semibold" data-i18n="k130">Multi-Warehouse Inventory</p>
+</div>
+<div class="kpi-card !p-3">
+<i class="fa-solid fa-users text-primary mb-2"></i>
+<p class="text-xs font-semibold" data-i18n="k131">Customers &amp; Loyalty</p>
+</div>
+<div class="kpi-card !p-3">
+<i class="fa-solid fa-id-badge text-primary mb-2"></i>
+<p class="text-xs font-semibold" data-i18n="k052">HR &amp; Payroll</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Built with, real engineering facts -->
+<section class="max-w-6xl mx-auto px-6 pb-16">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+<div data-aos="fade-up"><p class="font-mono-fig text-3xl font-bold text-primary">8+</p><p class="text-sm mt-1" data-i18n="k132" style="color:var(--text-secondary)">Integrated modules</p></div>
+<div data-aos="fade-up" data-aos-delay="75"><p class="font-mono-fig text-3xl font-bold text-primary">35+</p><p class="text-sm mt-1" data-i18n="k133" style="color:var(--text-secondary)">Database tables</p></div>
+<div data-aos="fade-up" data-aos-delay="150"><p class="font-mono-fig text-3xl font-bold text-primary">3</p><p class="text-sm mt-1" data-i18n="k134" style="color:var(--text-secondary)">Export formats (PDF/Excel/CSV)</p></div>
+<div data-aos="fade-up" data-aos-delay="225"><p class="font-mono-fig text-3xl font-bold text-primary">2</p><p class="text-sm mt-1" data-i18n="k135" style="color:var(--text-secondary)">AI providers supported</p></div>
+</div>
+</section>
+<!-- Features -->
+<section class="max-w-6xl mx-auto px-6 py-16">
+<div class="text-center max-w-2xl mx-auto mb-12" data-aos="fade-up">
+<h2 class="font-display text-3xl font-bold mb-3" data-i18n="k136">Everything your business needs, connected</h2>
+<p data-i18n="k137" style="color:var(--text-secondary)">No more juggling separate tools for sales, stock, staff, and books.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+<div class="surface p-5" data-aos="fade-up" data-aos-delay="0">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-cash-register"></i>
+</div>
+<h3 class="font-semibold mb-1.5" data-i18n="k048">Point of Sale</h3>
+<p class="text-sm" data-i18n="k138" style="color:var(--text-secondary)">Fast checkout with barcode scanning, split payments, holds, and instant receipts.</p>
+</div>
+<div class="surface p-5" data-aos="fade-up" data-aos-delay="75">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-warehouse"></i>
+</div>
+<h3 class="font-semibold mb-1.5" data-i18n="k130">Multi-Warehouse Inventory</h3>
+<p class="text-sm" data-i18n="k139" style="color:var(--text-secondary)">Track stock across locations with transfers and automated low-stock alerts.</p>
+</div>
+<div class="surface p-5" data-aos="fade-up" data-aos-delay="150">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-users"></i>
+</div>
+<h3 class="font-semibold mb-1.5" data-i18n="k131">Customers &amp; Loyalty</h3>
+<p class="text-sm" data-i18n="k140" style="color:var(--text-secondary)">Groups, loyalty points, and full purchase history for every customer.</p>
+</div>
+<div class="surface p-5" data-aos="fade-up" data-aos-delay="225">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-id-badge"></i>
+</div>
+<h3 class="font-semibold mb-1.5" data-i18n="k052">HR &amp; Payroll</h3>
+<p class="text-sm" data-i18n="k141" style="color:var(--text-secondary)">Attendance, leave requests, and payroll — with role-based permissions.</p>
+</div>
+<div class="surface p-5" data-aos="fade-up" data-aos-delay="0">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-scale-balanced"></i>
+</div>
+<h3 class="font-semibold mb-1.5" data-i18n="k053">Accounting</h3>
+<p class="text-sm" data-i18n="k142" style="color:var(--text-secondary)">Income, expenses, and cash-flow visibility without a separate tool.</p>
+</div>
+<div class="surface p-5" data-aos="fade-up" data-aos-delay="75">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-wand-magic-sparkles"></i>
+</div>
+<h3 class="font-semibold mb-1.5" data-i18n="k105">AI Business Assistant</h3>
+<p class="text-sm" data-i18n="k143" style="color:var(--text-secondary)">Ask for sales predictions, restock advice, and plain-English reports.</p>
+</div>
+<div class="surface p-5" data-aos="fade-up" data-aos-delay="150">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-chart-line"></i>
+</div>
+<h3 class="font-semibold mb-1.5" data-i18n="k144">Reports &amp; Exports</h3>
+<p class="text-sm" data-i18n="k145" style="color:var(--text-secondary)">Sales, inventory, and expense reports — export to PDF, Excel, or CSV.</p>
+</div>
+<div class="surface p-5" data-aos="fade-up" data-aos-delay="225">
+<div class="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+<i class="fa-solid fa-shield-halved"></i>
+</div>
+<h3 class="font-semibold mb-1.5" data-i18n="k146">Secure by Default</h3>
+<p class="text-sm" data-i18n="k147" style="color:var(--text-secondary)">Role-based access, audit logs, and hardened sessions on every account.</p>
+</div>
+</div>
+<div class="text-center mt-8" data-aos="fade-up">
+<a class="text-primary font-semibold text-sm" href="features.html"><span data-i18n="k148">See all features in detail</span><i class="fa-solid fa-arrow-right ml-1"></i></a>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-16" style="background:var(--bg-surface-alt)">
+<div class="max-w-4xl mx-auto px-6">
+<div class="text-center max-w-2xl mx-auto mb-10" data-aos="fade-up">
+<h2 class="font-display text-3xl font-bold mb-3" data-i18n="k149">Trusted by business owners like you</h2>
+</div>
+<div class="swiper testimonialSwiper" data-aos="fade-up">
+<div class="swiper-wrapper pb-10">
+<div class="swiper-slide">
+<div class="surface p-8 text-center max-w-xl mx-auto">
+<i class="fa-solid fa-quote-left text-2xl text-primary/30 mb-4"></i>
+<p class="text-lg mb-6" data-i18n="k150">“Switching from three separate spreadsheets to one dashboard cut our monthly closing time in half.”</p>
+<div class="h-11 w-11 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mx-auto mb-2" data-i18n="k151">A</div>
+<p class="font-semibold text-sm" data-i18n="k152">Amara</p>
+<p class="text-xs" data-i18n="k153" style="color:var(--text-secondary)">Owner, boutique retail shop</p>
+</div>
+</div>
+<div class="swiper-slide">
+<div class="surface p-8 text-center max-w-xl mx-auto">
+<i class="fa-solid fa-quote-left text-2xl text-primary/30 mb-4"></i>
+<p class="text-lg mb-6" data-i18n="k154">“The POS screen is fast enough for a lunch rush, and the low-stock alerts mean we stopped running out of key ingredients.”</p>
+<div class="h-11 w-11 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mx-auto mb-2" data-i18n="k155">R</div>
+<p class="font-semibold text-sm" data-i18n="k156">Rafiq</p>
+<p class="text-xs" data-i18n="k157" style="color:var(--text-secondary)">Manager, quick-service restaurant</p>
+</div>
+</div>
+<div class="swiper-slide">
+<div class="surface p-8 text-center max-w-xl mx-auto">
+<i class="fa-solid fa-quote-left text-2xl text-primary/30 mb-4"></i>
+<p class="text-lg mb-6" data-i18n="k158">“Multi-warehouse stock transfers between our two locations used to be a phone call and a guess. Now it is two clicks.”</p>
+<div class="h-11 w-11 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mx-auto mb-2" data-i18n="k159">P</div>
+<p class="font-semibold text-sm" data-i18n="k160">Priya</p>
+<p class="text-xs" data-i18n="k161" style="color:var(--text-secondary)">Pharmacist, independent pharmacy</p>
+</div>
+</div>
+<div class="swiper-slide">
+<div class="surface p-8 text-center max-w-xl mx-auto">
+<i class="fa-solid fa-quote-left text-2xl text-primary/30 mb-4"></i>
+<p class="text-lg mb-6" data-i18n="k162">“The AI assistant flagged a slow-moving category before I noticed it myself — genuinely useful, not a gimmick.”</p>
+<div class="h-11 w-11 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold mx-auto mb-2" data-i18n="k163">D</div>
+<p class="font-semibold text-sm" data-i18n="k164">Daniel</p>
+<p class="text-xs" data-i18n="k165" style="color:var(--text-secondary)">Founder, small electronics store</p>
+</div>
+</div>
+</div>
+<div class="swiper-pagination"></div>
+</div>
+<p class="text-center text-xs mt-2" style="color:var(--text-secondary)">See more on the <a class="text-primary font-medium" data-i18n="k166" href="testimonials.html">testimonials page</a>.</p>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="max-w-5xl mx-auto px-6 py-20 text-center" data-aos="fade-up">
+<h2 class="font-display text-3xl sm:text-4xl font-bold mb-4" data-i18n="k167">Ready to run your business from one place?</h2>
+<p class="mb-8" data-i18n="k168" style="color:var(--text-secondary)">Start your free trial today — no credit card required.</p>
+<a class="btn-primary px-8 py-4 text-base inline-block" href="register.html"><span data-i18n="k008">Start Free Trial</span><i class="fa-solid fa-arrow-right ml-1 text-sm"></i></a>
+</section>
+<footer class="border-t mt-20" style="border-color:var(--border-subtle)">
+<div class="max-w-7xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-5 gap-8">
+<div class="col-span-2">
+<a class="flex items-center gap-2.5 mb-3" href="index.html">
+<div class="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white">
+<i class="fa-solid fa-layer-group text-xs"></i>
+</div>
+<span class="font-display font-bold" data-i18n="k000">POS &amp; Inventory Management System</span>
+</a>
+<p class="text-sm max-w-xs" data-i18n="k022" style="color:var(--text-secondary)">
+                All-in-one POS, inventory, and business management for retail stores, restaurants, pharmacies, and SMEs.
+            </p>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k023" style="color:var(--text-secondary)">Product</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k002" href="features.html">Features</a>
+<a class="block hover:text-primary" data-i18n="k003" href="pricing.html">Pricing</a>
+<a class="block hover:text-primary" data-i18n="k024" href="testimonials.html">Testimonials</a>
+<a class="block hover:text-primary" data-i18n="k008" href="register.html">Start Free Trial</a>
+</div>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k025" style="color:var(--text-secondary)">Company</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k026" href="about.html">About Us</a>
+<a class="block hover:text-primary" data-i18n="k004" href="blog.html">Blog</a>
+<a class="block hover:text-primary" data-i18n="k006" href="contact.html">Contact</a>
+<a class="block hover:text-primary" data-i18n="k005" href="faq.html">FAQ</a>
+</div>
+</div>
+<div>
+<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k027" style="color:var(--text-secondary)">Legal</p>
+<div class="space-y-2 text-sm">
+<a class="block hover:text-primary" data-i18n="k028" href="privacy-policy.html">Privacy Policy</a>
+<a class="block hover:text-primary" data-i18n="k029" href="terms.html">Terms &amp; Conditions</a>
+</div>
+</div>
+</div>
+<div class="border-t py-6" style="border-color:var(--border-subtle)">
+<div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm" style="color:var(--text-secondary)">
+<p data-i18n="k030">© 2026 POS &amp; Inventory Management System. All rights reserved.</p>
+<div class="flex items-center gap-4">
+<a aria-label="Facebook" class="hover:text-primary" href="#"><i class="fa-brands fa-facebook"></i></a>
+<a aria-label="X (Twitter)" class="hover:text-primary" href="#"><i class="fa-brands fa-x-twitter"></i></a>
+<a aria-label="LinkedIn" class="hover:text-primary" href="#"><i class="fa-brands fa-linkedin"></i></a>
+<a aria-label="Instagram" class="hover:text-primary" href="#"><i class="fa-brands fa-instagram"></i></a>
+</div>
+</div>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+<script src="assets/js/main.js"></script>
+<script>AOS.init({ duration: 500, once: true });</script>
+<script src="assets/js/site-auth.js" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    new Swiper('.testimonialSwiper', {
+        loop: true,
+        autoplay: { delay: 4500, disableOnInteraction: false },
+        pagination: { el: '.swiper-pagination', clickable: true },
+    });
+</script>
+<script src="assets/js/i18n.js"></script></body>
+</html>
