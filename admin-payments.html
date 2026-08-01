@@ -98,7 +98,7 @@
 import { auth, db } from "./assets/js/firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
-    collection, query, where, orderBy, getDocs, doc, updateDoc, serverTimestamp,
+    collection, query, where, orderBy, getDocs, doc, updateDoc, serverTimestamp, Timestamp,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { ADMIN_UIDS } from "./assets/js/payment-config.js";
 
@@ -152,7 +152,7 @@ function orderCard(orderDoc, { reviewed }) {
             ${o.rejectReason ? `<p class="text-xs mb-3" style="color:var(--text-secondary)"><span class="font-medium">Reject reason:</span> ${o.rejectReason}</p>` : ''}
             ${reviewed ? '' : `
             <div class="flex gap-3 mt-4">
-                <button class="btn-primary !bg-emerald text-sm !py-2 !px-4" data-approve="${orderDoc.id}" data-uid="${o.uid}" data-plan="${o.plan}" type="button">Approve</button>
+                <button class="btn-primary !bg-emerald text-sm !py-2 !px-4" data-approve="${orderDoc.id}" data-uid="${o.uid}" data-plan="${o.plan}" data-billing-cycle="${o.billingCycle}" type="button">Approve</button>
                 <button class="surface border text-sm !py-2 !px-4 rounded-xl" data-reject="${orderDoc.id}" style="border-color:var(--border-subtle)" type="button">Reject</button>
             </div>`}
         </div>
@@ -239,9 +239,13 @@ document.getElementById('pendingList')?.addEventListener('click', async (e) => {
         if (rejectBtn) updatePayload.rejectReason = rejectReason;
         await updateDoc(doc(db, 'orders', orderId), updatePayload);
         if (approveBtn) {
+            const billingCycle = approveBtn.getAttribute('data-billing-cycle');
+            const days = billingCycle === 'yearly' ? 365 : 30;
+            const expiresAt = Timestamp.fromMillis(Date.now() + days * 86400000);
             await updateDoc(doc(db, 'users', approveBtn.getAttribute('data-uid')), {
                 plan: approveBtn.getAttribute('data-plan'),
                 planUpdatedAt: serverTimestamp(),
+                planExpiresAt: expiresAt,
             });
         }
         await loadOrders();

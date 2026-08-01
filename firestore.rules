@@ -7,7 +7,7 @@ service cloud.firestore {
     // panel (admin-payments.html) won't be able to write anything.
     function isAdmin() {
       return request.auth != null && request.auth.uid in [
-        'REPLACE_WITH_YOUR_FIREBASE_UID'
+        'U2HvvgDr5mREBRFCvQa6IuEjwzj2'
       ];
     }
 
@@ -39,9 +39,11 @@ service cloud.firestore {
                .hasOnly(['trialStartedAt', 'plan']) )
       )
       // The ONLY other way `plan` may change from the client: the admin
-      // approving a manual bKash/Nagad order in admin-payments.html.
+      // approving a manual bKash/Nagad order in admin-payments.html. This
+      // also stamps planExpiresAt (start + the order's billing cycle), so
+      // the plan auto-locks again when it lapses without another approval.
       || ( isAdmin() && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['plan', 'planUpdatedAt']) );
+             .hasOnly(['plan', 'planUpdatedAt', 'planExpiresAt']) );
 
       allow delete: if false;
     }
