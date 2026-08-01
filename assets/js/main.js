@@ -42,3 +42,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+// ---------------------------------------------------------------------------
+// Mobile sidebar drawer (app pages only — a no-op if these elements aren't
+// on the page, so it's safe to include everywhere via main.js).
+// ---------------------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    const openBtn = document.getElementById('sidebarToggle');
+    const closeBtn = document.getElementById('sidebarClose');
+    if (!sidebar || !backdrop || !openBtn) return;
+
+    function openSidebar() {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        openBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeSidebar() {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+        document.body.style.overflow = '';
+        openBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    openBtn.addEventListener('click', openSidebar);
+    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+    backdrop.addEventListener('click', closeSidebar);
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeSidebar();
+    });
+    // Close automatically if the viewport is resized up to desktop width.
+    window.addEventListener('resize', function () {
+        if (window.innerWidth >= 1024) closeSidebar();
+    });
+});
