@@ -53,7 +53,10 @@
 <div class="hidden text-center py-24" id="notAdminView">
 <i class="fa-solid fa-lock text-3xl mb-4" style="color:var(--text-secondary)"></i>
 <p class="text-lg font-semibold mb-1">Not authorized</p>
-<p class="text-sm" style="color:var(--text-secondary)">This page is restricted to the platform admin.</p>
+<p class="text-sm mb-4" style="color:var(--text-secondary)">This page is restricted to the platform admin.</p>
+<p class="text-xs" style="color:var(--text-secondary)">You're signed in as:</p>
+<p class="text-sm font-mono font-medium mb-1" id="notAdminUid">—</p>
+<p class="text-xs max-w-sm mx-auto" style="color:var(--text-secondary)">If this should be the admin account, add this exact UID to <code>ADMIN_UIDS</code> in <code>assets/js/payment-config.js</code> and to <code>isAdmin()</code> in <code>firestore.rules</code> (then redeploy the rules).</p>
 </div>
 
 <div class="hidden" id="adminView">
@@ -128,7 +131,6 @@
     .tab-btn .tab-count { opacity: 0.75; font-size: 0.75rem; margin-left: 0.15rem; }
 </style>
 
-<script src="assets/js/site-auth.js" type="module"></script>
 <script type="module">
 import { auth, db } from "./assets/js/firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
@@ -388,6 +390,7 @@ document.getElementById('orderList').addEventListener('click', async (e) => {
 
 onAuthStateChanged(auth, (user) => {
     if (!user || !ADMIN_UIDS.includes(user.uid)) {
+        if (user) document.getElementById('notAdminUid').textContent = user.uid;
         document.getElementById('notAdminView').classList.remove('hidden');
         return;
     }
