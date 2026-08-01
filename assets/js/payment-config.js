@@ -9,7 +9,7 @@ export const PAYMENT_METHODS = [
     {
         id: "bkash",
         label: "bKash",
-        number: "01806105457",       // TODO: put your real bKash number here
+        number: "01XXXXXXXXX",       // TODO: put your real bKash number here
         type: "Personal",             // "Personal" or "Merchant/Agent"
         icon: "fa-solid fa-mobile-screen",
         color: "#E2136E",
@@ -17,7 +17,7 @@ export const PAYMENT_METHODS = [
     {
         id: "nagad",
         label: "Nagad",
-        number: "01612336485",       // TODO: put your real Nagad number here
+        number: "01XXXXXXXXX",       // TODO: put your real Nagad number here
         type: "Personal",             // "Personal" or "Merchant/Agent"
         icon: "fa-solid fa-mobile-screen",
         color: "#F6921E",

@@ -12,7 +12,48 @@
 // ---------------------------------------------------------------------------
 import { auth } from "./firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { db } from "./firebase-init.js";
 import { enforceTrialLock } from "./trial-guard.js";
+import { pageAllowedForPlan, FEATURE_LABELS } from "./plan-features.js";
+
+function lang() {
+    return localStorage.getItem('lang') || 'en';
+}
+
+const FEATURE_LOCK_COPY = {
+    en: (label) => ({
+        title: `Upgrade to unlock ${label}`,
+        body: `${label} isn\u2019t included in your current plan. Upgrade to Pro to get access, along with HR & Payroll, Accounting, and the AI Assistant.`,
+        cta: 'View Plans & Upgrade',
+    }),
+    bn: (label) => ({
+        title: `${label} আনলক করতে আপগ্রেড করুন`,
+        body: `আপনার বর্তমান প্ল্যানে ${label} নেই। Pro-তে আপগ্রেড করলে এটি সহ HR & Payroll, Accounting, আর AI Assistant পাবেন।`,
+        cta: 'প্ল্যান দেখুন ও আপগ্রেড করুন',
+    }),
+};
+
+function renderFeatureLockOverlay(page) {
+    if (document.getElementById('featureLockOverlay')) return;
+    const label = FEATURE_LABELS[page] || page;
+    const c = (FEATURE_LOCK_COPY[lang()] || FEATURE_LOCK_COPY.en)(label);
+    const el = document.createElement('div');
+    el.id = 'featureLockOverlay';
+    el.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(15,17,26,0.72);backdrop-filter:blur(4px);';
+    el.innerHTML = `
+      <div style="max-width:26rem;width:100%;background:var(--bg-surface,#fff);border-radius:1.25rem;padding:2.25rem 2rem;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.35);">
+        <div style="width:3.25rem;height:3.25rem;border-radius:9999px;background:#2454FF22;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;">
+          <i class="fa-solid fa-lock" style="color:#2454FF;font-size:1.1rem;"></i>
+        </div>
+        <h2 style="font-weight:800;font-size:1.25rem;margin-bottom:0.6rem;">${c.title}</h2>
+        <p style="font-size:0.9rem;color:var(--text-secondary,#666);margin-bottom:1.5rem;">${c.body}</p>
+        <a href="pricing.html" class="btn-primary" style="display:block;padding:0.65rem 1rem;border-radius:0.75rem;font-size:0.9rem;font-weight:600;margin-bottom:0.6rem;">${c.cta}</a>
+        <a href="dashboard.html" style="display:block;width:100%;padding:0.6rem 1rem;font-size:0.85rem;color:var(--text-secondary,#666);">Back to Dashboard</a>
+      </div>`;
+    document.body.appendChild(el);
+    document.body.style.overflow = 'hidden';
+}
 
 export function requireAuth(onReady) {
     onAuthStateChanged(auth, async (user) => {
@@ -32,11 +73,29 @@ export function requireAuth(onReady) {
             el.classList.toggle('active', el.getAttribute('data-nav') === page);
         });
 
-        // 14-day trial lock: if the trial has expired and the account hasn't
-        // been upgraded, an overlay is shown and page init is skipped so no
-        // module can read/write Firestore data behind the lock.
+        // Account-level lock: payment under review, trial expired, or paid
+        // plan lapsed. If locked, an overlay is shown and page init is
+        // skipped so no module can read/write Firestore data behind it.
         const unlocked = await enforceTrialLock(user, { allowLockedAccess: page === 'settings' });
         if (!unlocked) return;
+
+        // Module-level gate: the account is unlocked, but this specific
+        // module (e.g. Accounting, HR & Payroll, AI Assistant) may not be
+        // included in the current plan.
+        if (page && page !== 'settings') {
+            try {
+                const snap = await getDoc(doc(db, 'users', user.uid));
+                const plan = (snap.exists() && snap.data().plan) || 'trial';
+                if (!pageAllowedForPlan(page, plan)) {
+                    renderFeatureLockOverlay(page);
+                    return;
+                }
+            } catch (err) {
+                // Fail open on a read hiccup — don't block a paying user
+                // from their own dashboard over a transient error.
+                console.error('Feature gate check failed:', err);
+            }
+        }
 
         if (typeof onReady === 'function') onReady(user);
     });
