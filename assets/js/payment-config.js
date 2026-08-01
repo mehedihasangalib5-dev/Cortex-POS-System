@@ -27,7 +27,7 @@ export const PAYMENT_METHODS = [
 // UIDs allowed to see /admin-payments.html and approve/reject orders.
 // Find your UID: sign in once, then Firebase Console → Authentication → Users.
 export const ADMIN_UIDS = [
-    "U2HvvgDr5mREBRFCvQa6IuEjwzj2",
+    "I50u3zwtzAWyeNYFJpvRTTE5Mtl1",
 ];
 
 // Must match firestore.rules `isAdmin()` list and functions PLAN_PRICES.
