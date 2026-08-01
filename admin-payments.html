@@ -61,6 +61,8 @@
 <h1 class="font-display text-2xl font-bold mb-1">Pending Payments</h1>
 <p class="text-sm mb-6" style="color:var(--text-secondary)">Match the TrxID/sender number against your bKash/Nagad statement, then approve or reject.</p>
 
+<div class="hidden mb-6 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="loadErrorBanner"></div>
+
 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
 <div class="surface p-4 rounded-xl">
 <p class="text-xs mb-1" style="color:var(--text-secondary)">Pending</p>
@@ -190,15 +192,46 @@ function render() {
 }
 
 async function loadOrders() {
-    const pendingSnap = await getDocs(query(
-        collection(db, 'orders'), where('status', '==', 'pending_verification'), orderBy('createdAt', 'desc')
-    ));
-    allPending = pendingSnap.docs;
+    const errBanner = document.getElementById('loadErrorBanner');
+    errBanner.classList.add('hidden');
+    errBanner.textContent = '';
 
-    const reviewedSnap = await getDocs(query(
-        collection(db, 'orders'), where('status', 'in', ['approved', 'rejected']), orderBy('createdAt', 'desc')
-    ));
-    allReviewed = reviewedSnap.docs;
+    // Pending and reviewed are fetched independently and rendered as soon
+    // as each succeeds — a problem with one query (e.g. a missing Firestore
+    // index) should never hide the other list too.
+    try {
+        const pendingSnap = await getDocs(query(
+            collection(db, 'orders'), where('status', '==', 'pending_verification'), orderBy('createdAt', 'desc')
+        ));
+        allPending = pendingSnap.docs;
+    } catch (err) {
+        console.error('Could not load pending orders:', err);
+        allPending = [];
+        errBanner.textContent = 'Could not load pending payments: ' + (err.message || err);
+        errBanner.classList.remove('hidden');
+    }
+    renderStats();
+    render();
+
+    // where(...,'in',[...]) combined with orderBy() on a different field
+    // needs a composite Firestore index, which may not exist yet on a
+    // fresh project. Two separate equality queries avoid that requirement
+    // entirely (each is just one equality filter + orderBy).
+    try {
+        const [approvedSnap, rejectedSnap] = await Promise.all([
+            getDocs(query(collection(db, 'orders'), where('status', '==', 'approved'), orderBy('createdAt', 'desc'))),
+            getDocs(query(collection(db, 'orders'), where('status', '==', 'rejected'), orderBy('createdAt', 'desc'))),
+        ]);
+        allReviewed = [...approvedSnap.docs, ...rejectedSnap.docs]
+            .sort((a, b) => (b.data().createdAt?.toMillis?.() || 0) - (a.data().createdAt?.toMillis?.() || 0));
+    } catch (err) {
+        console.error('Could not load reviewed orders:', err);
+        allReviewed = [];
+        if (!errBanner.textContent) {
+            errBanner.textContent = 'Could not load reviewed payments: ' + (err.message || err);
+            errBanner.classList.remove('hidden');
+        }
+    }
 
     approvedTrxIds = new Set(
         allReviewed.filter((d) => d.data().status === 'approved').map((d) => d.data().trxId).filter(Boolean)
