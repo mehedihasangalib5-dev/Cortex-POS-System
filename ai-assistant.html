@@ -4,33 +4,18 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="index, follow" name="robots"/>
-<title>Blog · POS &amp; Inventory Management System</title>
-<meta content="Articles on running retail, restaurants, pharmacies, and small business operations." name="description"/>
+<meta content="noindex, nofollow" name="robots"/>
+<title>AI Assistant · POS &amp; Inventory Management System</title>
+<meta content="Ask questions about your business in plain language." name="description"/>
 <link href="assets/img/favicon.ico" rel="icon" sizes="any"/>
 <link href="assets/img/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
 <link href="assets/img/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
 <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon"/>
 <link href="site.webmanifest" rel="manifest"/>
 <meta content="#2454FF" name="theme-color"/>
-<link href="https://your-domain.com/blog.html" rel="canonical"/>
-<meta content="POS &amp; Inventory Management System" property="og:site_name"/>
-<meta content="website" property="og:type"/>
-<meta content="Blog" property="og:title"/>
-<meta content="Articles on running retail, restaurants, pharmacies, and small business operations." property="og:description"/>
-<meta content="https://your-domain.com/blog.html" property="og:url"/>
-<meta content="https://your-domain.com/assets/img/og-image.png" property="og:image"/>
-<meta content="1200" property="og:image:width"/>
-<meta content="630" property="og:image:height"/>
-<meta content="summary_large_image" name="twitter:card"/>
-<meta content="Blog" name="twitter:title"/>
-<meta content="Articles on running retail, restaurants, pharmacies, and small business operations." name="twitter:description"/>
-<meta content="https://your-domain.com/assets/img/og-image.png" name="twitter:image"/>
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind CDN (configured with our design tokens) -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
     tailwind.config = {
@@ -52,13 +37,8 @@
         }
     };
 </script>
-<!-- Font Awesome -->
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
-<!-- Core design system -->
 <link href="assets/css/style.css" rel="stylesheet"/>
-<!-- AOS animation library -->
-<link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
-<!-- Apply saved theme before paint to avoid a light/dark flash -->
 <script>
     if (localStorage.getItem('theme') === 'dark' ||
         (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -66,121 +46,74 @@
     }
 </script>
 </head>
-<body class="font-sans">
-<header class="sticky top-0 z-40 surface-glass" style="border-radius:0; border-left:0; border-right:0; border-top:0;">
-<nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-<a class="flex items-center gap-2.5 shrink-0" href="index.html">
-<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white">
-<i class="fa-solid fa-layer-group text-sm"></i>
-</div>
-<span class="font-display font-bold text-lg" data-i18n="k000">POS &amp; Inventory Management System</span>
-</a>
-<div class="hidden lg:flex items-center gap-1">
-<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k001" href="index.html" style="color:var(--text-secondary)">Home</a>
-<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k002" href="features.html" style="color:var(--text-secondary)">Features</a>
-<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k003" href="pricing.html" style="color:var(--text-secondary)">Pricing</a>
-<a class="px-3.5 py-2 rounded-lg text-sm font-medium text-primary" data-i18n="k004" href="blog.html">Blog</a>
-<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k005" href="faq.html" style="color:var(--text-secondary)">FAQ</a>
-<a class="px-3.5 py-2 rounded-lg text-sm font-medium" data-i18n="k006" href="contact.html" style="color:var(--text-secondary)">Contact</a>
-</div>
-<div class="hidden lg:flex items-center gap-3">
-<button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()">
-<i class="fa-solid fa-moon dark:hidden"></i>
-<i class="fa-solid fa-sun hidden dark:inline"></i>
-</button>
-<span class="flex items-center gap-3" data-auth="out">
-<a class="px-3.5 py-2 text-sm font-medium" data-i18n="k007" href="login.html" style="color:var(--text-secondary)">Sign In</a>
-<a class="btn-primary text-sm !py-2 !px-4" data-i18n="k008" href="register.html">Start Free Trial</a>
-</span>
-<span class="hidden-auth items-center gap-3 flex" data-auth="in">
-<a class="btn-primary text-sm !py-2 !px-4" data-i18n="k009" href="dashboard.html">Go to Dashboard</a>
-<button class="px-3.5 py-2 text-sm font-medium" data-i18n="k010" data-logout="" style="color:var(--text-secondary)">Logout</button>
-</span>
-</div>
-<div class="flex items-center rounded-full p-0.5 text-xs font-semibold shrink-0" data-lang-toggle="" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)"><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="en" type="button">EN</button><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="bn" type="button">বাং</button></div><button class="lg:hidden text-lg" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
+<body class="font-sans" data-page="ai-assistant">
+<header class="surface-glass sticky top-0 z-30 px-3 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4" style="border-radius:0">
+<div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
+<button aria-controls="sidebar" aria-expanded="false" aria-label="Open menu" class="lg:hidden h-9 w-9 shrink-0 rounded-lg flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" id="sidebarToggle" type="button">
 <i class="fa-solid fa-bars"></i>
 </button>
-</nav>
-<div class="hidden lg:hidden border-t px-6 py-4 space-y-1" id="mobileNav" style="border-color:var(--border-subtle)">
-<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k001" href="index.html">Home</a>
-<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k002" href="features.html">Features</a>
-<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k003" href="pricing.html">Pricing</a>
-<a class="block px-3 py-2.5 rounded-lg text-sm font-medium text-primary bg-primary/5" data-i18n="k004" href="blog.html">Blog</a>
-<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k005" href="faq.html">FAQ</a>
-<a class="block px-3 py-2.5 rounded-lg text-sm font-medium" data-i18n="k006" href="contact.html">Contact</a>
-<div class="pt-3 mt-2 border-t flex flex-col gap-2" style="border-color:var(--border-subtle)">
-<div class="flex flex-col gap-2" data-auth="out">
-<a class="text-center px-3.5 py-2 text-sm font-medium" data-i18n="k007" href="login.html">Sign In</a>
-<a class="btn-primary text-sm text-center" data-i18n="k008" href="register.html">Start Free Trial</a>
+<a class="flex items-center gap-2 sm:gap-2.5 shrink-0 min-w-0" href="index.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white shrink-0"><i class="fa-solid fa-layer-group text-sm"></i></div>
+<span class="font-display font-bold text-lg hidden sm:inline truncate">POS &amp; Inventory Management System</span>
+</a>
 </div>
-<div class="hidden-auth flex-col gap-2 flex" data-auth="in">
-<a class="btn-primary text-sm text-center" data-i18n="k009" href="dashboard.html">Go to Dashboard</a>
-<button class="text-center px-3.5 py-2 text-sm font-medium" data-i18n="k010" data-logout="">Logout</button>
+<div class="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0">
+<div class="flex items-center rounded-full p-0.5 text-xs font-semibold shrink-0" data-lang-toggle="" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)"><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="en" type="button">EN</button><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="bn" type="button">বাং</button></div>
+<button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()" title="Toggle dark mode">
+<i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:inline"></i>
+</button>
+<div class="flex items-center gap-2 sm:gap-2.5 pl-2 sm:pl-3 border-l" style="border-color:var(--border-subtle)">
+<div class="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm shrink-0" data-user-initial="">?</div>
+<div class="hidden sm:block leading-tight">
+<p class="text-sm font-semibold" data-user-name=""> </p>
+<p class="text-xs" data-user-email="" style="color:var(--text-secondary)"> </p>
 </div>
 </div>
+<button class="h-9 w-9 sm:h-auto sm:w-auto sm:px-3.5 sm:py-2 rounded-lg flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 text-sm font-medium" data-logout="" style="color:var(--text-secondary)" title="Logout">
+<i class="fa-solid fa-right-from-bracket sm:mr-1"></i><span class="hidden sm:inline">Logout</span></button>
 </div>
 </header>
-<section class="max-w-3xl mx-auto px-6 pt-16 pb-20 text-center">
-<h1 class="font-display text-4xl font-extrabold mb-4" data-aos="fade-up" data-i18n="k004">Blog</h1>
-<p class="text-lg mb-8" data-aos="fade-up" data-aos-delay="75" data-i18n="k031" style="color:var(--text-secondary)">
-        Articles on running retail, restaurants, and SME operations are on the way. Check back soon.
-    </p>
-<a class="surface px-6 py-3 font-medium inline-block" data-i18n="k032" href="index.html">Back to Home</a>
-</section>
-<footer class="border-t mt-20" style="border-color:var(--border-subtle)">
-<div class="max-w-7xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-5 gap-8">
-<div class="col-span-2">
-<a class="flex items-center gap-2.5 mb-3" href="index.html">
-<div class="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white">
-<i class="fa-solid fa-layer-group text-xs"></i>
+
+<div class="flex items-start max-w-7xl mx-auto">
+<div class="fixed inset-0 z-40 hidden bg-black/50 lg:hidden" id="sidebarBackdrop"></div>
+<aside class="sidebar fixed lg:sticky inset-y-0 lg:inset-y-auto left-0 lg:top-[65px] z-50 lg:z-auto flex flex-col w-72 lg:w-60 shrink-0 h-full lg:h-auto lg:min-h-[calc(100vh-65px)] p-4 gap-1 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto" id="sidebar" style="background:var(--bg-surface)">
+<div class="flex items-center justify-between mb-2 lg:hidden">
+<span class="font-display font-bold text-sm px-1">Menu</span>
+<button aria-label="Close menu" class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" id="sidebarClose" type="button"><i class="fa-solid fa-xmark"></i></button>
 </div>
-<span class="font-display font-bold" data-i18n="k000">POS &amp; Inventory Management System</span>
-</a>
-<p class="text-sm max-w-xs" data-i18n="k022" style="color:var(--text-secondary)">
-                All-in-one POS, inventory, and business management for retail stores, restaurants, pharmacies, and SMEs.
-            </p>
+
+<a class="nav-link" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge w-4 text-center"></i><span>Dashboard</span></a>
+<a class="nav-link" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register w-4 text-center"></i><span>Point of Sale</span></a>
+<a class="nav-link" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse w-4 text-center"></i><span>Inventory</span></a>
+<a class="nav-link" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced w-4 text-center"></i><span>Accounting</span></a>
+<div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
+<a class="nav-link" data-nav="customers" href="customers.html"><i class="fa-solid fa-users w-4 text-center"></i><span>Customers</span></a>
+<a class="nav-link" data-nav="hr-payroll" href="hr-payroll.html"><i class="fa-solid fa-id-badge w-4 text-center"></i><span>HR &amp; Payroll</span></a>
+<a class="nav-link" data-nav="reports" href="reports.html"><i class="fa-solid fa-chart-line w-4 text-center"></i><span>Reports</span></a>
+<a class="nav-link" data-nav="ai-assistant" href="ai-assistant.html"><i class="fa-solid fa-wand-magic-sparkles w-4 text-center"></i><span>AI Assistant</span></a>
+<div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
+<a class="nav-link" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear w-4 text-center"></i><span>Settings</span></a>
+</aside>
+
+<main class="flex-1 min-w-0 px-6 py-8 w-full">
+<div class="mb-6">
+<h1 class="font-display text-2xl font-bold mb-1">AI Assistant</h1>
+<p class="text-sm" style="color:var(--text-secondary)">Ask about today's sales, low stock, dues, payroll, and more — answered live from your data.</p>
 </div>
-<div>
-<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k023" style="color:var(--text-secondary)">Product</p>
-<div class="space-y-2 text-sm">
-<a class="block hover:text-primary" data-i18n="k002" href="features.html">Features</a>
-<a class="block hover:text-primary" data-i18n="k003" href="pricing.html">Pricing</a>
-<a class="block hover:text-primary" data-i18n="k024" href="testimonials.html">Testimonials</a>
-<a class="block hover:text-primary" data-i18n="k008" href="register.html">Start Free Trial</a>
+
+<div class="surface flex flex-col" style="height:calc(100vh - 260px); min-height:420px">
+<div class="flex-1 overflow-y-auto p-5 space-y-4" id="chatLog"></div>
+<div class="px-4 pt-2 pb-3 flex flex-wrap gap-2 border-t" id="suggestionRow" style="border-color:var(--border-subtle)"></div>
+<form class="p-4 pt-2 border-t flex items-center gap-2" id="chatForm" style="border-color:var(--border-subtle)">
+<input autocomplete="off" class="input-field" id="chatInput" placeholder="Ask something like 'what's low on stock?'" type="text"/>
+<button class="btn-primary !py-2.5 !px-4" type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+</form>
 </div>
+<p class="text-xs mt-3" style="color:var(--text-secondary)"><i class="fa-solid fa-circle-info mr-1"></i>This assistant reads live figures from your Firestore data (sales, inventory, expenses, customers, staff) and answers with pattern matching — no data leaves your browser.</p>
+</main>
 </div>
-<div>
-<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k025" style="color:var(--text-secondary)">Company</p>
-<div class="space-y-2 text-sm">
-<a class="block hover:text-primary" data-i18n="k026" href="about.html">About Us</a>
-<a class="block hover:text-primary" data-i18n="k004" href="blog.html">Blog</a>
-<a class="block hover:text-primary" data-i18n="k006" href="contact.html">Contact</a>
-<a class="block hover:text-primary" data-i18n="k005" href="faq.html">FAQ</a>
-</div>
-</div>
-<div>
-<p class="text-xs font-semibold uppercase tracking-wide mb-3" data-i18n="k027" style="color:var(--text-secondary)">Legal</p>
-<div class="space-y-2 text-sm">
-<a class="block hover:text-primary" data-i18n="k028" href="privacy-policy.html">Privacy Policy</a>
-<a class="block hover:text-primary" data-i18n="k029" href="terms.html">Terms &amp; Conditions</a>
-</div>
-</div>
-</div>
-<div class="border-t py-6" style="border-color:var(--border-subtle)">
-<div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm" style="color:var(--text-secondary)">
-<p data-i18n="k030">© 2026 POS &amp; Inventory Management System. All rights reserved.</p>
-<div class="flex items-center gap-4">
-<a aria-label="Facebook" class="hover:text-primary" href="#"><i class="fa-brands fa-facebook"></i></a>
-<a aria-label="X (Twitter)" class="hover:text-primary" href="#"><i class="fa-brands fa-x-twitter"></i></a>
-<a aria-label="LinkedIn" class="hover:text-primary" href="#"><i class="fa-brands fa-linkedin"></i></a>
-<a aria-label="Instagram" class="hover:text-primary" href="#"><i class="fa-brands fa-instagram"></i></a>
-</div>
-</div>
-</div>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+
 <script src="assets/js/main.js"></script>
-<script>AOS.init({ duration: 500, once: true });</script>
-<script src="assets/js/site-auth.js" type="module"></script>
+<script src="assets/js/ai-assistant.js" type="module"></script>
 <script src="assets/js/i18n.js"></script></body>
 </html>

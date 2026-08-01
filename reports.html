@@ -48,41 +48,41 @@
 </script>
 </head>
 <body class="font-sans" data-page="reports">
-<header class="surface-glass sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between gap-4" style="border-radius:0">
-<a class="flex items-center gap-2.5 shrink-0" href="index.html">
-<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white"><i class="fa-solid fa-layer-group text-sm"></i></div>
-<span class="font-display font-bold text-lg hidden sm:inline">POS &amp; Inventory Management System</span>
+<header class="surface-glass sticky top-0 z-30 px-3 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4" style="border-radius:0">
+<div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
+<button aria-controls="sidebar" aria-expanded="false" aria-label="Open menu" class="lg:hidden h-9 w-9 shrink-0 rounded-lg flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" id="sidebarToggle" type="button">
+<i class="fa-solid fa-bars"></i>
+</button>
+<a class="flex items-center gap-2 sm:gap-2.5 shrink-0 min-w-0" href="index.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white shrink-0"><i class="fa-solid fa-layer-group text-sm"></i></div>
+<span class="font-display font-bold text-lg hidden sm:inline truncate">POS &amp; Inventory Management System</span>
 </a>
-<div class="flex items-center gap-3 ml-auto">
+</div>
+<div class="flex items-center gap-1.5 sm:gap-3 ml-auto shrink-0">
+<div class="flex items-center rounded-full p-0.5 text-xs font-semibold shrink-0" data-lang-toggle="" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)"><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="en" type="button">EN</button><button class="lang-toggle-btn px-2.5 py-1 rounded-full transition" data-lang-option="bn" type="button">বাং</button></div>
 <button class="h-9 w-9 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" onclick="toggleTheme()" title="Toggle dark mode">
 <i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:inline"></i>
 </button>
-<div class="flex items-center gap-2.5 pl-3 border-l" style="border-color:var(--border-subtle)">
-<div class="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm" data-user-initial="">?</div>
+<div class="flex items-center gap-2 sm:gap-2.5 pl-2 sm:pl-3 border-l" style="border-color:var(--border-subtle)">
+<div class="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm shrink-0" data-user-initial="">?</div>
 <div class="hidden sm:block leading-tight">
 <p class="text-sm font-semibold" data-user-name=""> </p>
 <p class="text-xs" data-user-email="" style="color:var(--text-secondary)"> </p>
 </div>
 </div>
-<button class="px-3.5 py-2 text-sm font-medium rounded-lg hover:bg-black/5 dark:hover:bg-white/5" data-logout="" style="color:var(--text-secondary)">
-<i class="fa-solid fa-right-from-bracket mr-1"></i><span>Logout</span></button>
+<button class="h-9 w-9 sm:h-auto sm:w-auto sm:px-3.5 sm:py-2 rounded-lg flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 text-sm font-medium" data-logout="" style="color:var(--text-secondary)" title="Logout">
+<i class="fa-solid fa-right-from-bracket sm:mr-1"></i><span class="hidden sm:inline">Logout</span></button>
 </div>
 </header>
 
-<div class="lg:hidden flex items-center gap-1.5 overflow-x-auto px-4 py-2.5 border-b" style="border-color:var(--border-subtle)">
-<a class="nav-link shrink-0" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
-<a class="nav-link shrink-0" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register"></i><span>POS</span></a>
-<a class="nav-link shrink-0" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse"></i><span>Inventory</span></a>
-<a class="nav-link shrink-0" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced"></i><span>Accounting</span></a>
-<a class="nav-link shrink-0" data-nav="customers" href="customers.html"><i class="fa-solid fa-users"></i><span>Customers</span></a>
-<a class="nav-link shrink-0" data-nav="hr-payroll" href="hr-payroll.html"><i class="fa-solid fa-id-badge"></i><span>HR &amp; Payroll</span></a>
-<a class="nav-link shrink-0" data-nav="reports" href="reports.html"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
-<a class="nav-link shrink-0" data-nav="ai-assistant" href="ai-assistant.html"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Assistant</span></a>
-<a class="nav-link shrink-0" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+<div class="flex items-start max-w-7xl mx-auto">
+<div class="fixed inset-0 z-40 hidden bg-black/50 lg:hidden" id="sidebarBackdrop"></div>
+<aside class="sidebar fixed lg:sticky inset-y-0 lg:inset-y-auto left-0 lg:top-[65px] z-50 lg:z-auto flex flex-col w-72 lg:w-60 shrink-0 h-full lg:h-auto lg:min-h-[calc(100vh-65px)] p-4 gap-1 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto" id="sidebar" style="background:var(--bg-surface)">
+<div class="flex items-center justify-between mb-2 lg:hidden">
+<span class="font-display font-bold text-sm px-1">Menu</span>
+<button aria-label="Close menu" class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" id="sidebarClose" type="button"><i class="fa-solid fa-xmark"></i></button>
 </div>
 
-<div class="flex items-start max-w-7xl mx-auto">
-<aside class="sidebar hidden lg:flex flex-col w-60 shrink-0 min-h-[calc(100vh-65px)] p-4 gap-1 sticky top-[65px]">
 <a class="nav-link" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge w-4 text-center"></i><span>Dashboard</span></a>
 <a class="nav-link" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register w-4 text-center"></i><span>Point of Sale</span></a>
 <a class="nav-link" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse w-4 text-center"></i><span>Inventory</span></a>
