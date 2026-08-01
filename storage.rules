@@ -1,0 +1,13 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Payment verification no longer collects a screenshot upload
+    // (register.html Step 3 now only takes sender number + TrxID),
+    // so nothing in the app writes to Storage anymore. Everything
+    // stays locked down by default.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

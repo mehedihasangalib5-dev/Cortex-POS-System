@@ -59,13 +59,36 @@
 
 <div class="hidden" id="adminView">
 <h1 class="font-display text-2xl font-bold mb-1">Pending Payments</h1>
-<p class="text-sm mb-8" style="color:var(--text-secondary)">Match the TrxID/screenshot against your bKash/Nagad statement, then approve or reject.</p>
+<p class="text-sm mb-6" style="color:var(--text-secondary)">Match the TrxID/sender number against your bKash/Nagad statement, then approve or reject.</p>
+
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+<div class="surface p-4 rounded-xl">
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Pending</p>
+<p class="font-display text-xl font-bold" id="statPending">0</p>
+</div>
+<div class="surface p-4 rounded-xl">
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Approved this month</p>
+<p class="font-display text-xl font-bold" id="statRevenue">৳0</p>
+</div>
+<div class="surface p-4 rounded-xl">
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Rejected (all time)</p>
+<p class="font-display text-xl font-bold" id="statRejected">0</p>
+</div>
+</div>
+
+<div class="relative mb-6">
+<i class="fa-solid fa-magnifying-glass absolute top-1/2 -translate-y-1/2 left-4 text-sm" style="color:var(--text-secondary)"></i>
+<input class="input-field !pl-10" id="searchInput" placeholder="Search by TrxID, sender number, email, or business name" type="text"/>
+</div>
 
 <div id="pendingList" class="space-y-4"></div>
 <p class="hidden text-sm py-10 text-center" id="emptyState" style="color:var(--text-secondary)">No pending payments right now.</p>
 
 <h2 class="font-display text-lg font-bold mt-12 mb-4">Recently Reviewed</h2>
 <div id="reviewedList" class="space-y-3"></div>
+<div class="flex justify-center mt-4">
+<button class="hidden surface border font-medium px-5 py-2 rounded-xl text-sm" id="loadMoreBtn" style="border-color:var(--border-subtle)" type="button">Load more</button>
+</div>
 </div>
 
 </main>
@@ -86,26 +109,47 @@ document.addEventListener('click', (e) => {
 
 function money(n) { return '৳' + Number(n).toLocaleString('en-US'); }
 
+// Full order lists kept in memory so search/filter and "Load more" don't
+// need extra Firestore reads — both pending and reviewed orders are already
+// fetched in full by loadOrders().
+let allPending = [];
+let allReviewed = [];
+let approvedTrxIds = new Set();
+let reviewedShownCount = 10;
+
+function matchesSearch(o, q) {
+    if (!q) return true;
+    q = q.toLowerCase();
+    return [o.trxId, o.senderNumber, o.customerEmail, o.businessName]
+        .some((v) => (v || '').toLowerCase().includes(q));
+}
+
 function orderCard(orderDoc, { reviewed }) {
     const o = orderDoc.data();
     const created = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString() : '';
     const statusColor = o.status === 'approved' ? 'text-emerald' : (o.status === 'rejected' ? 'text-red-500' : 'text-amber');
+    const isDuplicate = !reviewed && o.trxId && approvedTrxIds.has(o.trxId);
     return `
         <div class="surface p-5 rounded-xl" data-order-id="${orderDoc.id}">
             <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
                 <div>
-                    <p class="font-semibold">${o.plan === 'pro' ? 'Pro' : 'Starter'} — ${o.billingCycle === 'yearly' ? 'Yearly' : 'Monthly'}</p>
+                    <p class="font-semibold">${o.businessName || o.customerEmail || 'Unknown customer'}</p>
+                    <p class="text-xs" style="color:var(--text-secondary)">${o.customerEmail || ''}${o.customerEmail ? ' · ' : ''}${o.plan === 'pro' ? 'Pro' : 'Starter'} — ${o.billingCycle === 'yearly' ? 'Yearly' : 'Monthly'}</p>
                     <p class="text-xs" style="color:var(--text-secondary)">${created}</p>
                 </div>
                 <span class="text-xs font-bold uppercase ${statusColor}">${o.status.replace('_', ' ')}</span>
             </div>
+            ${isDuplicate ? `
+            <div class="flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-lg mb-3" style="background:color-mix(in srgb, #EF4444 12%, transparent); color:#EF4444">
+                <i class="fa-solid fa-triangle-exclamation"></i> This TrxID was already used in an approved order — check before approving.
+            </div>` : ''}
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm mb-4">
                 <div><p class="text-xs" style="color:var(--text-secondary)">Amount</p><p class="font-medium">${money(o.amount)}</p></div>
                 <div><p class="text-xs" style="color:var(--text-secondary)">Method</p><p class="font-medium">${o.method}</p></div>
                 <div><p class="text-xs" style="color:var(--text-secondary)">Sender</p><p class="font-medium font-mono">${o.senderNumber}</p></div>
                 <div><p class="text-xs" style="color:var(--text-secondary)">TrxID</p><p class="font-medium font-mono">${o.trxId}</p></div>
             </div>
-            <a class="text-primary text-sm font-medium" href="${o.screenshotUrl}" target="_blank" rel="noopener">View screenshot →</a>
+            ${o.rejectReason ? `<p class="text-xs mb-3" style="color:var(--text-secondary)"><span class="font-medium">Reject reason:</span> ${o.rejectReason}</p>` : ''}
             ${reviewed ? '' : `
             <div class="flex gap-3 mt-4">
                 <button class="btn-primary !bg-emerald text-sm !py-2 !px-4" data-approve="${orderDoc.id}" data-uid="${o.uid}" data-plan="${o.plan}" type="button">Approve</button>
@@ -115,35 +159,85 @@ function orderCard(orderDoc, { reviewed }) {
     `;
 }
 
+function renderStats() {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const approvedThisMonth = allReviewed.filter((d) => {
+        const o = d.data();
+        return o.status === 'approved' && o.createdAt?.toDate && o.createdAt.toDate() >= monthStart;
+    });
+    const revenue = approvedThisMonth.reduce((sum, d) => sum + Number(d.data().amount || 0), 0);
+    const rejectedCount = allReviewed.filter((d) => d.data().status === 'rejected').length;
+
+    document.getElementById('statPending').textContent = allPending.length;
+    document.getElementById('statRevenue').textContent = money(revenue);
+    document.getElementById('statRejected').textContent = rejectedCount;
+}
+
+function render() {
+    const q = document.getElementById('searchInput').value.trim();
+
+    const filteredPending = allPending.filter((d) => matchesSearch(d.data(), q));
+    const pendingList = document.getElementById('pendingList');
+    pendingList.innerHTML = filteredPending.map((d) => orderCard(d, { reviewed: false })).join('');
+    document.getElementById('emptyState').classList.toggle('hidden', filteredPending.length > 0);
+
+    const filteredReviewed = allReviewed.filter((d) => matchesSearch(d.data(), q));
+    const shown = filteredReviewed.slice(0, reviewedShownCount);
+    document.getElementById('reviewedList').innerHTML = shown.map((d) => orderCard(d, { reviewed: true })).join('')
+        || '<p class="text-sm" style="color:var(--text-secondary)">Nothing reviewed yet.</p>';
+    document.getElementById('loadMoreBtn').classList.toggle('hidden', shown.length >= filteredReviewed.length);
+}
+
 async function loadOrders() {
     const pendingSnap = await getDocs(query(
         collection(db, 'orders'), where('status', '==', 'pending_verification'), orderBy('createdAt', 'desc')
     ));
-    const pendingList = document.getElementById('pendingList');
-    pendingList.innerHTML = pendingSnap.docs.map((d) => orderCard(d, { reviewed: false })).join('');
-    document.getElementById('emptyState').classList.toggle('hidden', pendingSnap.docs.length > 0);
+    allPending = pendingSnap.docs;
 
     const reviewedSnap = await getDocs(query(
         collection(db, 'orders'), where('status', 'in', ['approved', 'rejected']), orderBy('createdAt', 'desc')
     ));
-    document.getElementById('reviewedList').innerHTML = reviewedSnap.docs.slice(0, 10)
-        .map((d) => orderCard(d, { reviewed: true })).join('') || '<p class="text-sm" style="color:var(--text-secondary)">Nothing reviewed yet.</p>';
+    allReviewed = reviewedSnap.docs;
+
+    approvedTrxIds = new Set(
+        allReviewed.filter((d) => d.data().status === 'approved').map((d) => d.data().trxId).filter(Boolean)
+    );
+
+    reviewedShownCount = 10;
+    renderStats();
+    render();
 }
+
+document.getElementById('searchInput')?.addEventListener('input', render);
+document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
+    reviewedShownCount += 10;
+    render();
+});
 
 document.getElementById('pendingList')?.addEventListener('click', async (e) => {
     const approveBtn = e.target.closest('[data-approve]');
     const rejectBtn = e.target.closest('[data-reject]');
     if (!approveBtn && !rejectBtn) return;
+
+    let rejectReason = '';
+    if (rejectBtn) {
+        rejectReason = prompt('Reason for rejecting this payment (shown to the customer):') || '';
+        if (rejectReason === '') return; // admin cancelled the prompt
+    }
+
     const btn = approveBtn || rejectBtn;
     btn.disabled = true;
     btn.textContent = 'Working...';
     try {
         const orderId = btn.getAttribute('data-approve') || btn.getAttribute('data-reject');
-        await updateDoc(doc(db, 'orders', orderId), {
+        const updatePayload = {
             status: approveBtn ? 'approved' : 'rejected',
             reviewedAt: serverTimestamp(),
             reviewedBy: auth.currentUser.uid,
-        });
+        };
+        if (rejectBtn) updatePayload.rejectReason = rejectReason;
+        await updateDoc(doc(db, 'orders', orderId), updatePayload);
         if (approveBtn) {
             await updateDoc(doc(db, 'users', approveBtn.getAttribute('data-uid')), {
                 plan: approveBtn.getAttribute('data-plan'),

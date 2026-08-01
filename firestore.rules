@@ -7,7 +7,7 @@ service cloud.firestore {
     // panel (admin-payments.html) won't be able to write anything.
     function isAdmin() {
       return request.auth != null && request.auth.uid in [
-        'U2HvvgDr5mREBRFCvQa6IuEjwzj2'
+        'REPLACE_WITH_YOUR_FIREBASE_UID'
       ];
     }
 
@@ -51,7 +51,7 @@ service cloud.firestore {
     // ever CREATE their own order in "pending_verification" status — they
     // can never set it to paid/approved themselves. Only the admin
     // (admin-payments.html) can flip the status after checking the TrxID/
-    // screenshot, and only the status/review fields — never the amount,
+    // sender number, and only the status/review fields — never the amount,
     // plan, or proof the customer submitted.
     match /orders/{orderId} {
       allow read: if request.auth != null &&
@@ -62,11 +62,11 @@ service cloud.firestore {
         && request.resource.data.status == 'pending_verification'
         && request.resource.data.plan in ['starter', 'pro']
         && request.resource.data.keys().hasAll(
-             ['uid', 'plan', 'billingCycle', 'amount', 'method', 'senderNumber', 'trxId', 'screenshotUrl', 'status', 'createdAt']);
+             ['uid', 'plan', 'billingCycle', 'amount', 'method', 'senderNumber', 'trxId', 'status', 'createdAt']);
 
       allow update: if isAdmin()
         && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['status', 'reviewedAt', 'reviewedBy']);
+             .hasOnly(['status', 'reviewedAt', 'reviewedBy', 'rejectReason']);
 
       allow delete: if false;
     }
