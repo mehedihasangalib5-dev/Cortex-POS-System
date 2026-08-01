@@ -1,1 +1,227 @@
+/* ============================================================================
+   POS System — Core Design System
+   Token-driven styles layered on top of Tailwind's utility classes.
+   ============================================================================ */
 
+:root {
+    /* Brand palette */
+    --color-primary: #2454FF;
+    --color-primary-dark: #1638C4;
+    --color-emerald: #10B981;
+    --color-amber: #F5A623;
+    --color-danger: #EF4444;
+
+    /* Light mode surfaces */
+    --bg-app: #F7F8FA;
+    --bg-surface: #FFFFFF;
+    --bg-surface-alt: #F1F3F7;
+    --text-primary: #0F172A;
+    --text-secondary: #5B647A;
+    --border-subtle: #E6E9F0;
+
+    --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+    --shadow-lifted: 0 4px 12px rgba(15, 23, 42, 0.06), 0 16px 40px rgba(15, 23, 42, 0.10);
+
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
+}
+
+.dark {
+    --bg-app: #0B0F19;
+    --bg-surface: #131826;
+    --bg-surface-alt: #1B2233;
+    --text-primary: #E7EAF2;
+    --text-secondary: #8A93A8;
+    --border-subtle: #232B3D;
+
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --shadow-lifted: 0 4px 16px rgba(0, 0, 0, 0.35), 0 24px 48px rgba(0, 0, 0, 0.45);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    background: var(--bg-app);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+h1, h2, h3, h4, .font-display {
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+.font-mono-fig {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------
+   Surfaces
+   --------------------------------------------------------------------- */
+
+.surface {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+}
+
+.surface-glass {
+    background: color-mix(in srgb, var(--bg-surface) 72%, transparent);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid var(--border-subtle);
+}
+
+/* ---------------------------------------------------------------------
+   Signature element: animated "pulse" border on KPI cards
+   --------------------------------------------------------------------- */
+
+.kpi-card {
+    position: relative;
+    background: var(--bg-surface);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lifted);
+}
+
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: var(--radius-xl);
+    background: conic-gradient(from var(--pulse-angle, 0deg),
+        var(--color-primary), var(--color-emerald), var(--color-amber), var(--color-primary));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.55;
+    animation: pulse-rotate 6s linear infinite;
+}
+
+@keyframes pulse-rotate {
+    to { --pulse-angle: 360deg; }
+}
+
+@property --pulse-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kpi-card::before { animation: none; }
+    * { transition: none !important; }
+}
+
+/* ---------------------------------------------------------------------
+   Sidebar / Layout
+   --------------------------------------------------------------------- */
+
+.sidebar {
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border-subtle);
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.nav-link:hover {
+    background: var(--bg-surface-alt);
+    color: var(--text-primary);
+}
+
+.nav-link.active {
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    color: var(--color-primary);
+}
+
+/* ---------------------------------------------------------------------
+   Auth pages
+   --------------------------------------------------------------------- */
+
+.auth-shell {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at 15% 15%, color-mix(in srgb, var(--color-primary) 18%, transparent), transparent 40%),
+        radial-gradient(circle at 85% 85%, color-mix(in srgb, var(--color-emerald) 14%, transparent), transparent 40%),
+        var(--bg-app);
+}
+
+.input-field {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-alt);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input-field:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    padding: 0.7rem 1.25rem;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover { background: var(--color-primary-dark); }
+.btn-primary:active { transform: scale(0.98); }
+
+/* Visible keyboard focus ring everywhere (accessibility) */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Scrollbar polish */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 8px; }
+
+/* ---------------------------------------------------------------------
+   Firebase auth-state visibility helper
+   --------------------------------------------------------------------- */
+.hidden-auth { display: none !important; }
+
+/* ---------------------------------------------------------------------
+   EN / BN language toggle
+   --------------------------------------------------------------------- */
+.lang-toggle-btn {
+    color: var(--text-secondary);
+    cursor: pointer;
+    line-height: 1;
+}
+.lang-toggle-btn.lang-active {
+    background: var(--color-primary);
+    color: #fff;
+}
