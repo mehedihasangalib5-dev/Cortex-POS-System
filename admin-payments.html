@@ -256,12 +256,14 @@ async function loadOrders() {
         } else {
             console.error(`Could not load "${status}" orders:`, result.reason);
             ordersByStatus[status] = [];
-            failures.push(status);
+            failures.push({ status, code: result.reason?.code || 'unknown', message: result.reason?.message || String(result.reason) });
         }
     });
 
     if (failures.length) {
-        errBanner.textContent = `Could not load: ${failures.join(', ')}. Check the browser console — this is usually a Firestore rules or index issue.`;
+        const linkify = (s) => s.replace(/(https?:\/\/\S+)/g, '<a href="$1" target="_blank" rel="noopener" style="text-decoration:underline">$1</a>');
+        const lines = failures.map((f) => `• ${f.status}: [${f.code}] ${linkify(f.message)}`).join('<br>');
+        errBanner.innerHTML = `<strong>Could not load orders:</strong><br>${lines}`;
         errBanner.classList.remove('hidden');
     }
 
