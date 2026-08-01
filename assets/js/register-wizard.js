@@ -7,7 +7,7 @@
 //                                   with status "pending_verification"
 //   Step 4  Confirmation         -> shown only after a paid-plan submission
 // ---------------------------------------------------------------------------
-import { auth, db, storage } from "./firebase-init.js";
+import { auth, db } from "./firebase-init.js";
 import {
     createUserWithEmailAndPassword,
     updateProfile,
@@ -15,9 +15,6 @@ import {
 import {
     doc, setDoc, addDoc, collection, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import {
-    ref, uploadBytes, getDownloadURL,
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
 import { PAYMENT_METHODS, PLAN_PRICES } from "./payment-config.js";
 
 const wizardCard = document.getElementById('wizardCard');
@@ -27,6 +24,8 @@ if (wizardCard) {
     const requestedPlan = params.get('plan'); // "starter" | "pro" | null
 
     let currentUid = null;
+    let currentEmail = '';
+    let currentBusinessName = '';
     let selectedPlan = (requestedPlan === 'starter' || requestedPlan === 'pro') ? requestedPlan : 'trial';
     let billingCycle = 'monthly';
     let selectedMethod = PAYMENT_METHODS[0]?.id || 'bkash';
@@ -82,6 +81,7 @@ if (wizardCard) {
             const name = step1Form.name.value.trim();
             const cred = await createUserWithEmailAndPassword(auth, email, step1Form.password.value);
             currentUid = cred.user.uid;
+            currentEmail = email;
             await updateProfile(cred.user, { displayName: name });
             await setDoc(doc(db, 'users', currentUid), {
                 name,
@@ -114,8 +114,9 @@ if (wizardCard) {
         btn.disabled = true;
         btn.textContent = 'Saving...';
         try {
+            currentBusinessName = step2Form.businessName.value.trim();
             await setDoc(doc(db, 'users', currentUid), {
-                businessName: step2Form.businessName.value.trim(),
+                businessName: currentBusinessName,
                 businessType: step2Form.businessType.value,
                 branchCount: step2Form.branchCount.value,
                 city: step2Form.city.value.trim(),
@@ -241,29 +242,20 @@ if (wizardCard) {
     paymentProofForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearError();
-        const file = document.getElementById('screenshotInput').files[0];
-        if (!file) {
-            showError('Please attach your payment screenshot.');
-            return;
-        }
         const btn = document.getElementById('submitProofBtn');
         btn.disabled = true;
-        btn.textContent = 'Uploading...';
+        btn.textContent = 'Submitting...';
         try {
-            const path = `payment-proofs/${currentUid}/${Date.now()}-${file.name}`;
-            const fileRef = ref(storage, path);
-            await uploadBytes(fileRef, file);
-            const screenshotUrl = await getDownloadURL(fileRef);
-
             await addDoc(collection(db, 'orders'), {
                 uid: currentUid,
+                customerEmail: currentEmail,
+                businessName: currentBusinessName,
                 plan: selectedPlan,
                 billingCycle,
                 amount: currentPrice(),
                 method: selectedMethod,
                 senderNumber: paymentProofForm.senderNumber.value.trim(),
                 trxId: paymentProofForm.trxId.value.trim(),
-                screenshotUrl,
                 status: 'pending_verification',
                 createdAt: serverTimestamp(),
             });
