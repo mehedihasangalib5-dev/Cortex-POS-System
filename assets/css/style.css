@@ -232,3 +232,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     background: var(--color-primary);
     color: #fff;
 }
+
+/* ---------------------------------------------------------------------
+   Mini FAQ accordion (pricing page etc.) — hide native marker, we render
+   our own chevron icon that rotates via the [open] state.
+   --------------------------------------------------------------------- */
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
