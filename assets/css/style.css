@@ -45,6 +45,13 @@ html, body {
     color: var(--text-primary);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     transition: background-color 0.25s ease, color 0.25s ease;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+img, svg, video {
+    max-width: 100%;
+    height: auto;
 }
 
 h1, h2, h3, h4, .font-display {
