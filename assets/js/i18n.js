@@ -5,7 +5,7 @@
 (function () {
     const translations = {
         en: {
-        "k000": "POS & Inventory Management System",
+        "k000": "CorPOS & IMS",
         "k001": "Home",
         "k002": "Features",
         "k003": "Pricing",
@@ -18,7 +18,7 @@
         "k010": "Logout",
         "k011": "Built for the business behind the counter",
         "k012": "Most small and mid-sized businesses end up running on a patchwork: one app for the till, a spreadsheet for stock, a notebook for staff hours, and a separate tool for the books. Every reconciliation between them costs time — and every gap between them costs money.",
-        "k013": "POS & Inventory Management System exists to close those gaps. Sales, inventory, customers, staff, and accounting all read from and write to the same database, in real time. When a sale happens at the till, stock updates immediately, loyalty points post to the right customer, and the numbers on your accounting dashboard are already current — no export, import, or end-of-day reconciliation required.",
+        "k013": "CorPOS & IMS exists to close those gaps. Sales, inventory, customers, staff, and accounting all read from and write to the same database, in real time. When a sale happens at the till, stock updates immediately, loyalty points post to the right customer, and the numbers on your accounting dashboard are already current — no export, import, or end-of-day reconciliation required.",
         "k014": "We built it for the businesses that actually run this way day to day: retail shops, restaurants, pharmacies, and small institutions that need something dependable, not a bloated enterprise suite designed for a different kind of company.",
         "k015": "Our Focus",
         "k016": "One connected system, not a bundle of disconnected tools.",
@@ -35,7 +35,7 @@
         "k027": "Legal",
         "k028": "Privacy Policy",
         "k029": "Terms & Conditions",
-        "k030": "© 2026 POS & Inventory Management System. All rights reserved.",
+        "k030": "© 2026 CorPOS & IMS. All rights reserved.",
         "k031": "Articles on running retail, restaurants, and SME operations are on the way. Check back soon.",
         "k032": "Back to Home",
         "k033": "Get in touch",
@@ -276,7 +276,7 @@
         "sk_send_error": "Something went wrong sending your message. Please try again or email us directly."
 },
         bn: {
-        "k000": "পিওএস ও ইনভেন্টরি ম্যানেজমেন্ট সিস্টেম",
+        "k000": "CorPOS & IMS",
         "k001": "হোম",
         "k002": "ফিচার",
         "k003": "মূল্য",
@@ -289,7 +289,7 @@
         "k010": "লগআউট",
         "k011": "কাউন্টারের পেছনের ব্যবসার জন্য তৈরি",
         "k012": "বেশিরভাগ ছোট ও মাঝারি ব্যবসা একগুচ্ছ বিচ্ছিন্ন টুল দিয়ে চলে — বিক্রির জন্য একটি অ্যাপ, স্টকের জন্য স্প্রেডশিট, কর্মীদের সময়ের জন্য একটি খাতা, আর হিসাবের জন্য আলাদা টুল। এগুলোর মধ্যে প্রতিটি মিলিয়ে দেখার কাজ সময় নষ্ট করে — আর প্রতিটি ফাঁক টাকা নষ্ট করে।",
-        "k013": "পিওএস ও ইনভেন্টরি ম্যানেজমেন্ট সিস্টেম এই ফাঁকগুলো দূর করার জন্যই তৈরি। বিক্রয়, ইনভেন্টরি, গ্রাহক, কর্মী এবং হিসাব — সবকিছু একই ডেটাবেস থেকে রিয়েল টাইমে পড়ে ও লেখে। কাউন্টারে বিক্রি হওয়া মাত্র স্টক আপডেট হয়ে যায়, লয়্যালটি পয়েন্ট সঠিক গ্রাহকের অ্যাকাউন্টে যোগ হয়, আর আপনার হিসাব ড্যাশবোর্ডের সংখ্যাগুলো তখনই হালনাগাদ থাকে — কোনো এক্সপোর্ট, ইমপোর্ট বা দিনশেষে মেলানোর দরকার নেই।",
+        "k013": "CorPOS & IMS এই ফাঁকগুলো দূর করার জন্যই তৈরি। বিক্রয়, ইনভেন্টরি, গ্রাহক, কর্মী এবং হিসাব — সবকিছু একই ডেটাবেস থেকে রিয়েল টাইমে পড়ে ও লেখে। কাউন্টারে বিক্রি হওয়া মাত্র স্টক আপডেট হয়ে যায়, লয়্যালটি পয়েন্ট সঠিক গ্রাহকের অ্যাকাউন্টে যোগ হয়, আর আপনার হিসাব ড্যাশবোর্ডের সংখ্যাগুলো তখনই হালনাগাদ থাকে — কোনো এক্সপোর্ট, ইমপোর্ট বা দিনশেষে মেলানোর দরকার নেই।",
         "k014": "আমরা এটি তৈরি করেছি সেসব ব্যবসার জন্য যারা প্রতিদিন এভাবেই চলে — খুচরা দোকান, রেস্তোরাঁ, ফার্মেসি এবং ছোট প্রতিষ্ঠান — যাদের দরকার নির্ভরযোগ্য কিছু, ভিন্ন ধরনের কোম্পানির জন্য বানানো ভারী এন্টারপ্রাইজ স্যুট নয়।",
         "k015": "আমাদের লক্ষ্য",
         "k016": "একটি সংযুক্ত সিস্টেম, বিচ্ছিন্ন টুলের গুচ্ছ নয়।",
@@ -306,7 +306,7 @@
         "k027": "আইনি",
         "k028": "গোপনীয়তা নীতি",
         "k029": "শর্তাবলী",
-        "k030": "© ২০২৬ পিওএস ও ইনভেন্টরি ম্যানেজমেন্ট সিস্টেম। সর্বস্বত্ব সংরক্ষিত।",
+        "k030": "© ২০২৬ CorPOS & IMS। সর্বস্বত্ব সংরক্ষিত।",
         "k031": "খুচরা, রেস্তোরাঁ ও এসএমই পরিচালনা নিয়ে লেখা শীঘ্রই আসছে। একটু পরে আবার দেখুন।",
         "k032": "হোমে ফিরে যান",
         "k033": "যোগাযোগ করুন",
