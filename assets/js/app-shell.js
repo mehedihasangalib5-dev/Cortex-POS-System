@@ -12,9 +12,10 @@
 // ---------------------------------------------------------------------------
 import { auth } from "./firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { enforceTrialLock } from "./trial-guard.js";
 
 export function requireAuth(onReady) {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (!user) {
             window.location.href = 'login.html';
             return;
@@ -30,6 +31,12 @@ export function requireAuth(onReady) {
         document.querySelectorAll('[data-nav]').forEach((el) => {
             el.classList.toggle('active', el.getAttribute('data-nav') === page);
         });
+
+        // 14-day trial lock: if the trial has expired and the account hasn't
+        // been upgraded, an overlay is shown and page init is skipped so no
+        // module can read/write Firestore data behind the lock.
+        const unlocked = await enforceTrialLock(user, { allowLockedAccess: page === 'settings' });
+        if (!unlocked) return;
 
         if (typeof onReady === 'function') onReady(user);
     });

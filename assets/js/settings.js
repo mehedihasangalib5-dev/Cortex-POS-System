@@ -4,18 +4,27 @@
 // threshold) plus per-user account settings (display name via Firebase Auth
 // updateProfile). Theme preference already lives in localStorage globally.
 // ---------------------------------------------------------------------------
-import { auth, db } from "./firebase-init.js";
+import { auth, db, functions } from "./firebase-init.js";
 import { requireAuth, toast } from "./app-shell.js";
 import { updateProfile } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
-    doc, getDoc, setDoc, serverTimestamp,
+    doc, getDoc, setDoc, serverTimestamp, Timestamp,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { httpsCallable } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-functions.js";
 
 const BUSINESS_DOC = 'business';
+const TRIAL_DAYS = 14;
+const PLAN_LABEL = { trial: 'Free Trial', starter: 'Starter', pro: 'Pro', enterprise: 'Enterprise' };
 
 requireAuth(async (user) => {
     document.getElementById('accName').value = user.displayName || '';
     document.getElementById('accEmail').value = user.email || '';
+
+    handlePaymentReturn();
+    await loadBillingStatus(user);
+    document.querySelectorAll('[data-plan-btn]').forEach((btn) => {
+        btn.addEventListener('click', () => onSwitchPlan(user, btn.dataset.planBtn));
+    });
 
     try {
         const snap = await getDoc(doc(db, 'settings', BUSINESS_DOC));
@@ -37,6 +46,80 @@ requireAuth(async (user) => {
     document.getElementById('businessForm').addEventListener('submit', onSaveBusiness);
     document.getElementById('accountForm').addEventListener('submit', (e) => onSaveAccount(e, user));
 });
+
+// SSLCommerz redirects the browser back to
+// settings.html?payment=success|failed|cancelled after checkout.
+function handlePaymentReturn() {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('payment');
+    if (!status) return;
+
+    if (status === 'success') toast('Payment received — your plan is updated!');
+    else if (status === 'cancelled') toast('Payment cancelled.', 'info');
+    else toast('Payment could not be completed. Please try again.', 'error');
+
+    // Clean the URL so a page refresh doesn't re-show the toast.
+    window.history.replaceState({}, '', window.location.pathname);
+}
+
+async function loadBillingStatus(user) {
+    const badge = document.getElementById('planBadge');
+    const statusText = document.getElementById('planStatusText');
+    try {
+        const ref = doc(db, 'users', user.uid);
+        const snap = await getDoc(ref);
+        const data = snap.exists() ? snap.data() : {};
+        const plan = data.plan || 'trial';
+
+        badge.textContent = PLAN_LABEL[plan] || plan;
+        badge.style.background = plan === 'trial' ? '#F5A62322' : '#10B98122';
+        badge.style.color = plan === 'trial' ? '#F5A623' : '#10B981';
+
+        if (plan === 'trial') {
+            const start = data.trialStartedAt instanceof Timestamp ? data.trialStartedAt.toMillis() : Date.now();
+            const elapsed = Math.floor((Date.now() - start) / 86400000);
+            const daysLeft = TRIAL_DAYS - elapsed;
+            statusText.textContent = daysLeft > 0
+                ? `${daysLeft} day${daysLeft === 1 ? '' : 's'} left in your free trial. Pick a plan below anytime to continue after it ends.`
+                : 'Your free trial has ended. Pick a plan below to unlock your dashboard again.';
+        } else {
+            statusText.textContent = `You're on the ${PLAN_LABEL[plan] || plan} plan. Thanks for being a customer!`;
+        }
+
+        document.querySelectorAll('[data-plan-btn]').forEach((btn) => {
+            const isCurrent = btn.dataset.planBtn === plan;
+            btn.disabled = isCurrent;
+            btn.textContent = isCurrent ? 'Current Plan' : `Switch to ${PLAN_LABEL[btn.dataset.planBtn]}`;
+            btn.classList.toggle('opacity-60', isCurrent);
+        });
+    } catch (err) {
+        console.error(err);
+        statusText.textContent = 'Could not load your plan status.';
+    }
+}
+
+// Real payment: calls the initiatePayment Cloud Function (which holds the
+// SSLCommerz secret server-side), then sends the browser to the hosted
+// SSLCommerz checkout page. The plan itself is only ever flipped by the
+// paymentCallback function after it independently verifies the payment —
+// nothing here writes `plan` to Firestore directly.
+async function onSwitchPlan(user, planId) {
+    const btn = document.querySelector(`[data-plan-btn="${planId}"]`);
+    if (!btn || btn.disabled) return;
+    btn.disabled = true;
+    const originalText = btn.textContent;
+    btn.textContent = 'Redirecting to payment...';
+    try {
+        const initiatePayment = httpsCallable(functions, 'initiatePayment');
+        const result = await initiatePayment({ planId });
+        window.location.href = result.data.gatewayUrl;
+    } catch (err) {
+        console.error(err);
+        toast(err.message || 'Could not start payment. Please try again.', 'error');
+        btn.disabled = false;
+        btn.textContent = originalText;
+    }
+}
 
 async function onSaveBusiness(e) {
     e.preventDefault();

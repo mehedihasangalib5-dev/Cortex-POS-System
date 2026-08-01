@@ -86,6 +86,11 @@ if (registerForm) {
                 businessName: registerForm.businessName ? registerForm.businessName.value.trim() : '',
                 role: 'owner',
                 createdAt: serverTimestamp(),
+                // Trial lock: 14 days from signup. `plan` stays "trial" until the
+                // owner is manually upgraded (e.g. in Firestore or a future billing
+                // flow) to "starter" / "pro" / "enterprise", which lifts the lock.
+                trialStartedAt: serverTimestamp(),
+                plan: 'trial',
             });
             window.location.href = 'dashboard.html';
         } catch (err) {
