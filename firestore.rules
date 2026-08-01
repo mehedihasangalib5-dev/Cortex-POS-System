@@ -2,11 +2,72 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Each signed-in user can read/create/update only their own profile doc,
-    // created at assets/js/auth-forms.js on registration.
+    // Platform admin (you) — must match assets/js/payment-config.js
+    // ADMIN_UIDS exactly, or the in-dashboard "Pending Payments" approve
+    // panel (admin-payments.html) won't be able to write anything.
+    function isAdmin() {
+      return request.auth != null && request.auth.uid in [
+        'U2HvvgDr5mREBRFCvQa6IuEjwzj2'
+      ];
+    }
+
+    // Each signed-in user can read their own profile doc, created at
+    // assets/js/auth-forms.js on registration.
+    //
+    // IMPORTANT: `plan` (and the initial `trialStartedAt`) are billing-
+    // critical fields. New accounts must start on plan:"trial", and after
+    // that, the ONLY way `plan` may change is the paymentCallback Cloud
+    // Function (functions/index.js) using the Admin SDK, which bypasses
+    // these rules entirely after independently verifying payment with
+    // SSLCommerz. Ordinary profile edits (name, business name, etc.) are
+    // still allowed from the client; a narrow one-time exception lets
+    // legacy accounts that predate the trial-lock feature self-heal a
+    // missing trialStartedAt without touching `plan`.
     match /users/{userId} {
-      allow read, update: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      allow create: if request.auth != null && request.auth.uid == userId
+                    && request.resource.data.plan == 'trial';
+
+      allow update: if request.auth != null && request.auth.uid == userId && (
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['name', 'businessName', 'businessType', 'branchCount', 'city', 'displayName', 'email'])
+        ||
+        ( !('trialStartedAt' in resource.data)
+          && request.resource.data.plan == 'trial'
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['trialStartedAt', 'plan']) )
+      )
+      // The ONLY other way `plan` may change from the client: the admin
+      // approving a manual bKash/Nagad order in admin-payments.html.
+      || ( isAdmin() && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['plan', 'planUpdatedAt']) );
+
+      allow delete: if false;
+    }
+
+    // Orders: manual bKash/Nagad payment proof submitted by the customer at
+    // registration (see assets/js/register-wizard.js). The customer can only
+    // ever CREATE their own order in "pending_verification" status — they
+    // can never set it to paid/approved themselves. Only the admin
+    // (admin-payments.html) can flip the status after checking the TrxID/
+    // screenshot, and only the status/review fields — never the amount,
+    // plan, or proof the customer submitted.
+    match /orders/{orderId} {
+      allow read: if request.auth != null &&
+        (request.auth.uid == resource.data.uid || isAdmin());
+
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'pending_verification'
+        && request.resource.data.plan in ['starter', 'pro']
+        && request.resource.data.keys().hasAll(
+             ['uid', 'plan', 'billingCycle', 'amount', 'method', 'senderNumber', 'trxId', 'screenshotUrl', 'status', 'createdAt']);
+
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'reviewedAt', 'reviewedBy']);
+
       allow delete: if false;
     }
 

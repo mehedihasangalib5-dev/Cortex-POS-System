@@ -120,27 +120,46 @@
 </div>
 </div>
 </header>
-<section class="auth-shell">
-<div class="surface p-8 w-full max-w-sm mx-4" data-aos="fade-up">
-<h1 class="font-display text-2xl font-bold mb-1 text-center" data-i18n="k021">Start Your Free Trial</h1>
-<p class="text-sm text-center mb-6" data-i18n="k226" style="color:var(--text-secondary)">No credit card required. Set up in minutes.</p>
+<section class="auth-shell py-12">
+<div class="surface p-6 sm:p-8 w-full max-w-lg mx-4" data-aos="fade-up" id="wizardCard">
+
+<div class="flex items-center justify-center gap-2 mb-7" id="stepIndicator">
+<div class="flex items-center gap-2 step-dot" data-step-dot="1">
+<div class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold step-circle">1</div>
+<span class="text-xs font-medium hidden sm:inline step-label">Account</span>
+</div>
+<div class="h-px w-8 sm:w-12" style="background:var(--border-subtle)"></div>
+<div class="flex items-center gap-2 step-dot" data-step-dot="2">
+<div class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold step-circle">2</div>
+<span class="text-xs font-medium hidden sm:inline step-label">Business</span>
+</div>
+<div class="h-px w-8 sm:w-12" style="background:var(--border-subtle)"></div>
+<div class="flex items-center gap-2 step-dot" data-step-dot="3">
+<div class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold step-circle">3</div>
+<span class="text-xs font-medium hidden sm:inline step-label">Plan</span>
+</div>
+</div>
+
 <div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="authError"></div>
-<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-emerald-50 text-emerald-700 border border-emerald-200" data-i18n="k122" id="authSuccess">Check your inbox for a password reset link.</div>
-<form id="registerForm">
+
+<div data-step="1">
+<h1 class="font-display text-2xl font-bold mb-1 text-center">Create Your Account</h1>
+<p class="text-sm text-center mb-6" style="color:var(--text-secondary)">No credit card required. Set up in minutes.</p>
+<form id="step1Form">
 <div class="mb-4">
-<label class="block text-sm font-medium mb-1.5" data-i18n="k037">Your name</label>
+<label class="block text-sm font-medium mb-1.5">Your name</label>
 <input class="input-field" name="name" required="" type="text"/>
 </div>
 <div class="mb-4">
-<label class="block text-sm font-medium mb-1.5" data-i18n="k227">Business name</label>
-<input class="input-field" name="businessName" type="text"/>
-</div>
-<div class="mb-4">
-<label class="block text-sm font-medium mb-1.5" data-i18n="k038">Email address</label>
+<label class="block text-sm font-medium mb-1.5">Email address</label>
 <input class="input-field" name="email" required="" type="email"/>
 </div>
-<div class="mb-5">
-<label class="block text-sm font-medium mb-1.5" data-i18n="k170">Password</label>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Phone number</label>
+<input class="input-field" name="phone" placeholder="01XXXXXXXXX" required="" type="tel"/>
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Password</label>
 <div class="relative">
 <input class="input-field pr-10" id="registerPassword" minlength="6" name="password" required="" type="password"/>
 <button aria-label="Show password" class="password-toggle absolute right-3 top-1/2 -translate-y-1/2" data-target="registerPassword" style="color:var(--text-secondary)" type="button">
@@ -148,11 +167,161 @@
 </button>
 </div>
 </div>
-<button class="btn-primary w-full mb-4" data-i18n="k228" id="authSubmitBtn" type="submit">Create Account</button>
+<div class="mb-5">
+<label class="block text-sm font-medium mb-1.5">Confirm password</label>
+<input class="input-field" minlength="6" name="confirmPassword" required="" type="password"/>
+</div>
+<button class="btn-primary w-full mb-4" id="step1Btn" type="submit">Continue</button>
 </form>
-<p class="text-center text-sm" style="color:var(--text-secondary)">Already have an account? <a class="text-primary font-medium" data-i18n="k229" href="login.html">Sign in</a>.</p>
+<p class="text-center text-sm" style="color:var(--text-secondary)">Already have an account? <a class="text-primary font-medium" href="login.html">Sign in</a>.</p>
+</div>
+
+<div class="hidden" data-step="2">
+<h1 class="font-display text-2xl font-bold mb-1 text-center">Tell Us About Your Business</h1>
+<p class="text-sm text-center mb-6" style="color:var(--text-secondary)">Helps us set up the right features for you.</p>
+<form id="step2Form">
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Business name</label>
+<input class="input-field" name="businessName" required="" type="text"/>
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Business type</label>
+<select class="input-field" name="businessType" required="">
+<option value="">Select one</option>
+<option value="retail">Retail shop</option>
+<option value="restaurant">Restaurant</option>
+<option value="pharmacy">Pharmacy</option>
+<option value="grocery">Grocery</option>
+<option value="other">Other</option>
+</select>
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Number of branches / outlets</label>
+<select class="input-field" name="branchCount" required="">
+<option value="1">1</option>
+<option value="2-5">2-5</option>
+<option value="6+">6+</option>
+</select>
+</div>
+<div class="mb-6">
+<label class="block text-sm font-medium mb-1.5">City / address</label>
+<input class="input-field" name="city" required="" type="text"/>
+</div>
+<div class="flex gap-3">
+<button class="surface border font-medium px-5 py-2.5 rounded-xl text-sm" data-back="1" style="border-color:var(--border-subtle)" type="button">Back</button>
+<button class="btn-primary flex-1" id="step2Btn" type="submit">Continue</button>
+</div>
+</form>
+</div>
+
+<div class="hidden" data-step="3">
+<h1 class="font-display text-2xl font-bold mb-1 text-center">Choose Your Plan</h1>
+<p class="text-sm text-center mb-6" style="color:var(--text-secondary)">Change or cancel any time.</p>
+
+<div class="grid grid-cols-3 gap-3 mb-6" id="planCards">
+<button class="plan-card surface border p-3 rounded-xl text-left" data-plan="trial" style="border-color:var(--border-subtle)" type="button">
+<p class="text-xs font-semibold uppercase" style="color:var(--text-secondary)">Free Trial</p>
+<p class="font-display font-bold text-lg mt-1">Tk 0</p>
+<p class="text-xs mt-1" style="color:var(--text-secondary)">14 days</p>
+</button>
+<button class="plan-card surface border p-3 rounded-xl text-left" data-plan="starter" style="border-color:var(--border-subtle)" type="button">
+<p class="text-xs font-semibold uppercase" style="color:var(--text-secondary)">Starter</p>
+<p class="font-display font-bold text-lg mt-1" data-price-display="starter">Tk 990</p>
+<p class="text-xs mt-1" style="color:var(--text-secondary)">/month</p>
+</button>
+<button class="plan-card surface border p-3 rounded-xl text-left" data-plan="pro" style="border-color:var(--border-subtle)" type="button">
+<p class="text-xs font-semibold uppercase" style="color:var(--text-secondary)">Pro</p>
+<p class="font-display font-bold text-lg mt-1" data-price-display="pro">Tk 2,490</p>
+<p class="text-xs mt-1" style="color:var(--text-secondary)">/month</p>
+</button>
+</div>
+
+<div class="hidden items-center justify-center gap-2 mb-6" id="billingToggle">
+<div class="flex items-center rounded-full p-1 text-sm font-medium" style="background:var(--bg-surface-alt)">
+<button class="px-4 py-1.5 rounded-full billing-btn" data-billing="monthly" type="button">Monthly</button>
+<button class="px-4 py-1.5 rounded-full billing-btn" data-billing="yearly" type="button">Yearly (-20%)</button>
+</div>
+</div>
+
+<form id="trialConfirmForm">
+<button class="btn-primary w-full mb-3" type="submit">Start Free Trial</button>
+</form>
+
+<div class="hidden" id="paidPlanSection">
+<div class="surface p-4 rounded-xl mb-5" style="background:var(--bg-surface-alt); border-color:var(--border-subtle)">
+<div class="flex items-center justify-between text-sm mb-1">
+<span style="color:var(--text-secondary)">Plan</span>
+<span class="font-medium" id="summaryPlan">-</span>
+</div>
+<div class="flex items-center justify-between text-lg font-bold">
+<span>Total</span>
+<span id="summaryTotal">Tk 0</span>
+</div>
+</div>
+<label class="flex items-start gap-2 text-sm mb-5 cursor-pointer">
+<input class="mt-0.5" id="tcCheckbox" required="" type="checkbox"/>
+<span style="color:var(--text-secondary)">I agree to the <a class="text-primary font-medium" href="terms.html" target="_blank">Terms and Conditions</a>.</span>
+</label>
+<button class="btn-primary w-full mb-3" id="proceedToPaymentBtn" type="button">Proceed to Payment</button>
+</div>
+
+<div class="hidden" id="paymentSection">
+<div class="rounded-xl px-4 py-3 text-center mb-4" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)">
+<p class="text-xs" style="color:var(--text-secondary)">Please send</p>
+<p class="font-display font-bold text-2xl" id="payAmountLabel">Tk 0</p>
+<p class="text-xs" style="color:var(--text-secondary)">to one of the numbers below</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5" id="paymentNumbers"></div>
+<form id="paymentProofForm">
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Paid via</label>
+<div class="flex gap-3" id="methodRadios"></div>
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Sender number (the number you sent from)</label>
+<input class="input-field" name="senderNumber" placeholder="01XXXXXXXXX" required="" type="tel"/>
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Transaction ID (TrxID)</label>
+<input class="input-field" name="trxId" required="" type="text"/>
+</div>
+<div class="mb-5">
+<label class="block text-sm font-medium mb-1.5">Payment screenshot</label>
+<input accept="image/*" class="input-field" id="screenshotInput" name="screenshot" required="" type="file"/>
+</div>
+<div class="flex gap-3">
+<button class="surface border font-medium px-5 py-2.5 rounded-xl text-sm" id="backToPlanBtn" style="border-color:var(--border-subtle)" type="button">Back</button>
+<button class="btn-primary flex-1" id="submitProofBtn" type="submit">Submit for Verification</button>
+</div>
+</form>
+</div>
+
+<div class="flex justify-center mt-1" id="step3BackWrap">
+<button class="text-sm font-medium" data-back="2" style="color:var(--text-secondary)" type="button">Back</button>
+</div>
+</div>
+
+<div class="hidden text-center py-6" data-step="4">
+<div class="h-14 w-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:color-mix(in srgb, var(--amber) 15%, transparent)">
+<i class="fa-solid fa-clock text-2xl" style="color:var(--amber)"></i>
+</div>
+<h1 class="font-display text-xl font-bold mb-2">Payment Under Review</h1>
+<p class="text-sm mb-6" style="color:var(--text-secondary)">We are reviewing your payment. Your plan will be activated within 1-24 hours. You can start using your account on the free trial in the meantime.</p>
+<a class="btn-primary inline-block px-6" href="dashboard.html">Go to Dashboard</a>
+</div>
+
 </div>
 </section>
+
+<style>
+.step-circle { background: var(--bg-surface-alt); color: var(--text-secondary); }
+.step-dot.active .step-circle { background: var(--color-primary); color: #fff; }
+.step-dot.active .step-label { color: var(--text-primary); }
+.step-dot .step-label { color: var(--text-secondary); }
+.plan-card { transition: border-color .15s ease, box-shadow .15s ease; }
+.plan-card.selected { border-color: var(--color-primary) !important; box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 25%, transparent); }
+.billing-btn.active { background: var(--color-primary); color: #fff; }
+</style>
 <footer class="border-t mt-20" style="border-color:var(--border-subtle)">
 <div class="max-w-7xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-5 gap-8">
 <div class="col-span-2">
@@ -208,6 +377,6 @@
 <script src="assets/js/main.js"></script>
 <script>AOS.init({ duration: 500, once: true });</script>
 <script src="assets/js/site-auth.js" type="module"></script>
-<script src="assets/js/auth-forms.js" type="module"></script>
+<script src="assets/js/register-wizard.js" type="module"></script>
 <script src="assets/js/i18n.js"></script></body>
 </html>

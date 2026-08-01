@@ -101,6 +101,33 @@
 <p class="text-sm" style="color:var(--text-secondary)">Your business profile, account, and app preferences.</p>
 </div>
 
+<!-- Billing & Plan -->
+<div class="surface p-6 mb-6">
+<div class="flex items-center justify-between mb-1">
+<h2 class="font-display text-lg font-bold">Billing &amp; Plan</h2>
+<span class="text-xs font-semibold px-2.5 py-1 rounded-full" id="planBadge" style="background:var(--bg-surface-alt); color:var(--text-secondary)">—</span>
+</div>
+<p class="text-sm mb-4" id="planStatusText" style="color:var(--text-secondary)">Loading your plan status…</p>
+<div class="grid sm:grid-cols-3 gap-3" id="planOptions">
+<div class="surface border p-4" data-plan-card="starter" style="border-color:var(--border-subtle)">
+<p class="font-semibold text-sm mb-0.5">Starter</p>
+<p class="font-mono-fig text-xl font-extrabold mb-2">৳990<span class="text-xs font-normal" style="color:var(--text-secondary)">/mo</span></p>
+<button class="w-full text-sm font-medium py-2 rounded-lg btn-primary" data-plan-btn="starter" type="button">Switch to Starter</button>
+</div>
+<div class="surface border p-4" data-plan-card="pro" style="border-color:var(--border-subtle)">
+<p class="font-semibold text-sm mb-0.5">Pro</p>
+<p class="font-mono-fig text-xl font-extrabold mb-2">৳2,490<span class="text-xs font-normal" style="color:var(--text-secondary)">/mo</span></p>
+<button class="w-full text-sm font-medium py-2 rounded-lg btn-primary" data-plan-btn="pro" type="button">Switch to Pro</button>
+</div>
+<div class="surface border p-4" data-plan-card="enterprise" style="border-color:var(--border-subtle)">
+<p class="font-semibold text-sm mb-0.5">Enterprise</p>
+<p class="font-mono-fig text-xl font-extrabold mb-2">Custom</p>
+<a class="block w-full text-sm font-medium py-2 rounded-lg text-center surface border" href="contact.html" style="border-color:var(--border-subtle)">Contact Sales</a>
+</div>
+</div>
+<p class="text-xs mt-4" style="color:var(--text-secondary)"><i class="fa-solid fa-shield-halved mr-1"></i>Payments are processed securely by SSLCommerz (bKash, Nagad, Rocket &amp; cards). You'll be redirected to their checkout page and back.</p>
+</div>
+
 <!-- Business Profile -->
 <div class="surface p-6 mb-6">
 <h2 class="font-display text-lg font-bold mb-1">Business Profile</h2>

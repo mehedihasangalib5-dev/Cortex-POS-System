@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="noindex, nofollow" name="robots"/>
+<title>Pending Payments · CorPOS &amp; IMS Admin</title>
+<link href="assets/img/favicon.ico" rel="icon" sizes="any"/>
+<link href="site.webmanifest" rel="manifest"/>
+<meta content="#2454FF" name="theme-color"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: { primary: { DEFAULT: '#2454FF', dark: '#1638C4' }, emerald: '#10B981', amber: '#F5A623' },
+                fontFamily: {
+                    display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    sans: ['"Inter"', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'monospace'],
+                },
+                borderRadius: { xl: '1rem', '2xl': '1.25rem' },
+            }
+        }
+    };
+</script>
+<link href="assets/css/style.css" rel="stylesheet"/>
+<script>
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+</head>
+<body class="font-sans">
+<header class="sticky top-0 z-40 surface-glass" style="border-radius:0; border-left:0; border-right:0; border-top:0;">
+<nav class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+<a class="flex items-center gap-2.5 shrink-0" href="dashboard.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white"><i class="fa-solid fa-layer-group text-sm"></i></div>
+<span class="font-display font-bold text-lg">CorPOS Admin</span>
+</a>
+<button class="px-3.5 py-2 text-sm font-medium" data-logout="" style="color:var(--text-secondary)" type="button">Logout</button>
+</nav>
+</header>
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
+
+<main class="max-w-5xl mx-auto px-6 py-10">
+
+<div class="hidden text-center py-24" id="notAdminView">
+<i class="fa-solid fa-lock text-3xl mb-4" style="color:var(--text-secondary)"></i>
+<p class="text-lg font-semibold mb-1">Not authorized</p>
+<p class="text-sm" style="color:var(--text-secondary)">This page is restricted to the platform admin.</p>
+</div>
+
+<div class="hidden" id="adminView">
+<h1 class="font-display text-2xl font-bold mb-1">Pending Payments</h1>
+<p class="text-sm mb-8" style="color:var(--text-secondary)">Match the TrxID/screenshot against your bKash/Nagad statement, then approve or reject.</p>
+
+<div id="pendingList" class="space-y-4"></div>
+<p class="hidden text-sm py-10 text-center" id="emptyState" style="color:var(--text-secondary)">No pending payments right now.</p>
+
+<h2 class="font-display text-lg font-bold mt-12 mb-4">Recently Reviewed</h2>
+<div id="reviewedList" class="space-y-3"></div>
+</div>
+
+</main>
+
+<script src="assets/js/site-auth.js" type="module"></script>
+<script type="module">
+import { auth, db } from "./assets/js/firebase-init.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+    collection, query, where, orderBy, getDocs, doc, updateDoc, serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { ADMIN_UIDS } from "./assets/js/payment-config.js";
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('[data-logout]')) return;
+    signOut(auth).then(() => { window.location.href = 'login.html'; });
+});
+
+function money(n) { return '৳' + Number(n).toLocaleString('en-US'); }
+
+function orderCard(orderDoc, { reviewed }) {
+    const o = orderDoc.data();
+    const created = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString() : '';
+    const statusColor = o.status === 'approved' ? 'text-emerald' : (o.status === 'rejected' ? 'text-red-500' : 'text-amber');
+    return `
+        <div class="surface p-5 rounded-xl" data-order-id="${orderDoc.id}">
+            <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
+                <div>
+                    <p class="font-semibold">${o.plan === 'pro' ? 'Pro' : 'Starter'} — ${o.billingCycle === 'yearly' ? 'Yearly' : 'Monthly'}</p>
+                    <p class="text-xs" style="color:var(--text-secondary)">${created}</p>
+                </div>
+                <span class="text-xs font-bold uppercase ${statusColor}">${o.status.replace('_', ' ')}</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm mb-4">
+                <div><p class="text-xs" style="color:var(--text-secondary)">Amount</p><p class="font-medium">${money(o.amount)}</p></div>
+                <div><p class="text-xs" style="color:var(--text-secondary)">Method</p><p class="font-medium">${o.method}</p></div>
+                <div><p class="text-xs" style="color:var(--text-secondary)">Sender</p><p class="font-medium font-mono">${o.senderNumber}</p></div>
+                <div><p class="text-xs" style="color:var(--text-secondary)">TrxID</p><p class="font-medium font-mono">${o.trxId}</p></div>
+            </div>
+            <a class="text-primary text-sm font-medium" href="${o.screenshotUrl}" target="_blank" rel="noopener">View screenshot →</a>
+            ${reviewed ? '' : `
+            <div class="flex gap-3 mt-4">
+                <button class="btn-primary !bg-emerald text-sm !py-2 !px-4" data-approve="${orderDoc.id}" data-uid="${o.uid}" data-plan="${o.plan}" type="button">Approve</button>
+                <button class="surface border text-sm !py-2 !px-4 rounded-xl" data-reject="${orderDoc.id}" style="border-color:var(--border-subtle)" type="button">Reject</button>
+            </div>`}
+        </div>
+    `;
+}
+
+async function loadOrders() {
+    const pendingSnap = await getDocs(query(
+        collection(db, 'orders'), where('status', '==', 'pending_verification'), orderBy('createdAt', 'desc')
+    ));
+    const pendingList = document.getElementById('pendingList');
+    pendingList.innerHTML = pendingSnap.docs.map((d) => orderCard(d, { reviewed: false })).join('');
+    document.getElementById('emptyState').classList.toggle('hidden', pendingSnap.docs.length > 0);
+
+    const reviewedSnap = await getDocs(query(
+        collection(db, 'orders'), where('status', 'in', ['approved', 'rejected']), orderBy('createdAt', 'desc')
+    ));
+    document.getElementById('reviewedList').innerHTML = reviewedSnap.docs.slice(0, 10)
+        .map((d) => orderCard(d, { reviewed: true })).join('') || '<p class="text-sm" style="color:var(--text-secondary)">Nothing reviewed yet.</p>';
+}
+
+document.getElementById('pendingList')?.addEventListener('click', async (e) => {
+    const approveBtn = e.target.closest('[data-approve]');
+    const rejectBtn = e.target.closest('[data-reject]');
+    if (!approveBtn && !rejectBtn) return;
+    const btn = approveBtn || rejectBtn;
+    btn.disabled = true;
+    btn.textContent = 'Working...';
+    try {
+        const orderId = btn.getAttribute('data-approve') || btn.getAttribute('data-reject');
+        await updateDoc(doc(db, 'orders', orderId), {
+            status: approveBtn ? 'approved' : 'rejected',
+            reviewedAt: serverTimestamp(),
+            reviewedBy: auth.currentUser.uid,
+        });
+        if (approveBtn) {
+            await updateDoc(doc(db, 'users', approveBtn.getAttribute('data-uid')), {
+                plan: approveBtn.getAttribute('data-plan'),
+                planUpdatedAt: serverTimestamp(),
+            });
+        }
+        await loadOrders();
+    } catch (err) {
+        console.error(err);
+        alert('Could not update this order. Check the console for details.');
+        btn.disabled = false;
+        btn.textContent = approveBtn ? 'Approve' : 'Reject';
+    }
+});
+
+onAuthStateChanged(auth, (user) => {
+    if (!user || !ADMIN_UIDS.includes(user.uid)) {
+        document.getElementById('notAdminView').classList.remove('hidden');
+        return;
+    }
+    document.getElementById('adminView').classList.remove('hidden');
+    loadOrders();
+});
+</script>
+</body>
+</html>
