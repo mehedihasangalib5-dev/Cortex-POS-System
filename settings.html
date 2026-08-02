@@ -125,7 +125,7 @@
 <a class="block w-full text-sm font-medium py-2 rounded-lg text-center surface border" href="contact.html" style="border-color:var(--border-subtle)">Contact Sales</a>
 </div>
 </div>
-<p class="text-xs mt-4" style="color:var(--text-secondary)"><i class="fa-solid fa-shield-halved mr-1"></i>Payments are processed securely by SSLCommerz (bKash, Nagad, Rocket &amp; cards). You'll be redirected to their checkout page and back.</p>
+<p class="text-xs mt-4" style="color:var(--text-secondary)"><i class="fa-solid fa-shield-halved mr-1"></i>Send payment via bKash/Nagad and submit your TrxID — our team verifies and activates it manually, usually within 1-24 hours.</p>
 </div>
 
 <!-- Business Profile -->
@@ -195,6 +195,51 @@
 </div>
 </div>
 </main>
+</div>
+
+<!-- Upgrade Plan modal: manual bKash/Nagad payment proof, same review flow
+     as a new signup (register-wizard.js), but for an already-signed-in
+     account — no re-registration, existing data untouched. -->
+<style>.upgrade-billing-btn.active { background: var(--color-primary, #2454FF); color: #fff; }</style>
+<div class="hidden fixed inset-0 z-50 items-center justify-center p-4" id="upgradeModal" style="background:rgba(15,17,26,0.6);backdrop-filter:blur(2px)">
+<div class="surface w-full max-w-md p-6 rounded-2xl max-h-[90vh] overflow-y-auto">
+<div class="flex items-center justify-between mb-1">
+<h3 class="font-display font-bold text-lg" id="upgradeModalTitle">Switch to Starter</h3>
+<button class="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" id="upgradeModalClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<p class="text-sm mb-4" style="color:var(--text-secondary)">Your account and data stay exactly as they are — only your plan changes once this is approved.</p>
+
+<div class="hidden items-center justify-center gap-2 mb-4" id="upgradeBillingToggle">
+<div class="flex items-center rounded-full p-1 text-sm font-medium" style="background:var(--bg-surface-alt)">
+<button class="px-4 py-1.5 rounded-full upgrade-billing-btn active" data-billing="monthly" type="button">Monthly</button>
+<button class="px-4 py-1.5 rounded-full upgrade-billing-btn" data-billing="yearly" type="button">Yearly (-20%)</button>
+</div>
+</div>
+
+<div class="rounded-xl px-4 py-3 text-center mb-4" style="background:var(--bg-surface-alt); border:1px solid var(--border-subtle)">
+<p class="text-xs" style="color:var(--text-secondary)">Please send</p>
+<p class="font-display font-bold text-2xl" id="upgradePayAmount">৳0</p>
+<p class="text-xs" style="color:var(--text-secondary)">to one of the numbers below</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5" id="upgradePaymentNumbers"></div>
+
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="upgradeFormError"></div>
+<form id="upgradeForm">
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Paid via</label>
+<div class="flex gap-3" id="upgradeMethodRadios"></div>
+</div>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Sender number (the number you sent from)</label>
+<input class="input-field" id="upgradeSenderNumber" placeholder="01XXXXXXXXX" required="" type="tel"/>
+</div>
+<div class="mb-5">
+<label class="block text-sm font-medium mb-1.5">Transaction ID (TrxID)</label>
+<input class="input-field" id="upgradeTrxId" required="" type="text"/>
+</div>
+<button class="btn-primary w-full" id="upgradeSubmitBtn" type="submit">Submit for Verification</button>
+</form>
+</div>
 </div>
 
 <script src="assets/js/main.js"></script>
