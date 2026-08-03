@@ -7,7 +7,7 @@ service cloud.firestore {
     // panel (admin-payments.html) won't be able to write anything.
     function isAdmin() {
       return request.auth != null && request.auth.uid in [
-        '6q238xgdsBSf8Q0ZnPwLbqswrxR2'
+        'I50u3zwtzAWyeNYFJpvRTTE5Mtl1'
       ];
     }
 
@@ -25,19 +25,29 @@ service cloud.firestore {
     function myRole() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
     }
+    // NOTE: reading a map key that doesn't exist (dot access) THROWS in
+    // Firestore rules instead of returning null the way JS would. Legacy
+    // user docs predate the `roleId` field entirely, so this must use the
+    // `in` operator to check the field exists before reading it — otherwise
+    // every legacy staff account throws here (and is therefore DENIED
+    // below) instead of getting the intended fail-open behavior.
     function myRoleId() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roleId;
+      let u = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      return ('roleId' in u) ? u.roleId : null;
     }
     // Whether the signed-in user is allowed to delete records (products,
     // customers). The owner always can. A staff member can unless their
     // assigned custom role explicitly turns "deleteRecords" off — no
-    // roleId (legacy accounts, or the role doc having been removed) fails
-    // OPEN, matching resolvePermissions()'s fail-open default in
-    // assets/js/roles-utils.js, so a hiccup here never locks a business
-    // out of its own data.
+    // roleId (legacy accounts), a since-deleted role doc, or a role doc
+    // missing the permissions map/key all fail OPEN, matching
+    // resolvePermissions()'s fail-open default in assets/js/roles-utils.js,
+    // so a hiccup here never locks a business out of its own data.
     function canDeleteRecords() {
       return myRole() == 'owner'
         || myRoleId() == null
+        || !exists(/databases/$(database)/documents/roles/$(myRoleId()))
+        || !('permissions' in get(/databases/$(database)/documents/roles/$(myRoleId())).data)
+        || !('deleteRecords' in get(/databases/$(database)/documents/roles/$(myRoleId())).data.permissions)
         || get(/databases/$(database)/documents/roles/$(myRoleId())).data.permissions.deleteRecords != false;
     }
 
@@ -193,6 +203,8 @@ service cloud.firestore {
     // form. It's a submission to the PLATFORM's own "Contact Us" page
     // (index.html/contact.html) — not per-business tenant data — so only
     // the platform admin can read/manage the inbox, never a tenant.
+    // Full inbox management (mark read/replied, delete) lives in its own
+    // admin panel — see admin-messages.html.
     match /contactMessages/{messageId} {
       allow create: if true;
       allow read, update, delete: if isAdmin();

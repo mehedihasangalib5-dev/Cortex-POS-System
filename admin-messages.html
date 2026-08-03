@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="noindex, nofollow" name="robots"/>
+<title>Messages Admin · CorPOS &amp; IMS</title>
+<link href="assets/img/favicon.ico" rel="icon" sizes="any"/>
+<link href="site.webmanifest" rel="manifest"/>
+<meta content="#2454FF" name="theme-color"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: { primary: { DEFAULT: '#2454FF', dark: '#1638C4' }, emerald: '#10B981', amber: '#F5A623' },
+                fontFamily: {
+                    display: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    sans: ['"Inter"', 'sans-serif'],
+                    mono: ['"JetBrains Mono"', 'monospace'],
+                },
+                borderRadius: { xl: '1rem', '2xl': '1.25rem' },
+            }
+        }
+    };
+</script>
+<link href="assets/css/style.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
+<script>
+    if (localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+</script>
+</head>
+<body class="font-sans">
+<header class="sticky top-0 z-40 surface-glass" style="border-radius:0; border-left:0; border-right:0; border-top:0;">
+<nav class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+<a class="flex items-center gap-2.5 shrink-0" href="dashboard.html">
+<div class="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-white"><i class="fa-solid fa-layer-group text-sm"></i></div>
+<span class="font-display font-bold text-lg">CorPOS Admin</span>
+</a>
+<div class="flex items-center gap-4">
+<a class="text-sm font-medium" href="admin-payments.html" style="color:var(--text-secondary)">Payments</a>
+<button class="px-3.5 py-2 text-sm font-medium" data-logout="" style="color:var(--text-secondary)" type="button">Logout</button>
+</div>
+</nav>
+</header>
+
+<main class="max-w-5xl mx-auto px-6 py-10">
+
+<div class="hidden text-center py-24" id="notAdminView">
+<i class="fa-solid fa-lock text-3xl mb-4" style="color:var(--text-secondary)"></i>
+<p class="text-lg font-semibold mb-1">Not authorized</p>
+<p class="text-sm mb-4" style="color:var(--text-secondary)">This page is restricted to the platform admin.</p>
+<p class="text-xs" style="color:var(--text-secondary)">You're signed in as:</p>
+<p class="text-sm font-mono font-medium mb-1" id="notAdminUid">—</p>
+<p class="text-xs max-w-sm mx-auto" style="color:var(--text-secondary)">If this should be the admin account, add this exact UID to <code>ADMIN_UIDS</code> in <code>assets/js/payment-config.js</code> and to <code>isAdmin()</code> in <code>firestore.rules</code> (then redeploy the rules).</p>
+</div>
+
+<div class="hidden" id="adminView">
+
+<div class="flex flex-wrap items-center justify-between gap-3 mb-1">
+<h1 class="font-display text-2xl font-bold">Messages</h1>
+<button class="surface border text-sm font-medium px-4 py-2 rounded-xl" id="refreshBtn" style="border-color:var(--border-subtle)" type="button">
+<i class="fa-solid fa-rotate-right mr-1.5"></i>Refresh
+</button>
+</div>
+<p class="text-sm mb-6" style="color:var(--text-secondary)">Submissions from the public "Contact Us" form (index.html / contact.html).</p>
+
+<div class="hidden mb-6 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="loadErrorBanner"></div>
+
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+<div class="surface p-4 rounded-xl">
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Total</p>
+<p class="font-display text-xl font-bold" id="statTotal">—</p>
+</div>
+<div class="surface p-4 rounded-xl">
+<p class="text-xs mb-1" style="color:var(--text-secondary)">New</p>
+<p class="font-display text-xl font-bold" id="statNew">—</p>
+</div>
+<div class="surface p-4 rounded-xl">
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Read</p>
+<p class="font-display text-xl font-bold" id="statRead">—</p>
+</div>
+<div class="surface p-4 rounded-xl">
+<p class="text-xs mb-1" style="color:var(--text-secondary)">Replied</p>
+<p class="font-display text-xl font-bold" id="statReplied">—</p>
+</div>
+</div>
+
+<div class="relative mb-5">
+<i class="fa-solid fa-magnifying-glass absolute top-1/2 -translate-y-1/2 left-4 text-sm" style="color:var(--text-secondary)"></i>
+<input class="input-field !pl-10" id="searchInput" placeholder="Search by name, email, or subject" type="text"/>
+</div>
+
+<div class="inline-flex items-center gap-1 p-1 rounded-full surface mb-6" id="tabBar">
+<button class="tab-btn px-4 py-2 rounded-full text-sm font-medium" data-tab="all" type="button">All <span class="tab-count" data-count="all">0</span></button>
+<button class="tab-btn px-4 py-2 rounded-full text-sm font-medium" data-tab="new" type="button">New <span class="tab-count" data-count="new">0</span></button>
+<button class="tab-btn px-4 py-2 rounded-full text-sm font-medium" data-tab="read" type="button">Read <span class="tab-count" data-count="read">0</span></button>
+<button class="tab-btn px-4 py-2 rounded-full text-sm font-medium" data-tab="replied" type="button">Replied <span class="tab-count" data-count="replied">0</span></button>
+</div>
+
+<div id="messageList" class="space-y-4"></div>
+<p class="hidden text-sm py-16 text-center" id="emptyState" style="color:var(--text-secondary)">Nothing here.</p>
+<div class="flex justify-center mt-6">
+<button class="hidden surface border font-medium px-5 py-2 rounded-xl text-sm" id="loadMoreBtn" style="border-color:var(--border-subtle)" type="button">Load more</button>
+</div>
+
+</div>
+
+</main>
+
+<!-- Delete-confirmation modal -->
+<div class="hidden fixed inset-0 z-50 items-center justify-center p-4" id="deleteModal" style="background:rgba(15,17,26,0.6);backdrop-filter:blur(2px)">
+<div class="surface w-full max-w-sm p-6 rounded-2xl">
+<h3 class="font-display font-bold text-lg mb-1">Delete this message?</h3>
+<p class="text-sm mb-5" style="color:var(--text-secondary)">This can't be undone.</p>
+<div class="flex gap-3">
+<button class="surface border font-medium flex-1 py-2.5 rounded-xl text-sm" id="deleteCancelBtn" style="border-color:var(--border-subtle)" type="button">Cancel</button>
+<button class="flex-1 py-2.5 rounded-xl text-sm font-medium text-white bg-red-500" id="deleteConfirmBtn" type="button">Delete</button>
+</div>
+</div>
+</div>
+
+<style>
+    .tab-btn { color: var(--text-secondary); }
+    .tab-btn.active { background: var(--color-primary, #2454FF); color: #fff; }
+    .tab-btn .tab-count { opacity: 0.75; font-size: 0.75rem; margin-left: 0.15rem; }
+</style>
+
+<script type="module">
+import { auth, db } from "./assets/js/firebase-init.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+    collection, query, orderBy, getDocs, doc, updateDoc, deleteDoc, serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { ADMIN_UIDS } from "./assets/js/payment-config.js";
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('[data-logout]')) return;
+    signOut(auth).then(() => { window.location.href = 'login.html'; });
+});
+
+function escapeHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+const TABS = ['all', 'new', 'read', 'replied'];
+const PAGE_SIZE = 10;
+
+// All messages are fetched once (one simple orderBy-only query — no
+// composite index needed) and kept fully in memory, same pattern as
+// admin-payments.html. Tabs/search just filter the in-memory array.
+let allMessages = [];
+let activeTab = 'all';
+let shownCount = PAGE_SIZE;
+
+function statusOf(d) {
+    return d.status || 'new'; // older submissions may predate the status field
+}
+
+function matchesSearch(d, q) {
+    if (!q) return true;
+    q = q.toLowerCase();
+    return [d.name, d.email, d.subject].some((v) => (v || '').toLowerCase().includes(q));
+}
+
+function messageCard(docSnap) {
+    const d = docSnap.data();
+    const status = statusOf(d);
+    const created = d.createdAt?.toDate ? d.createdAt.toDate().toLocaleString() : '—';
+    const statusColor = status === 'new' ? 'text-primary' : (status === 'replied' ? 'text-emerald' : 'text-amber');
+    const mailHref = d.email ? `mailto:${encodeURIComponent(d.email)}?subject=${encodeURIComponent('Re: ' + (d.subject || 'Your message to CorPOS'))}` : null;
+    return `
+        <div class="surface p-5 rounded-xl" data-message-id="${docSnap.id}">
+            <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
+                <div>
+                    <p class="font-semibold">${escapeHtml(d.name || 'Unknown')}</p>
+                    <p class="text-xs" style="color:var(--text-secondary)">${escapeHtml(d.email || '')}</p>
+                    <p class="text-xs" style="color:var(--text-secondary)">${created}</p>
+                </div>
+                <span class="text-xs font-bold uppercase ${statusColor}">${status}</span>
+            </div>
+            <p class="text-sm font-medium mb-1">${escapeHtml(d.subject || '(no subject)')}</p>
+            <p class="text-sm whitespace-pre-wrap mb-4" style="color:var(--text-secondary)">${escapeHtml(d.message || '')}</p>
+            <div class="flex flex-wrap gap-2">
+                ${mailHref ? `<a class="btn-primary !bg-primary text-sm !py-2 !px-4" href="${mailHref}"><i class="fa-solid fa-reply mr-1.5"></i>Reply by email</a>` : ''}
+                ${status !== 'read' ? `<button class="surface border text-sm !py-2 !px-4 rounded-xl" data-mark="read" data-id="${docSnap.id}" style="border-color:var(--border-subtle)" type="button">Mark read</button>` : ''}
+                ${status !== 'replied' ? `<button class="surface border text-sm !py-2 !px-4 rounded-xl" data-mark="replied" data-id="${docSnap.id}" style="border-color:var(--border-subtle)" type="button">Mark replied</button>` : ''}
+                <button class="surface border text-sm !py-2 !px-4 rounded-xl text-red-500" data-delete="${docSnap.id}" style="border-color:var(--border-subtle)" type="button">Delete</button>
+            </div>
+        </div>
+    `;
+}
+
+function renderStats() {
+    document.getElementById('statTotal').textContent = allMessages.length;
+    TABS.filter((t) => t !== 'all').forEach((s) => {
+        const count = allMessages.filter((d) => statusOf(d.data()) === s).length;
+        document.getElementById(`stat${s[0].toUpperCase()}${s.slice(1)}`).textContent = count;
+        document.querySelector(`.tab-count[data-count="${s}"]`).textContent = count;
+    });
+    document.querySelector('.tab-count[data-count="all"]').textContent = allMessages.length;
+}
+
+function render() {
+    const q = document.getElementById('searchInput').value.trim();
+
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === activeTab);
+    });
+
+    const byTab = activeTab === 'all' ? allMessages : allMessages.filter((d) => statusOf(d.data()) === activeTab);
+    const filtered = byTab.filter((d) => matchesSearch(d.data(), q));
+    const shown = filtered.slice(0, shownCount);
+
+    document.getElementById('messageList').innerHTML = shown.map(messageCard).join('');
+    document.getElementById('emptyState').classList.toggle('hidden', filtered.length > 0);
+    document.getElementById('loadMoreBtn').classList.toggle('hidden', shown.length >= filtered.length);
+}
+
+async function loadMessages() {
+    const errBanner = document.getElementById('loadErrorBanner');
+    errBanner.classList.add('hidden');
+    errBanner.textContent = '';
+
+    try {
+        const q = query(collection(db, 'contactMessages'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        allMessages = snap.docs;
+    } catch (err) {
+        console.error('Could not load contact messages:', err);
+        allMessages = [];
+        const linkify = (s) => s.replace(/(https?:\/\/\S+)/g, '<a href="$1" target="_blank" rel="noopener" style="text-decoration:underline">$1</a>');
+        errBanner.innerHTML = `<strong>Could not load messages:</strong><br>[${err.code || 'unknown'}] ${linkify(err.message || String(err))}`;
+        errBanner.classList.remove('hidden');
+    }
+
+    shownCount = PAGE_SIZE;
+    renderStats();
+    render();
+}
+
+// ---- Tabs, search, pagination ----
+document.getElementById('tabBar').addEventListener('click', (e) => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    activeTab = btn.getAttribute('data-tab');
+    shownCount = PAGE_SIZE;
+    render();
+});
+document.getElementById('searchInput').addEventListener('input', () => {
+    shownCount = PAGE_SIZE;
+    render();
+});
+document.getElementById('loadMoreBtn').addEventListener('click', () => {
+    shownCount += PAGE_SIZE;
+    render();
+});
+document.getElementById('refreshBtn').addEventListener('click', loadMessages);
+
+// ---- Mark as read / replied ----
+document.getElementById('messageList').addEventListener('click', async (e) => {
+    const markBtn = e.target.closest('[data-mark]');
+    const deleteBtn = e.target.closest('[data-delete]');
+
+    if (markBtn) {
+        const newStatus = markBtn.getAttribute('data-mark');
+        const id = markBtn.getAttribute('data-id');
+        markBtn.disabled = true;
+        try {
+            await updateDoc(doc(db, 'contactMessages', id), {
+                status: newStatus,
+                reviewedAt: serverTimestamp(),
+                reviewedBy: auth.currentUser.uid,
+            });
+            await loadMessages();
+        } catch (err) {
+            console.error(err);
+            alert('Could not update this message. Check the console for details.');
+            markBtn.disabled = false;
+        }
+        return;
+    }
+
+    if (deleteBtn) {
+        openDeleteModal(deleteBtn.getAttribute('data-delete'));
+    }
+});
+
+// ---- Delete (custom modal instead of the browser's native confirm) ----
+let pendingDeleteId = null;
+
+function openDeleteModal(id) {
+    pendingDeleteId = id;
+    const modal = document.getElementById('deleteModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeDeleteModal() {
+    pendingDeleteId = null;
+    const modal = document.getElementById('deleteModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+document.getElementById('deleteCancelBtn').addEventListener('click', closeDeleteModal);
+document.getElementById('deleteModal').addEventListener('click', (e) => {
+    if (e.target.id === 'deleteModal') closeDeleteModal();
+});
+
+document.getElementById('deleteConfirmBtn').addEventListener('click', async () => {
+    const id = pendingDeleteId;
+    const btn = document.getElementById('deleteConfirmBtn');
+    btn.disabled = true;
+    btn.textContent = 'Deleting...';
+    try {
+        await deleteDoc(doc(db, 'contactMessages', id));
+        closeDeleteModal();
+        await loadMessages();
+    } catch (err) {
+        console.error(err);
+        alert('Could not delete this message. Check the console for details.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Delete';
+    }
+});
+
+onAuthStateChanged(auth, (user) => {
+    if (!user || !ADMIN_UIDS.includes(user.uid)) {
+        if (user) document.getElementById('notAdminUid').textContent = user.uid;
+        document.getElementById('notAdminView').classList.remove('hidden');
+        return;
+    }
+    document.getElementById('adminView').classList.remove('hidden');
+    loadMessages();
+});
+</script>
+</body>
+</html>
