@@ -1,22 +1,20 @@
 // ---------------------------------------------------------------------------
 // Dashboard: auth guard + user info + logout (via app-shell.js), live KPI
 // cards (today's sales, product count, low stock, 30-day net profit), and
-// recent sales / recent contact messages widgets.
+// the recent sales widget.
+//
+// Note: contact-form submissions (contactMessages) used to have a "Recent
+// Contact Messages" widget bolted onto this dashboard for the platform
+// admin. That's now its own full admin panel — see admin-messages.html —
+// so this file no longer touches contactMessages at all.
 // ---------------------------------------------------------------------------
 import { db } from "./firebase-init.js";
 import { requireAuth, escapeHtml, formatTaka } from "./app-shell.js";
 import { collection, query, where, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { ADMIN_UIDS } from "./payment-config.js";
 
 requireAuth(async (user, ctx) => {
     const businessId = ctx.businessId;
-    const tasks = [loadSalesAndKpis(businessId), loadProductKpis(businessId), loadExpenseKpis(businessId)];
-    // contactMessages are submissions to the PLATFORM's own public "Contact
-    // Us" form (index.html/contact.html) — not per-business data. Only the
-    // platform admin should ever see these, never a tenant's dashboard.
-    if (ADMIN_UIDS.includes(user.uid)) tasks.push(loadRecentMessages());
-    else document.getElementById('recentMessagesCard')?.classList.add('hidden');
-    await Promise.all(tasks);
+    await Promise.all([loadSalesAndKpis(businessId), loadProductKpis(businessId), loadExpenseKpis(businessId)]);
 });
 
 function startOfToday() {
@@ -30,37 +28,6 @@ function daysAgo(n) {
     d.setDate(d.getDate() - n);
     d.setHours(0, 0, 0, 0);
     return d;
-}
-
-async function loadRecentMessages() {
-    const list = document.getElementById('recentMessagesList');
-    if (!list) return;
-    try {
-        const q = query(collection(db, 'contactMessages'), orderBy('createdAt', 'desc'), limit(5));
-        const snap = await getDocs(q);
-        if (snap.empty) {
-            list.innerHTML = '<p class="text-sm" style="color:var(--text-secondary)">No contact messages yet.</p>';
-            return;
-        }
-        list.innerHTML = '';
-        snap.forEach((docSnap) => {
-            const d = docSnap.data();
-            const row = document.createElement('div');
-            row.className = 'flex items-start justify-between gap-3 py-3 border-b';
-            row.style.borderColor = 'var(--border-subtle)';
-            row.innerHTML = `
-                <div>
-                    <p class="text-sm font-semibold">${escapeHtml(d.name || 'Unknown')}</p>
-                    <p class="text-xs" style="color:var(--text-secondary)">${escapeHtml(d.subject || d.email || '')}</p>
-                </div>
-                <span class="text-xs shrink-0" style="color:var(--text-secondary)">${d.createdAt ? d.createdAt.toDate().toLocaleDateString() : '—'}</span>
-            `;
-            list.appendChild(row);
-        });
-    } catch (err) {
-        console.error(err);
-        list.innerHTML = '<p class="text-sm text-red-500">Could not load messages — check your Firebase config and Firestore rules.</p>';
-    }
 }
 
 async function loadSalesAndKpis(businessId) {

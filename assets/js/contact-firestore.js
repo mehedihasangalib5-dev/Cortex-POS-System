@@ -39,6 +39,7 @@ if (form) {
                 email: form.email.value.trim(),
                 subject: form.subject.value.trim(),
                 message: form.message.value.trim(),
+                status: 'new', // 'new' | 'read' | 'replied' — managed from admin-messages.html
                 createdAt: serverTimestamp(),
             });
             successBox.classList.remove('hidden');
