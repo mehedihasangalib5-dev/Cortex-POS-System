@@ -31,10 +31,36 @@ firebase deploy --only firestore:rules
 
 These rules:
 - Let anyone submit the **Contact** form (public `create` on `contactMessages`),
-  but only signed-in users can read/manage those messages (shown on the
-  dashboard).
+  but only the platform admin can read/manage those messages.
 - Let each signed-in user read/create/update only their **own** `users/{uid}`
   profile document, created automatically on registration.
+- Isolate every business's data (`products`, `sales`, `customers`,
+  `employees`, `expenses`, `payrollRecords`, `settings`) by a `businessId`
+  field, so one customer's account can never see another's.
+
+### ⚠️ Migrating existing data (only relevant if you had data before this)
+
+If `products`, `sales`, `customers`, etc. already had documents in them
+*before* multi-tenancy was added, those documents have **no `businessId`
+field** — the new rules above will make them invisible to everyone,
+including you, the moment you deploy. New documents created from now on
+get `businessId` automatically; only pre-existing ones need a one-time
+backfill.
+
+To fix it: for each existing document in those collections, set
+`businessId` to the uid of whichever account should own that data (almost
+always your own, if you were the only one using it). Easiest ways to do
+this once:
+- **Firebase Console**: open each collection, edit each document, add the
+  `businessId` field manually (fine for a handful of documents).
+- **A short Admin SDK script**: loop over each collection with
+  `db.collection('products').get()` and `doc.ref.update({ businessId: OWNER_UID })`
+  for each doc — ask an AI coding assistant (or Claude) to write this for
+  you if you have more than a few documents; it's a 15-line Node.js script
+  run once with `firebase-admin`.
+
+If you're starting fresh (no real data yet), you can ignore this section
+entirely.
 
 ## 4. Serve the site over http(s), not file://
 

@@ -5,8 +5,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="noindex, nofollow" name="robots"/>
-<title>Point of Sale · CorPOS &amp; IMS</title>
-<meta content="Ring up a new sale." name="description"/>
+<title>Warehouses · CorPOS &amp; IMS</title>
+<meta content="Manage warehouses/locations and transfer stock between them." name="description"/>
 <link href="assets/img/favicon.ico" rel="icon" sizes="any"/>
 <link href="assets/img/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
 <link href="assets/img/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
@@ -46,7 +46,7 @@
     }
 </script>
 </head>
-<body class="font-sans" data-page="pos">
+<body class="font-sans" data-page="warehouses">
 <header class="surface-glass sticky top-0 z-30 px-3 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4" style="border-radius:0">
 <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
 <button aria-controls="sidebar" aria-expanded="false" aria-label="Open menu" class="lg:hidden h-9 w-9 shrink-0 rounded-lg flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" id="sidebarToggle" type="button">
@@ -96,73 +96,121 @@
 <a class="nav-link" data-nav="settings" href="settings.html"><i class="fa-solid fa-gear w-4 text-center"></i><span>Settings</span></a>
 </aside>
 
-<main class="flex-1 min-w-0 px-4 sm:px-6 py-6 w-full">
-<h1 class="font-display text-2xl font-bold mb-4">Point of Sale</h1>
-
-<div class="grid lg:grid-cols-[1fr_360px] gap-6 items-start">
-<!-- Product picker -->
+<main class="flex-1 min-w-0 px-6 py-8 w-full">
+<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
 <div>
-<div class="flex flex-wrap items-center gap-3 mb-4">
-<div class="relative flex-1 min-w-[220px]">
-<i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-sm" style="color:var(--text-secondary)"></i>
-<input class="input-field pl-9" id="posSearch" placeholder="Search products by name or SKU..." type="text"/>
+<h1 class="font-display text-2xl font-bold mb-1">Warehouses</h1>
+<p class="text-sm" style="color:var(--text-secondary)">Manage your locations and move stock between them.</p>
 </div>
-<div class="flex items-center gap-2 shrink-0">
-<i class="fa-solid fa-warehouse text-sm" style="color:var(--text-secondary)"></i>
-<select class="input-field !w-auto" id="posWarehouse"></select>
-</div>
-</div>
-<div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="posProductGrid">
-<p class="col-span-full text-sm py-6 text-center" style="color:var(--text-secondary)">Loading products...</p>
+<div class="flex items-center gap-2">
+<button class="text-sm !py-2.5 !px-4 rounded-lg font-medium border" id="transferStockBtn" style="border-color:var(--border-subtle)"><i class="fa-solid fa-right-left mr-1.5"></i>Transfer Stock</button>
+<button class="btn-primary text-sm !py-2.5 !px-4" id="addWarehouseBtn"><i class="fa-solid fa-plus mr-1.5"></i>Add Warehouse</button>
 </div>
 </div>
 
-<!-- Cart -->
-<div class="surface p-5 lg:sticky lg:top-[85px]">
-<h2 class="font-display text-lg font-bold mb-3">Current Sale</h2>
-<div class="max-h-[40vh] overflow-y-auto mb-3 -mx-1 px-1" id="cartItems">
-<p class="text-sm py-4 text-center" style="color:var(--text-secondary)">Cart is empty. Tap a product to add it.</p>
+<p class="text-xs mb-3" id="warehouseLimitLabel" style="color:var(--text-secondary)"></p>
+
+<div class="surface overflow-x-auto mb-8">
+<table class="w-full text-sm">
+<thead>
+<tr class="border-b text-left" style="border-color:var(--border-subtle)">
+<th class="px-4 py-3 font-semibold">Name</th>
+<th class="px-4 py-3 font-semibold">Address</th>
+<th class="px-4 py-3 font-semibold">Status</th>
+<th class="px-4 py-3 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody id="warehouseTableBody">
+<tr><td class="px-4 py-6 text-center" colspan="4" style="color:var(--text-secondary)">Loading warehouses...</td></tr>
+</tbody>
+</table>
 </div>
-<div class="border-t pt-3 space-y-2 text-sm mb-4" style="border-color:var(--border-subtle)">
-<div class="flex items-center justify-between">
-<span style="color:var(--text-secondary)">Subtotal</span>
-<span class="font-mono-fig" id="cartSubtotal">৳0</span>
-</div>
-<div class="flex items-center justify-between gap-2">
-<label style="color:var(--text-secondary)" for="cartDiscount">Discount (৳)</label>
-<input class="input-field !w-24 !py-1.5 text-right font-mono-fig" id="cartDiscount" min="0" step="0.01" type="number" value="0"/>
-</div>
-<div class="flex items-center justify-between font-bold text-base pt-1">
-<span>Total</span>
-<span class="font-mono-fig" id="cartTotal">৳0</span>
-</div>
-</div>
-<div class="mb-4">
-<label class="block text-sm font-medium mb-1.5">Payment Method</label>
-<select class="input-field" id="paymentMethod">
-<option value="cash">Cash</option>
-<option value="card">Card</option>
-<option value="mobile_banking">Mobile Banking (bKash/Nagad)</option>
-</select>
-</div>
-<button class="btn-primary w-full mb-2" disabled="" id="checkoutBtn"><i class="fa-solid fa-circle-check mr-1.5"></i>Checkout</button>
-<button class="w-full text-sm py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5" id="clearCartBtn" style="color:var(--text-secondary)" type="button">Clear cart</button>
-</div>
+
+<h2 class="font-display text-lg font-bold mb-3">Recent Stock Transfers</h2>
+<div class="surface overflow-x-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="border-b text-left" style="border-color:var(--border-subtle)">
+<th class="px-4 py-3 font-semibold">Date</th>
+<th class="px-4 py-3 font-semibold">Product</th>
+<th class="px-4 py-3 font-semibold">From</th>
+<th class="px-4 py-3 font-semibold">To</th>
+<th class="px-4 py-3 font-semibold text-right">Qty</th>
+<th class="px-4 py-3 font-semibold">Note</th>
+</tr>
+</thead>
+<tbody id="transferTableBody">
+<tr><td class="px-4 py-6 text-center" colspan="6" style="color:var(--text-secondary)">Loading transfers...</td></tr>
+</tbody>
+</table>
 </div>
 </main>
 </div>
 
-<!-- Success modal -->
-<div class="fixed inset-0 z-50 hidden items-center justify-center p-4" id="saleSuccessModal" style="background:rgba(15,23,42,0.5)">
-<div class="surface w-full max-w-sm p-6 text-center">
-<div class="h-14 w-14 rounded-full bg-emerald/10 text-emerald flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-check"></i></div>
-<h2 class="font-display text-lg font-bold mb-1">Sale Completed</h2>
-<p class="text-sm mb-5" id="saleSuccessAmount" style="color:var(--text-secondary)"></p>
-<button class="btn-primary w-full" id="saleSuccessOk" type="button">New Sale</button>
+<!-- Add / Edit Warehouse Modal -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center p-4" id="warehouseModal" style="background:rgba(15,23,42,0.5)">
+<div class="surface w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-display text-lg font-bold" id="warehouseModalTitle">Add Warehouse</h2>
+<button class="h-8 w-8 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" id="closeWarehouseModal" type="button"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="warehouseFormError"></div>
+<form id="warehouseForm">
+<input id="warehouseId" type="hidden"/>
+<div class="mb-3">
+<label class="block text-sm font-medium mb-1.5">Warehouse Name</label>
+<input class="input-field" id="wName" placeholder="e.g. Dhaka Store, Chattogram Depot" required="" type="text"/>
+</div>
+<div class="mb-3">
+<label class="block text-sm font-medium mb-1.5">Address</label>
+<input class="input-field" id="wAddress" type="text"/>
+</div>
+<label class="flex items-center gap-2 text-sm mb-5" style="color:var(--text-secondary)">
+<input id="wIsDefault" type="checkbox"/> Set as default warehouse
+</label>
+<button class="btn-primary w-full" id="warehouseSubmitBtn" type="submit">Save Warehouse</button>
+</form>
+</div>
+</div>
+
+<!-- Transfer Stock Modal -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center p-4" id="transferModal" style="background:rgba(15,23,42,0.5)">
+<div class="surface w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-display text-lg font-bold">Transfer Stock</h2>
+<button class="h-8 w-8 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" id="closeTransferModal" type="button"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="transferFormError"></div>
+<form id="transferForm">
+<div class="mb-3">
+<label class="block text-sm font-medium mb-1.5">Product</label>
+<select class="input-field" id="tProduct" required=""></select>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-3">
+<div>
+<label class="block text-sm font-medium mb-1.5">From</label>
+<select class="input-field" id="tFrom" required=""></select>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1.5">To</label>
+<select class="input-field" id="tTo" required=""></select>
+</div>
+</div>
+<p class="text-xs mb-3" id="tAvailableLabel" style="color:var(--text-secondary)"></p>
+<div class="mb-3">
+<label class="block text-sm font-medium mb-1.5">Quantity</label>
+<input class="input-field" id="tQty" min="1" required="" step="1" type="number"/>
+</div>
+<div class="mb-5">
+<label class="block text-sm font-medium mb-1.5">Note (optional)</label>
+<input class="input-field" id="tNote" placeholder="e.g. Restocking branch" type="text"/>
+</div>
+<button class="btn-primary w-full" id="transferSubmitBtn" type="submit">Transfer Stock</button>
+</form>
 </div>
 </div>
 
 <script src="assets/js/main.js"></script>
-<script src="assets/js/pos.js" type="module"></script>
+<script src="assets/js/warehouses.js" type="module"></script>
 <script src="assets/js/i18n.js"></script></body>
 </html>

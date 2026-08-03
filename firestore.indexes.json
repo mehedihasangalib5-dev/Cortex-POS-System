@@ -7,6 +7,86 @@
         { "fieldPath": "status", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "products",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "businessId", "order": "ASCENDING" },
+        { "fieldPath": "name", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "sales",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "businessId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "expenses",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "businessId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "customers",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "businessId", "order": "ASCENDING" },
+        { "fieldPath": "name", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "employees",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "businessId", "order": "ASCENDING" },
+        { "fieldPath": "name", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "payrollRecords",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "businessId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "warehouses",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "businessId", "order": "ASCENDING" },
+        { "fieldPath": "name", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "stockTransfers",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "businessId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "roles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "businessId", "order": "ASCENDING" },
+        { "fieldPath": "isSystem", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "roles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "businessId", "order": "ASCENDING" },
+        { "fieldPath": "name", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

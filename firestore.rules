@@ -11,50 +11,166 @@ service cloud.firestore {
       ];
     }
 
-    // Each signed-in user can read their own profile doc, created at
-    // assets/js/auth-forms.js on registration.
-    //
-    // IMPORTANT: `plan` (and the initial `trialStartedAt`) are billing-
-    // critical fields. New accounts must start on plan:"trial", and after
-    // that, the ONLY way `plan` may change is the paymentCallback Cloud
-    // Function (functions/index.js) using the Admin SDK, which bypasses
-    // these rules entirely after independently verifying payment with
-    // SSLCommerz. Ordinary profile edits (name, business name, etc.) are
-    // still allowed from the client; a narrow one-time exception lets
-    // legacy accounts that predate the trial-lock feature self-heal a
-    // missing trialStartedAt without touching `plan`.
-    match /users/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
+    // --- Multi-tenancy -------------------------------------------------
+    // Every signed-in user belongs to exactly one "business", identified
+    // by businessId — a plain string equal to the OWNER's uid (an owner's
+    // own businessId is their own uid; an invited staff member's
+    // businessId is the owner's uid — see assets/js/business-context.js
+    // and register-wizard.js). These two helpers do one extra document
+    // read each (Firestore caches get() within a single request, so this
+    // doesn't multiply per document in a list query).
+    function myBusinessId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.businessId;
+    }
+    function myRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    function myRoleId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roleId;
+    }
+    // Whether the signed-in user is allowed to delete records (products,
+    // customers). The owner always can. A staff member can unless their
+    // assigned custom role explicitly turns "deleteRecords" off — no
+    // roleId (legacy accounts, or the role doc having been removed) fails
+    // OPEN, matching resolvePermissions()'s fail-open default in
+    // assets/js/roles-utils.js, so a hiccup here never locks a business
+    // out of its own data.
+    function canDeleteRecords() {
+      return myRole() == 'owner'
+        || myRoleId() == null
+        || get(/databases/$(database)/documents/roles/$(myRoleId())).data.permissions.deleteRecords != false;
+    }
 
+    // Each signed-in user can read their own profile doc, created at
+    // assets/js/register-wizard.js on registration — plus, so the Team
+    // section in settings.html can list co-workers, anyone can read a
+    // profile doc that shares their own businessId.
+    //
+    // IMPORTANT: `plan`, `planExpiresAt`, `businessId`, and `role` are
+    // billing/tenancy-critical fields. They can only change via:
+    //   - account creation (owner: businessId = own uid, role "owner",
+    //     plan "trial"; staff: businessId + role come from a validated
+    //     pending invite)
+    //   - the admin approving a manual bKash/Nagad order
+    //     (admin-payments.html), which also stamps planExpiresAt
+    //   - a narrow one-time self-heal for legacy accounts/documents that
+    //     predate a field being introduced (trialStartedAt, businessId)
+    // Ordinary profile edits (name, phone, etc.) are always allowed from
+    // the client for the user's own doc.
+    match /users/{userId} {
+      allow read: if request.auth != null && (
+        request.auth.uid == userId
+        || isAdmin()
+        || resource.data.businessId == myBusinessId()
+      );
+
+      // New business owner.
       allow create: if request.auth != null && request.auth.uid == userId
+                    && request.resource.data.role == 'owner'
+                    && request.resource.data.businessId == userId
                     && request.resource.data.plan == 'trial';
+
+      // New staff member joining via a pending invite addressed to their
+      // own (verified) sign-in email. inviteId must be included on the
+      // new doc so this rule can look the invite up directly.
+      allow create: if request.auth != null && request.auth.uid == userId
+                    && request.resource.data.role == 'staff'
+                    && 'inviteId' in request.resource.data
+                    && get(/databases/$(database)/documents/invites/$(request.resource.data.inviteId)).data.status == 'pending'
+                    && get(/databases/$(database)/documents/invites/$(request.resource.data.inviteId)).data.email == request.auth.token.email
+                    && request.resource.data.businessId == get(/databases/$(database)/documents/invites/$(request.resource.data.inviteId)).data.businessId;
 
       allow update: if request.auth != null && request.auth.uid == userId && (
         request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['name', 'businessName', 'businessType', 'branchCount', 'city', 'displayName', 'email'])
+          .hasOnly(['name', 'businessName', 'businessType', 'branchCount', 'city', 'displayName', 'email', 'phone'])
         ||
+        // Legacy self-heal: account predates the trial-lock feature.
         ( !('trialStartedAt' in resource.data)
           && request.resource.data.plan == 'trial'
           && request.resource.data.diff(resource.data).affectedKeys()
                .hasOnly(['trialStartedAt', 'plan']) )
+        ||
+        // Legacy self-heal: account predates multi-tenancy — becomes the
+        // owner of its own (new) business, matching how it already
+        // behaved (see assets/js/business-context.js).
+        ( !('businessId' in resource.data)
+          && request.resource.data.businessId == userId
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['businessId', 'role']) )
       )
-      // The ONLY other way `plan` may change from the client: the admin
-      // approving a manual bKash/Nagad order in admin-payments.html. This
-      // also stamps planExpiresAt (start + the order's billing cycle), so
-      // the plan auto-locks again when it lapses without another approval.
+      // A teammate's business may itself be a legacy business missing its
+      // trialStartedAt stamp — allow any member of that same business to
+      // trigger that specific, narrow self-heal on the owner's doc too.
+      || ( request.auth != null
+           && resource.data.businessId == myBusinessId()
+           && !('trialStartedAt' in resource.data)
+           && request.resource.data.plan == 'trial'
+           && request.resource.data.diff(resource.data).affectedKeys()
+                .hasOnly(['trialStartedAt', 'plan']) )
+      // The owner reassigning a staff member's custom role (Settings >
+      // Team). Only the roleId field — never businessId/role/plan.
+      || ( request.auth != null && myRole() == 'owner'
+           && resource.data.businessId == myBusinessId()
+           && resource.data.role == 'staff'
+           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['roleId']) )
+      // The admin approving a manual bKash/Nagad order
+      // (admin-payments.html). Also stamps planExpiresAt (start + the
+      // order's billing cycle), so the plan auto-locks again when it
+      // lapses without another approval.
       || ( isAdmin() && request.resource.data.diff(resource.data).affectedKeys()
              .hasOnly(['plan', 'planUpdatedAt', 'planExpiresAt']) );
 
-      allow delete: if false;
+      // The owner can remove a staff member (Team section in
+      // settings.html). The removed account keeps its Firebase Auth
+      // login but has no business doc anymore, so app-shell.js's guard
+      // treats their next sign-in as a fresh, unaffiliated account.
+      allow delete: if request.auth != null
+        && myRole() == 'owner'
+        && resource.data.businessId == myBusinessId()
+        && resource.data.role == 'staff';
     }
 
-    // Orders: manual bKash/Nagad payment proof submitted by the customer at
-    // registration (see assets/js/register-wizard.js). The customer can only
-    // ever CREATE their own order in "pending_verification" status — they
-    // can never set it to paid/approved themselves. Only the admin
-    // (admin-payments.html) can flip the status after checking the TrxID/
-    // sender number, and only the status/review fields — never the amount,
-    // plan, or proof the customer submitted.
+    // Team invites — an owner invites a teammate by email (settings.html);
+    // the teammate's account is created with that role/businessId once
+    // they sign up with the matching email (see the users/{userId} create
+    // rule above and register-wizard.js).
+    match /invites/{inviteId} {
+      allow read: if request.auth != null && (
+        request.auth.token.email == resource.data.email
+        || resource.data.businessId == myBusinessId()
+      );
+
+      allow create: if request.auth != null
+        && myRole() == 'owner'
+        && request.resource.data.businessId == myBusinessId()
+        && request.resource.data.invitedBy == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.role == 'staff';
+
+      // The invitee accepting it (register-wizard.js) — only the
+      // status/acceptance fields, never who it's for or which business.
+      allow update: if request.auth != null
+        && request.auth.token.email == resource.data.email
+        && request.resource.data.status == 'accepted'
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['status', 'acceptedBy', 'acceptedAt']);
+
+      // The owner cancelling a pending invite.
+      allow delete: if request.auth != null
+        && myRole() == 'owner'
+        && resource.data.businessId == myBusinessId();
+    }
+
+    // Orders: manual bKash/Nagad payment proof, submitted either at
+    // registration (new business, see register-wizard.js) or from an
+    // existing owner upgrading/renewing a plan (settings.html). Always
+    // filed under `uid` == the business's businessId (== the owner's
+    // uid), whichever of the two flows created it. The customer can only
+    // ever CREATE their own order in "pending_verification" status —
+    // they can never set it to approved themselves. Only the admin
+    // (admin-payments.html) can flip the status after checking the
+    // TrxID/sender number, and only the status/review fields — never the
+    // amount, plan, or proof submitted.
     match /orders/{orderId} {
       allow read: if request.auth != null &&
         (request.auth.uid == resource.data.uid || isAdmin());
@@ -73,55 +189,108 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Anyone (even signed-out visitors) can submit the public contact form,
-    // but only signed-in users (the business owner/staff) can read, edit,
-    // or delete messages — matches assets/js/contact-firestore.js +
-    // assets/js/dashboard.js.
+    // Anyone (even signed-out visitors) can submit the public contact
+    // form. It's a submission to the PLATFORM's own "Contact Us" page
+    // (index.html/contact.html) — not per-business tenant data — so only
+    // the platform admin can read/manage the inbox, never a tenant.
     match /contactMessages/{messageId} {
       allow create: if true;
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if isAdmin();
     }
 
-    // Inventory: any signed-in staff member can view and manage products.
-    // (Single-business setup — every signed-in user is treated as staff.
-    // If you later support multiple businesses, scope these by a
-    // businessId field instead.)
+    // --- Per-business data --------------------------------------------
+    // Every document here is scoped by a businessId field. A signed-in
+    // user (owner or invited staff) can only read/write documents whose
+    // businessId matches their own — see myBusinessId() above.
+
+    match /roles/{roleId} {
+      allow read: if request.auth != null && resource.data.businessId == myBusinessId();
+      allow create: if request.auth != null && myRole() == 'owner'
+        && request.resource.data.businessId == myBusinessId();
+      // Owner can rename/edit a role's permissions any time, but can't
+      // repurpose the businessId or the isSystem flag (Owner/Staff must
+      // stay recognizable as the two built-in roles).
+      allow update: if request.auth != null && myRole() == 'owner'
+        && resource.data.businessId == myBusinessId()
+        && request.resource.data.businessId == myBusinessId()
+        && request.resource.data.isSystem == resource.data.isSystem;
+      // System roles (Owner/Staff) can never be deleted — only custom
+      // roles the owner created.
+      allow delete: if request.auth != null && myRole() == 'owner'
+        && resource.data.businessId == myBusinessId()
+        && resource.data.isSystem != true;
+    }
+
+    match /warehouses/{warehouseId} {
+      allow read, delete: if request.auth != null && resource.data.businessId == myBusinessId();
+      allow create: if request.auth != null && request.resource.data.businessId == myBusinessId();
+      allow update: if request.auth != null
+        && resource.data.businessId == myBusinessId()
+        && request.resource.data.businessId == myBusinessId();
+    }
+
+    match /stockTransfers/{transferId} {
+      allow read, delete: if request.auth != null && resource.data.businessId == myBusinessId();
+      allow create: if request.auth != null && request.resource.data.businessId == myBusinessId();
+      allow update: if request.auth != null
+        && resource.data.businessId == myBusinessId()
+        && request.resource.data.businessId == myBusinessId();
+    }
+
     match /products/{productId} {
-      allow read, create, update, delete: if request.auth != null;
+      allow read: if request.auth != null && resource.data.businessId == myBusinessId();
+      allow delete: if request.auth != null && resource.data.businessId == myBusinessId() && canDeleteRecords();
+      allow create: if request.auth != null && request.resource.data.businessId == myBusinessId();
+      allow update: if request.auth != null
+        && resource.data.businessId == myBusinessId()
+        && request.resource.data.businessId == myBusinessId();
     }
 
-    // Sales: created by the POS screen at checkout. Signed-in staff can
-    // read the sales log; edits/deletes are allowed for corrections but
-    // could be locked down further (e.g. to admins only) later.
     match /sales/{saleId} {
-      allow read, create, update, delete: if request.auth != null;
+      allow read, delete: if request.auth != null && resource.data.businessId == myBusinessId();
+      allow create: if request.auth != null && request.resource.data.businessId == myBusinessId();
+      allow update: if request.auth != null
+        && resource.data.businessId == myBusinessId()
+        && request.resource.data.businessId == myBusinessId();
     }
 
-    // Accounting: manually logged expenses.
     match /expenses/{expenseId} {
-      allow read, create, update, delete: if request.auth != null;
+      allow read, delete: if request.auth != null && resource.data.businessId == myBusinessId();
+      allow create: if request.auth != null && request.resource.data.businessId == myBusinessId();
+      allow update: if request.auth != null
+        && resource.data.businessId == myBusinessId()
+        && request.resource.data.businessId == myBusinessId();
     }
 
-    // Customers: contact info + running "due" (credit) balance.
     match /customers/{customerId} {
-      allow read, create, update, delete: if request.auth != null;
+      allow read: if request.auth != null && resource.data.businessId == myBusinessId();
+      allow delete: if request.auth != null && resource.data.businessId == myBusinessId() && canDeleteRecords();
+      allow create: if request.auth != null && request.resource.data.businessId == myBusinessId();
+      allow update: if request.auth != null
+        && resource.data.businessId == myBusinessId()
+        && request.resource.data.businessId == myBusinessId();
     }
 
-    // HR: staff records.
     match /employees/{employeeId} {
-      allow read, create, update, delete: if request.auth != null;
+      allow read, delete: if request.auth != null && resource.data.businessId == myBusinessId();
+      allow create: if request.auth != null && request.resource.data.businessId == myBusinessId();
+      allow update: if request.auth != null
+        && resource.data.businessId == myBusinessId()
+        && request.resource.data.businessId == myBusinessId();
     }
 
-    // Payroll: monthly salary payment log (also mirrored into /expenses
-    // when marked paid — see assets/js/hr-payroll.js).
     match /payrollRecords/{recordId} {
-      allow read, create, update, delete: if request.auth != null;
+      allow read, delete: if request.auth != null && resource.data.businessId == myBusinessId();
+      allow create: if request.auth != null && request.resource.data.businessId == myBusinessId();
+      allow update: if request.auth != null
+        && resource.data.businessId == myBusinessId()
+        && request.resource.data.businessId == myBusinessId();
     }
 
-    // Settings: single shared business-profile doc (id "business") plus
-    // room for future per-feature settings docs.
+    // Business-profile doc — one per business, doc ID == businessId
+    // directly (no separate field/query needed).
     match /settings/{settingsId} {
-      allow read, create, update, delete: if request.auth != null;
+      allow read, create, update, delete: if request.auth != null && settingsId == myBusinessId();
     }
   }
 }

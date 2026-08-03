@@ -40,6 +40,9 @@
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" rel="stylesheet"/>
 <link href="assets/css/style.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf-autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
     if (localStorage.getItem('theme') === 'dark' ||
         (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -86,6 +89,7 @@
 <a class="nav-link" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge w-4 text-center"></i><span>Dashboard</span></a>
 <a class="nav-link" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register w-4 text-center"></i><span>Point of Sale</span></a>
 <a class="nav-link" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse w-4 text-center"></i><span>Inventory</span></a>
+<a class="nav-link" data-nav="warehouses" href="warehouses.html"><i class="fa-solid fa-boxes-stacked w-4 text-center"></i><span>Warehouses</span></a>
 <a class="nav-link" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced w-4 text-center"></i><span>Accounting</span></a>
 <div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
 <a class="nav-link" data-nav="customers" href="customers.html"><i class="fa-solid fa-users w-4 text-center"></i><span>Customers</span></a>
@@ -102,8 +106,10 @@
 <h1 class="font-display text-2xl font-bold mb-1">Reports</h1>
 <p class="text-sm" style="color:var(--text-secondary)">Trends across sales, inventory, and expenses.</p>
 </div>
-<div class="flex items-center gap-2">
-<button class="btn-primary text-sm !py-2.5 !px-4" id="exportSalesBtn"><i class="fa-solid fa-download mr-1.5"></i>Export Sales CSV</button>
+<div class="flex flex-wrap items-center gap-2">
+<button class="surface border text-sm font-medium !py-2.5 !px-4 rounded-xl" id="exportSalesBtn" style="border-color:var(--border-subtle)" title="Export sales as CSV"><i class="fa-solid fa-file-csv mr-1.5"></i>CSV</button>
+<button class="surface border text-sm font-medium !py-2.5 !px-4 rounded-xl" id="exportSalesPdfBtn" style="border-color:var(--border-subtle)" title="Export sales as PDF"><i class="fa-solid fa-file-pdf mr-1.5 text-red-500"></i>PDF</button>
+<button class="btn-primary text-sm !py-2.5 !px-4" id="exportSalesExcelBtn" title="Export sales as Excel"><i class="fa-solid fa-file-excel mr-1.5"></i>Excel</button>
 </div>
 </div>
 

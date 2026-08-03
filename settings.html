@@ -85,6 +85,7 @@
 <a class="nav-link" data-nav="dashboard" href="dashboard.html"><i class="fa-solid fa-gauge w-4 text-center"></i><span>Dashboard</span></a>
 <a class="nav-link" data-nav="pos" href="pos.html"><i class="fa-solid fa-cash-register w-4 text-center"></i><span>Point of Sale</span></a>
 <a class="nav-link" data-nav="inventory" href="inventory.html"><i class="fa-solid fa-warehouse w-4 text-center"></i><span>Inventory</span></a>
+<a class="nav-link" data-nav="warehouses" href="warehouses.html"><i class="fa-solid fa-boxes-stacked w-4 text-center"></i><span>Warehouses</span></a>
 <a class="nav-link" data-nav="accounting" href="accounting.html"><i class="fa-solid fa-scale-balanced w-4 text-center"></i><span>Accounting</span></a>
 <div class="my-2 border-t" style="border-color:var(--border-subtle)"></div>
 <a class="nav-link" data-nav="customers" href="customers.html"><i class="fa-solid fa-users w-4 text-center"></i><span>Customers</span></a>
@@ -126,6 +127,66 @@
 </div>
 </div>
 <p class="text-xs mt-4" style="color:var(--text-secondary)"><i class="fa-solid fa-shield-halved mr-1"></i>Send payment via bKash/Nagad and submit your TrxID — our team verifies and activates it manually, usually within 1-24 hours.</p>
+<p class="hidden text-xs mt-3 px-3 py-2 rounded-lg" id="billingOwnerOnlyNote" style="background:var(--bg-surface-alt); color:var(--text-secondary)"><i class="fa-solid fa-circle-info mr-1"></i>Only the account owner can change the plan.</p>
+</div>
+
+<!-- Team -->
+<div class="surface p-6 mb-6">
+<div class="flex items-center justify-between mb-1">
+<h2 class="font-display text-lg font-bold">Team</h2>
+<span class="text-xs font-medium" id="teamLoginCount" style="color:var(--text-secondary)">—</span>
+</div>
+<p class="text-sm mb-4" style="color:var(--text-secondary)">Everyone with a login sees the same business data.</p>
+
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="teamError"></div>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-emerald/10 text-emerald border border-emerald/20" id="teamInviteSuccess"></div>
+
+<div id="teamMembersList" class="space-y-2 mb-5"></div>
+
+<form class="hidden flex flex-col sm:flex-row gap-3" id="teamInviteForm">
+<input class="input-field flex-1" id="teamInviteEmail" placeholder="teammate@email.com" required="" type="email"/>
+<select class="input-field sm:!w-44 shrink-0" id="teamInviteRole"></select>
+<button class="btn-primary sm:w-auto shrink-0" id="teamInviteBtn" type="submit">Send Invite</button>
+</form>
+<p class="hidden text-xs mt-2" id="teamLimitNote" style="color:var(--text-secondary)"></p>
+<p class="hidden text-xs" id="teamStaffNote" style="color:var(--text-secondary)"><i class="fa-solid fa-circle-info mr-1"></i>Only the account owner can invite or remove teammates.</p>
+</div>
+
+<!-- Roles & Permissions -->
+<div class="surface p-6 mb-6" id="rolesSection">
+<div class="flex items-center justify-between mb-1">
+<h2 class="font-display text-lg font-bold">Roles &amp; Permissions</h2>
+<button class="text-sm font-medium hover:underline" id="addRoleBtn" type="button"><i class="fa-solid fa-plus mr-1"></i>Add Role</button>
+</div>
+<p class="text-sm mb-4" style="color:var(--text-secondary)">Control which pages each teammate can open. Assign a role to someone from the Team list above.</p>
+<div id="rolesList" class="space-y-2"></div>
+</div>
+
+<!-- Add / Edit Role Modal -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center p-4" id="roleModal" style="background:rgba(15,23,42,0.5)">
+<div class="surface w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-display text-lg font-bold" id="roleModalTitle">Add Role</h2>
+<button class="h-8 w-8 rounded-full flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5" id="closeRoleModal" type="button"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="roleFormError"></div>
+<form id="roleForm">
+<input id="roleId" type="hidden"/>
+<div class="mb-4">
+<label class="block text-sm font-medium mb-1.5">Role Name</label>
+<input class="input-field" id="roleName" placeholder="e.g. Cashier, Store Manager" required="" type="text"/>
+</div>
+<div class="mb-2">
+<p class="block text-sm font-medium mb-1.5">Page Access</p>
+<div class="space-y-1.5" id="rolePagePerms"></div>
+</div>
+<div class="mb-5 pt-2 border-t" style="border-color:var(--border-subtle)">
+<p class="block text-sm font-medium mb-1.5 mt-2">Other Permissions</p>
+<div class="space-y-1.5" id="roleExtraPerms"></div>
+</div>
+<button class="btn-primary w-full" id="roleSubmitBtn" type="submit">Save Role</button>
+</form>
+</div>
 </div>
 
 <!-- Business Profile -->
