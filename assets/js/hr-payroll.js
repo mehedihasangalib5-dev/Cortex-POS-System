@@ -6,20 +6,22 @@
 import { db } from "./firebase-init.js";
 import { requireAuth, escapeHtml, formatTaka, toast } from "./app-shell.js";
 import {
-    collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, orderBy, query, Timestamp,
+    collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, orderBy, query, where, Timestamp,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 let allEmployees = [];
 let allPayroll = [];
 let currentUser = null;
+let businessId = null;
 
-requireAuth((user) => {
+requireAuth((user, ctx) => {
     currentUser = user;
+    businessId = ctx.businessId;
     document.getElementById('pDate').valueAsDate = new Date();
     const now = new Date();
     document.getElementById('pMonth').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-    onSnapshot(query(collection(db, 'employees'), orderBy('name')), (snap) => {
+    onSnapshot(query(collection(db, 'employees'), where('businessId', '==', businessId), orderBy('name')), (snap) => {
         allEmployees = [];
         snap.forEach((d) => allEmployees.push({ id: d.id, ...d.data() }));
         renderEmployees();
@@ -31,7 +33,7 @@ requireAuth((user) => {
             `<tr><td class="px-4 py-6 text-center text-red-500" colspan="6">Could not load employees — check Firestore rules.</td></tr>`;
     });
 
-    onSnapshot(query(collection(db, 'payrollRecords'), orderBy('createdAt', 'desc')), (snap) => {
+    onSnapshot(query(collection(db, 'payrollRecords'), where('businessId', '==', businessId), orderBy('createdAt', 'desc')), (snap) => {
         allPayroll = [];
         snap.forEach((d) => allPayroll.push({ id: d.id, ...d.data() }));
         renderPayroll();
@@ -183,6 +185,7 @@ async function onSubmitEmployee(e) {
 
     const id = document.getElementById('employeeId').value;
     const payload = {
+        businessId,
         name: document.getElementById('eName').value.trim(),
         role: document.getElementById('eRole').value.trim(),
         phone: document.getElementById('ePhone').value.trim(),
@@ -264,6 +267,7 @@ async function onSubmitPayroll(e) {
 
     try {
         await addDoc(collection(db, 'payrollRecords'), {
+            businessId,
             employeeId: emp.id,
             employeeName: emp.name,
             month: monthVal,
@@ -274,6 +278,7 @@ async function onSubmitPayroll(e) {
 
         if (addExpense) {
             await addDoc(collection(db, 'expenses'), {
+                businessId,
                 category: 'Salary',
                 amount,
                 note: `Salary · ${emp.name}${monthVal ? ' · ' + monthVal : ''}`,

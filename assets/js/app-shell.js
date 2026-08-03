@@ -8,36 +8,55 @@
 //
 // Usage in a page's module script:
 //   import { requireAuth } from "./app-shell.js";
-//   requireAuth((user) => { ...page-specific init that needs `user`... });
+//   requireAuth((user, ctx) => { ...page init, scope Firestore reads/writes
+//   to ctx.businessId... });
 // ---------------------------------------------------------------------------
 import { auth } from "./firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { db } from "./firebase-init.js";
 import { enforceTrialLock } from "./trial-guard.js";
 import { pageAllowedForPlan, FEATURE_LABELS } from "./plan-features.js";
+import { getBusinessContext } from "./business-context.js";
 
 function lang() {
     return localStorage.getItem('lang') || 'en';
 }
 
 const FEATURE_LOCK_COPY = {
-    en: (label) => ({
-        title: `Upgrade to unlock ${label}`,
-        body: `${label} isn\u2019t included in your current plan. Upgrade to Pro to get access, along with HR & Payroll, Accounting, and the AI Assistant.`,
-        cta: 'View Plans & Upgrade',
-    }),
-    bn: (label) => ({
-        title: `${label} আনলক করতে আপগ্রেড করুন`,
-        body: `আপনার বর্তমান প্ল্যানে ${label} নেই। Pro-তে আপগ্রেড করলে এটি সহ HR & Payroll, Accounting, আর AI Assistant পাবেন।`,
-        cta: 'প্ল্যান দেখুন ও আপগ্রেড করুন',
-    }),
+    en: {
+        plan: (label) => ({
+            title: `Upgrade to unlock ${label}`,
+            body: `${label} isn\u2019t included in your current plan. Upgrade to Pro to get access, along with HR & Payroll, Accounting, and the AI Assistant.`,
+            cta: 'View Plans & Upgrade',
+            ctaHref: 'pricing.html',
+        }),
+        role: (label) => ({
+            title: `${label} isn\u2019t available to you`,
+            body: `Your current role doesn\u2019t include access to ${label}. Ask your business owner to update your permissions in Settings > Roles & Permissions.`,
+            cta: 'Back to Dashboard',
+            ctaHref: 'dashboard.html',
+        }),
+    },
+    bn: {
+        plan: (label) => ({
+            title: `${label} আনলক করতে আপগ্রেড করুন`,
+            body: `আপনার বর্তমান প্ল্যানে ${label} নেই। Pro-তে আপগ্রেড করলে এটি সহ HR & Payroll, Accounting, আর AI Assistant পাবেন।`,
+            cta: 'প্ল্যান দেখুন ও আপগ্রেড করুন',
+            ctaHref: 'pricing.html',
+        }),
+        role: (label) => ({
+            title: `${label} আপনার জন্য উপলব্ধ না`,
+            body: `আপনার বর্তমান রোলে ${label}-এর অ্যাক্সেস নেই। আপনার বিজনেস ওনারকে Settings > Roles & Permissions থেকে আপনার পারমিশন আপডেট করতে বলুন।`,
+            cta: 'ড্যাশবোর্ডে ফিরে যান',
+            ctaHref: 'dashboard.html',
+        }),
+    },
 };
 
-function renderFeatureLockOverlay(page) {
+function renderFeatureLockOverlay(page, reason = 'plan') {
     if (document.getElementById('featureLockOverlay')) return;
     const label = FEATURE_LABELS[page] || page;
-    const c = (FEATURE_LOCK_COPY[lang()] || FEATURE_LOCK_COPY.en)(label);
+    const copyFor = (FEATURE_LOCK_COPY[lang()] || FEATURE_LOCK_COPY.en)[reason] || FEATURE_LOCK_COPY.en.plan;
+    const c = copyFor(label);
     const el = document.createElement('div');
     el.id = 'featureLockOverlay';
     el.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:rgba(15,17,26,0.72);backdrop-filter:blur(4px);';
@@ -48,7 +67,7 @@ function renderFeatureLockOverlay(page) {
         </div>
         <h2 style="font-weight:800;font-size:1.25rem;margin-bottom:0.6rem;">${c.title}</h2>
         <p style="font-size:0.9rem;color:var(--text-secondary,#666);margin-bottom:1.5rem;">${c.body}</p>
-        <a href="pricing.html" class="btn-primary" style="display:block;padding:0.65rem 1rem;border-radius:0.75rem;font-size:0.9rem;font-weight:600;margin-bottom:0.6rem;">${c.cta}</a>
+        <a href="${c.ctaHref}" class="btn-primary" style="display:block;padding:0.65rem 1rem;border-radius:0.75rem;font-size:0.9rem;font-weight:600;margin-bottom:0.6rem;">${c.cta}</a>
         <a href="dashboard.html" style="display:block;width:100%;padding:0.6rem 1rem;font-size:0.85rem;color:var(--text-secondary,#666);">Back to Dashboard</a>
       </div>`;
     document.body.appendChild(el);
@@ -79,25 +98,37 @@ export function requireAuth(onReady) {
         const unlocked = await enforceTrialLock(user, { allowLockedAccess: page === 'settings' });
         if (!unlocked) return;
 
-        // Module-level gate: the account is unlocked, but this specific
-        // module (e.g. Accounting, HR & Payroll, AI Assistant) may not be
-        // included in the current plan.
-        if (page && page !== 'settings') {
-            try {
-                const snap = await getDoc(doc(db, 'users', user.uid));
-                const plan = (snap.exists() && snap.data().plan) || 'trial';
+        // Resolve which business this user belongs to (themselves, if an
+        // owner; the inviting owner's, if staff) and — module-level gate —
+        // whether the CURRENT plan includes this specific page at all.
+        let ctx = { businessId: user.uid, role: 'owner' };
+        try {
+            ctx = await getBusinessContext(user.uid);
+            if (page && page !== 'settings') {
+                const plan = ctx.ownerData?.plan || 'trial';
                 if (!pageAllowedForPlan(page, plan)) {
-                    renderFeatureLockOverlay(page);
+                    renderFeatureLockOverlay(page, 'plan');
                     return;
                 }
-            } catch (err) {
-                // Fail open on a read hiccup — don't block a paying user
-                // from their own dashboard over a transient error.
-                console.error('Feature gate check failed:', err);
+                if (ctx.permissions && ctx.permissions[page] === false) {
+                    renderFeatureLockOverlay(page, 'role');
+                    return;
+                }
             }
+        } catch (err) {
+            // Fail open on a read hiccup — don't block a paying user
+            // from their own dashboard over a transient error.
+            console.error('Business context / feature gate check failed:', err);
         }
 
-        if (typeof onReady === 'function') onReady(user);
+        if (ctx.permissions) {
+            document.querySelectorAll('[data-nav]').forEach((el) => {
+                const navPage = el.getAttribute('data-nav');
+                if (navPage && ctx.permissions[navPage] === false) el.classList.add('hidden');
+            });
+        }
+
+        if (typeof onReady === 'function') onReady(user, ctx);
     });
 }
 

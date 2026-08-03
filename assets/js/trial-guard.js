@@ -22,9 +22,10 @@
 // ---------------------------------------------------------------------------
 import { db } from "./firebase-init.js";
 import {
-    doc, getDoc, setDoc, serverTimestamp, Timestamp,
+    doc, setDoc, serverTimestamp, Timestamp,
     collection, query, where, limit, getDocs,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getBusinessContext } from "./business-context.js";
 
 const TRIAL_DAYS = 14;
 
@@ -132,13 +133,14 @@ export async function enforceTrialLock(user, opts = {}) {
     const allowLockedAccess = !!opts.allowLockedAccess;
     const c = COPY[lang()] || COPY.en;
     try {
-        const ref = doc(db, 'users', user.uid);
-        const snap = await getDoc(ref);
-        let data = snap.exists() ? snap.data() : {};
+        const { businessId, ownerData } = await getBusinessContext(user.uid);
+        let data = ownerData;
 
         if (!data.trialStartedAt) {
-            // Legacy account with no trial stamp yet — start the clock now.
-            await setDoc(ref, { trialStartedAt: serverTimestamp(), plan: data.plan || 'trial' }, { merge: true });
+            // Legacy business with no trial stamp yet — start the clock now.
+            // Always stamped on the OWNER's doc (businessId), never a staff
+            // member's own doc, since billing only ever lives there.
+            await setDoc(doc(db, 'users', businessId), { trialStartedAt: serverTimestamp(), plan: data.plan || 'trial' }, { merge: true });
             renderCountdownBanner('trialBanner', c.daysLeft(TRIAL_DAYS), 'pricing.html', c.upgrade, '#F5A623');
             return true;
         }
@@ -166,9 +168,11 @@ export async function enforceTrialLock(user, opts = {}) {
         }
 
         // --- plan === 'trial' from here on.
-        // A trial-plan account with a payment awaiting review never gets
-        // trial access — it's locked until the admin decides.
-        if (await hasPendingOrder(user.uid)) {
+        // A trial-plan business with a payment awaiting review never gets
+        // trial access — it's locked until the admin decides. Orders are
+        // always filed under the OWNER's uid (businessId), whether it was
+        // the owner or a staff member who submitted it.
+        if (await hasPendingOrder(businessId)) {
             if (allowLockedAccess) {
                 renderLockedBanner(`${c.pendingTitle} — ${c.pendingBody}`);
                 return true;

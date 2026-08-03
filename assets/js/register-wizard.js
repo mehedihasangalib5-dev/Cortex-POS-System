@@ -1,7 +1,12 @@
 // ---------------------------------------------------------------------------
-// Drives the 3-step register.html wizard:
-//   Step 1  Create account       -> Firebase Auth user + users/{uid} doc (plan: "trial")
-//   Step 2  Business info        -> merged into users/{uid}
+// Drives the register.html wizard:
+//   Step 1  Create account       -> Firebase Auth user + users/{uid} doc.
+//                                   If this email has a pending team invite,
+//                                   they join as staff on the inviter's
+//                                   business and skip straight to the
+//                                   dashboard (steps 2-4 are owner-only —
+//                                   billing/business info is already set).
+//   Step 2  Business info        -> merged into users/{uid} (owners only)
 //   Step 3  Plan + payment       -> trial finishes immediately; starter/pro
 //                                   collects bKash/Nagad proof into /orders
 //                                   with status "pending_verification"
@@ -13,7 +18,7 @@ import {
     updateProfile,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
-    doc, setDoc, addDoc, collection, serverTimestamp,
+    doc, setDoc, updateDoc, addDoc, collection, query, where, limit, getDocs, serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { PAYMENT_METHODS, PLAN_PRICES } from "./payment-config.js";
 
@@ -83,11 +88,45 @@ if (wizardCard) {
             currentUid = cred.user.uid;
             currentEmail = email;
             await updateProfile(cred.user, { displayName: name });
+
+            // A pending team invite for this email? Join as staff on the
+            // inviter's business instead of starting a new one — no trial,
+            // no plan, no payment step; they inherit the owner's plan.
+            const inviteSnap = await getDocs(query(
+                collection(db, 'invites'),
+                where('email', '==', email.toLowerCase()),
+                where('status', '==', 'pending'),
+                limit(1)
+            ));
+
+            if (!inviteSnap.empty) {
+                const inviteDoc = inviteSnap.docs[0];
+                const invite = inviteDoc.data();
+                await setDoc(doc(db, 'users', currentUid), {
+                    name,
+                    email,
+                    phone: step1Form.phone.value.trim(),
+                    role: 'staff',
+                    roleId: invite.roleId || null,
+                    businessId: invite.businessId,
+                    inviteId: inviteDoc.id,
+                    createdAt: serverTimestamp(),
+                });
+                await updateDoc(doc(db, 'invites', inviteDoc.id), {
+                    status: 'accepted',
+                    acceptedBy: currentUid,
+                    acceptedAt: serverTimestamp(),
+                });
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
             await setDoc(doc(db, 'users', currentUid), {
                 name,
                 email,
                 phone: step1Form.phone.value.trim(),
                 role: 'owner',
+                businessId: currentUid,
                 createdAt: serverTimestamp(),
                 // Trial lock: every account starts on "trial" no matter which
                 // plan they're about to pay for — `plan` only flips to

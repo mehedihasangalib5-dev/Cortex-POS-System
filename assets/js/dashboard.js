@@ -5,10 +5,18 @@
 // ---------------------------------------------------------------------------
 import { db } from "./firebase-init.js";
 import { requireAuth, escapeHtml, formatTaka } from "./app-shell.js";
-import { collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { collection, query, where, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { ADMIN_UIDS } from "./payment-config.js";
 
-requireAuth(async () => {
-    await Promise.all([loadRecentMessages(), loadSalesAndKpis(), loadProductKpis(), loadExpenseKpis()]);
+requireAuth(async (user, ctx) => {
+    const businessId = ctx.businessId;
+    const tasks = [loadSalesAndKpis(businessId), loadProductKpis(businessId), loadExpenseKpis(businessId)];
+    // contactMessages are submissions to the PLATFORM's own public "Contact
+    // Us" form (index.html/contact.html) — not per-business data. Only the
+    // platform admin should ever see these, never a tenant's dashboard.
+    if (ADMIN_UIDS.includes(user.uid)) tasks.push(loadRecentMessages());
+    else document.getElementById('recentMessagesCard')?.classList.add('hidden');
+    await Promise.all(tasks);
 });
 
 function startOfToday() {
@@ -55,10 +63,10 @@ async function loadRecentMessages() {
     }
 }
 
-async function loadSalesAndKpis() {
+async function loadSalesAndKpis(businessId) {
     const list = document.getElementById('recentSalesList');
     try {
-        const q = query(collection(db, 'sales'), orderBy('createdAt', 'desc'), limit(50));
+        const q = query(collection(db, 'sales'), where('businessId', '==', businessId), orderBy('createdAt', 'desc'), limit(50));
         const snap = await getDocs(q);
 
         const today = startOfToday();
@@ -112,9 +120,9 @@ async function loadSalesAndKpis() {
     }
 }
 
-async function loadProductKpis() {
+async function loadProductKpis(businessId) {
     try {
-        const snap = await getDocs(collection(db, 'products'));
+        const snap = await getDocs(query(collection(db, 'products'), where('businessId', '==', businessId)));
         let low = 0;
         snap.forEach((docSnap) => {
             const d = docSnap.data();
@@ -130,9 +138,9 @@ async function loadProductKpis() {
     }
 }
 
-async function loadExpenseKpis() {
+async function loadExpenseKpis(businessId) {
     try {
-        const q = query(collection(db, 'expenses'), orderBy('createdAt', 'desc'), limit(200));
+        const q = query(collection(db, 'expenses'), where('businessId', '==', businessId), orderBy('createdAt', 'desc'), limit(200));
         const snap = await getDocs(q);
         const since30 = daysAgo(30);
         let expense30 = 0;

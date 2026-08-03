@@ -6,25 +6,27 @@
 import { db } from "./firebase-init.js";
 import { requireAuth, escapeHtml, formatTaka, toast } from "./app-shell.js";
 import {
-    collection, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, Timestamp,
+    collection, query, where, orderBy, limit, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, Timestamp,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 let sales = [];
 let expenses = [];
 let range = 'month'; // 'month' | 'all'
 let currentUser = null;
+let businessId = null;
 
-requireAuth((user) => {
+requireAuth((user, ctx) => {
     currentUser = user;
+    businessId = ctx.businessId;
     document.getElementById('eDate').valueAsDate = new Date();
 
-    onSnapshot(query(collection(db, 'sales'), orderBy('createdAt', 'desc'), limit(300)), (snap) => {
+    onSnapshot(query(collection(db, 'sales'), where('businessId', '==', businessId), orderBy('createdAt', 'desc'), limit(300)), (snap) => {
         sales = [];
         snap.forEach((d) => sales.push({ id: d.id, ...d.data() }));
         render();
     }, (err) => { console.error(err); toast('Could not load sales data', 'error'); });
 
-    onSnapshot(query(collection(db, 'expenses'), orderBy('createdAt', 'desc'), limit(300)), (snap) => {
+    onSnapshot(query(collection(db, 'expenses'), where('businessId', '==', businessId), orderBy('createdAt', 'desc'), limit(300)), (snap) => {
         expenses = [];
         snap.forEach((d) => expenses.push({ id: d.id, ...d.data() }));
         render();
@@ -151,6 +153,7 @@ async function onAddExpense(e) {
     try {
         const dateVal = document.getElementById('eDate').value;
         await addDoc(collection(db, 'expenses'), {
+            businessId,
             category: document.getElementById('eCategory').value,
             amount: Number(document.getElementById('eAmount').value) || 0,
             note: document.getElementById('eNote').value.trim(),

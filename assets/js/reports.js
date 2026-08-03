@@ -4,36 +4,57 @@
 // ---------------------------------------------------------------------------
 import { db } from "./firebase-init.js";
 import { requireAuth, escapeHtml, formatTaka, toast } from "./app-shell.js";
+import { exportTableToPdf, exportTableToExcel, pdfMoney } from "./export-utils.js";
 import {
-    collection, onSnapshot, query, orderBy, limit,
+    collection, onSnapshot, query, where, orderBy, limit,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 let sales = [];
 let expenses = [];
 let products = [];
 let salesChart, expenseChart, paymentChart;
+let businessName = 'CorPOS & IMS';
 
-requireAuth(() => {
-    onSnapshot(query(collection(db, 'sales'), orderBy('createdAt', 'desc'), limit(1000)), (snap) => {
+requireAuth((user, ctx) => {
+    const businessId = ctx.businessId;
+    businessName = ctx.ownerData?.businessName || businessName;
+    onSnapshot(query(collection(db, 'sales'), where('businessId', '==', businessId), orderBy('createdAt', 'desc'), limit(1000)), (snap) => {
         sales = [];
         snap.forEach((d) => sales.push({ id: d.id, ...d.data() }));
         render();
     }, (err) => { console.error(err); toast('Could not load sales data', 'error'); });
 
-    onSnapshot(query(collection(db, 'expenses'), orderBy('createdAt', 'desc'), limit(500)), (snap) => {
+    onSnapshot(query(collection(db, 'expenses'), where('businessId', '==', businessId), orderBy('createdAt', 'desc'), limit(500)), (snap) => {
         expenses = [];
         snap.forEach((d) => expenses.push({ id: d.id, ...d.data() }));
         render();
     }, (err) => { console.error(err); toast('Could not load expense data', 'error'); });
 
-    onSnapshot(query(collection(db, 'products')), (snap) => {
+    onSnapshot(query(collection(db, 'products'), where('businessId', '==', businessId)), (snap) => {
         products = [];
         snap.forEach((d) => products.push({ id: d.id, ...d.data() }));
         render();
     }, (err) => { console.error(err); toast('Could not load product data', 'error'); });
 
     document.getElementById('exportSalesBtn').addEventListener('click', exportSalesCsv);
+    document.getElementById('exportSalesPdfBtn').addEventListener('click', exportSalesPdf);
+    document.getElementById('exportSalesExcelBtn').addEventListener('click', exportSalesExcel);
 });
+
+/** Builds the shared [date, items, payment method, total] rows used by the PDF/Excel exports. */
+function buildSalesRows(moneyFmt) {
+    return sales.map((s) => {
+        const created = s.createdAt ? s.createdAt.toDate() : null;
+        const itemsDesc = (s.items || []).map((it) => `${it.name} x${it.qty}`).join('; ');
+        const method = s.paymentMethod || '';
+        return [
+            created ? created.toLocaleString('en-BD') : '',
+            itemsDesc,
+            method.charAt(0).toUpperCase() + method.slice(1),
+            moneyFmt(Number(s.total) || 0),
+        ];
+    });
+}
 
 function dayKey(d) {
     return d.toISOString().slice(0, 10);
@@ -232,4 +253,28 @@ function exportSalesCsv() {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+}
+
+function exportSalesPdf() {
+    if (sales.length === 0) { toast('No sales to export yet', 'error'); return; }
+    const total = sales.reduce((sum, s) => sum + (Number(s.total) || 0), 0);
+    exportTableToPdf({
+        filename: 'sales-report',
+        title: 'Sales Report',
+        businessName,
+        subtitle: `${sales.length} transaction${sales.length === 1 ? '' : 's'}`,
+        columns: ['Date', 'Items', 'Payment Method', 'Total'],
+        rows: buildSalesRows(pdfMoney),
+        summaryLines: [`Total: ${pdfMoney(total)}`],
+    });
+}
+
+function exportSalesExcel() {
+    if (sales.length === 0) { toast('No sales to export yet', 'error'); return; }
+    exportTableToExcel({
+        filename: 'sales-report',
+        sheetName: 'Sales',
+        columns: ['Date', 'Items', 'Payment Method', 'Total (৳)'],
+        rows: buildSalesRows((n) => n),
+    });
 }

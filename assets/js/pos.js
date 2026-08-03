@@ -6,18 +6,60 @@
 import { db } from "./firebase-init.js";
 import { requireAuth, escapeHtml, formatTaka, toast } from "./app-shell.js";
 import {
-    collection, onSnapshot, doc, runTransaction, serverTimestamp, query, orderBy,
+    collection, onSnapshot, doc, runTransaction, serverTimestamp, query, where, orderBy,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { ensureDefaultWarehouse, subscribeWarehouses, resolveStockMap, sumStock } from "./warehouse-utils.js";
 
 let allProducts = [];
 let cart = {}; // productId -> { id, name, sku, price, qty, stock }
 let searchTerm = '';
 let currentUser = null;
+let businessId = null;
+let allWarehouses = [];
+let defaultWarehouseId = null;
+let selectedWarehouseId = null;
 
-requireAuth((user) => {
+function warehouseStorageKey() { return `posWarehouse:${businessId}`; }
+
+/** Stock available for a product at the currently selected warehouse. */
+function stockAt(p) {
+    if (!selectedWarehouseId) return Number(p.stock) || 0;
+    const map = resolveStockMap(p, defaultWarehouseId);
+    return Number(map[selectedWarehouseId]) || 0;
+}
+
+requireAuth(async (user, ctx) => {
     currentUser = user;
+    businessId = ctx.businessId;
+    defaultWarehouseId = await ensureDefaultWarehouse(businessId);
+    selectedWarehouseId = localStorage.getItem(warehouseStorageKey()) || defaultWarehouseId;
 
-    const q = query(collection(db, 'products'), orderBy('name'));
+    subscribeWarehouses(businessId, (list) => {
+        allWarehouses = list;
+        const sel = document.getElementById('posWarehouse');
+        if (!allWarehouses.some((w) => w.id === selectedWarehouseId)) {
+            selectedWarehouseId = allWarehouses.find((w) => w.isDefault)?.id || allWarehouses[0]?.id || defaultWarehouseId;
+        }
+        if (allWarehouses.length <= 1) {
+            sel.parentElement.classList.add('hidden');
+        } else {
+            sel.parentElement.classList.remove('hidden');
+        }
+        sel.innerHTML = allWarehouses.map((w) => `<option value="${w.id}">${escapeHtml(w.name || '')}</option>`).join('');
+        sel.value = selectedWarehouseId;
+        renderProducts();
+        renderCart();
+    });
+
+    document.getElementById('posWarehouse').addEventListener('change', (e) => {
+        selectedWarehouseId = e.target.value;
+        localStorage.setItem(warehouseStorageKey(), selectedWarehouseId);
+        cart = {}; // selling location changed — start a fresh cart to avoid mixing stock from two locations
+        renderProducts();
+        renderCart();
+    });
+
+    const q = query(collection(db, 'products'), where('businessId', '==', businessId), orderBy('name'));
     onSnapshot(q, (snap) => {
         allProducts = [];
         snap.forEach((docSnap) => allProducts.push({ id: docSnap.id, ...docSnap.data() }));
@@ -25,7 +67,7 @@ requireAuth((user) => {
         Object.keys(cart).forEach((id) => {
             const p = allProducts.find((x) => x.id === id);
             if (!p) delete cart[id];
-            else cart[id].stock = Number(p.stock) || 0;
+            else cart[id].stock = stockAt(p);
         });
         renderProducts();
         renderCart();
@@ -78,7 +120,7 @@ function renderProducts() {
         return;
     }
     grid.innerHTML = list.map((p) => {
-        const stock = Number(p.stock) || 0;
+        const stock = stockAt(p);
         const out = stock <= 0;
         return `
             <button class="surface p-3 text-left flex flex-col ${out ? 'opacity-40 cursor-not-allowed' : 'hover:shadow-lg transition'}"
@@ -95,7 +137,7 @@ function renderProducts() {
 function addToCart(id) {
     const p = allProducts.find((x) => x.id === id);
     if (!p) return;
-    const stock = Number(p.stock) || 0;
+    const stock = stockAt(p);
     if (stock <= 0) return;
     if (!cart[id]) cart[id] = { id, name: p.name, sku: p.sku || '', price: Number(p.sellPrice) || 0, qty: 0, stock };
     if (cart[id].qty >= stock) { toast(`Only ${stock} in stock`, 'error'); return; }
@@ -164,30 +206,38 @@ async function onCheckout() {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i>Processing...';
 
     try {
+        const warehouseId = selectedWarehouseId;
+        const warehouseName = allWarehouses.find((w) => w.id === warehouseId)?.name || '';
+
         await runTransaction(db, async (tx) => {
             const productRefs = items.map((it) => doc(db, 'products', it.id));
             const snaps = await Promise.all(productRefs.map((ref) => tx.get(ref)));
 
-            snaps.forEach((snap, i) => {
+            const newMaps = snaps.map((snap, i) => {
                 if (!snap.exists()) throw new Error(`${items[i].name} no longer exists.`);
-                const currentStock = Number(snap.data().stock) || 0;
+                const map = resolveStockMap(snap.data(), defaultWarehouseId);
+                const currentStock = Number(map[warehouseId]) || 0;
                 if (currentStock < items[i].qty) {
-                    throw new Error(`Not enough stock for ${items[i].name} (only ${currentStock} left).`);
+                    throw new Error(`Not enough stock for ${items[i].name} at ${warehouseName || 'this location'} (only ${currentStock} left).`);
                 }
+                map[warehouseId] = currentStock - items[i].qty;
+                return map;
             });
 
             snaps.forEach((snap, i) => {
-                const currentStock = Number(snap.data().stock) || 0;
-                tx.update(productRefs[i], { stock: currentStock - items[i].qty });
+                tx.update(productRefs[i], { stockByWarehouse: newMaps[i], stock: sumStock(newMaps[i]) });
             });
 
             const saleRef = doc(collection(db, 'sales'));
             tx.set(saleRef, {
+                businessId,
                 items: items.map((it) => ({ productId: it.id, name: it.name, sku: it.sku, qty: it.qty, price: it.price, lineTotal: it.price * it.qty })),
                 subtotal,
                 discount,
                 total,
                 paymentMethod: document.getElementById('paymentMethod').value,
+                warehouseId,
+                warehouseName,
                 cashierUid: currentUser.uid,
                 cashierName: currentUser.displayName || currentUser.email,
                 createdAt: serverTimestamp(),

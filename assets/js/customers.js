@@ -6,14 +6,18 @@
 import { db } from "./firebase-init.js";
 import { requireAuth, escapeHtml, formatTaka, toast } from "./app-shell.js";
 import {
-    collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, orderBy, query, increment,
+    collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, orderBy, query, where, increment,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 let allCustomers = [];
 let searchTerm = '';
+let businessId = null;
+let canDelete = true;
 
-requireAuth(() => {
-    const q = query(collection(db, 'customers'), orderBy('name'));
+requireAuth((user, ctx) => {
+    businessId = ctx.businessId;
+    canDelete = ctx.permissions ? ctx.permissions.deleteRecords !== false : true;
+    const q = query(collection(db, 'customers'), where('businessId', '==', businessId), orderBy('name'));
     onSnapshot(q, (snap) => {
         allCustomers = [];
         snap.forEach((docSnap) => allCustomers.push({ id: docSnap.id, ...docSnap.data() }));
@@ -82,7 +86,7 @@ function render() {
             <td class="px-4 py-3 text-right whitespace-nowrap">
                 ${due > 0 ? `<button class="h-8 w-8 rounded-lg hover:bg-emerald/10 text-emerald" data-pay="${c.id}" data-name="${escapeHtml(c.name || '')}" data-due="${due}" title="Record Payment"><i class="fa-solid fa-money-bill-wave text-xs"></i></button>` : ''}
                 <button class="h-8 w-8 rounded-lg hover:bg-black/5 dark:hover:bg-white/5" data-edit="${c.id}" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>
-                <button class="h-8 w-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500" data-del="${c.id}" data-name="${escapeHtml(c.name || '')}" title="Delete"><i class="fa-solid fa-trash text-xs"></i></button>
+                ${canDelete ? `<button class="h-8 w-8 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500" data-del="${c.id}" data-name="${escapeHtml(c.name || '')}" title="Delete"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}
             </td>
         </tr>
     `;
@@ -125,6 +129,7 @@ async function onSubmit(e) {
 
     const id = document.getElementById('customerId').value;
     const payload = {
+        businessId,
         name: document.getElementById('cName').value.trim(),
         phone: document.getElementById('cPhone').value.trim(),
         address: document.getElementById('cAddress').value.trim(),

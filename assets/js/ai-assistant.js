@@ -11,7 +11,7 @@
 import { db } from "./firebase-init.js";
 import { requireAuth, escapeHtml, formatTaka } from "./app-shell.js";
 import {
-    collection, onSnapshot, query, orderBy, limit,
+    collection, onSnapshot, query, where, orderBy, limit,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 let sales = [];
@@ -29,20 +29,21 @@ const SUGGESTIONS = [
     "Top selling products?",
 ];
 
-requireAuth(() => {
-    onSnapshot(query(collection(db, 'sales'), orderBy('createdAt', 'desc'), limit(1000)), (snap) => {
+requireAuth((user, ctx) => {
+    const businessId = ctx.businessId;
+    onSnapshot(query(collection(db, 'sales'), where('businessId', '==', businessId), orderBy('createdAt', 'desc'), limit(1000)), (snap) => {
         sales = []; snap.forEach((d) => sales.push({ id: d.id, ...d.data() }));
     });
-    onSnapshot(query(collection(db, 'expenses'), orderBy('createdAt', 'desc'), limit(500)), (snap) => {
+    onSnapshot(query(collection(db, 'expenses'), where('businessId', '==', businessId), orderBy('createdAt', 'desc'), limit(500)), (snap) => {
         expenses = []; snap.forEach((d) => expenses.push({ id: d.id, ...d.data() }));
     });
-    onSnapshot(collection(db, 'products'), (snap) => {
+    onSnapshot(query(collection(db, 'products'), where('businessId', '==', businessId)), (snap) => {
         products = []; snap.forEach((d) => products.push({ id: d.id, ...d.data() }));
     });
-    onSnapshot(collection(db, 'customers'), (snap) => {
+    onSnapshot(query(collection(db, 'customers'), where('businessId', '==', businessId)), (snap) => {
         customers = []; snap.forEach((d) => customers.push({ id: d.id, ...d.data() }));
     });
-    onSnapshot(collection(db, 'employees'), (snap) => {
+    onSnapshot(query(collection(db, 'employees'), where('businessId', '==', businessId)), (snap) => {
         employees = []; snap.forEach((d) => employees.push({ id: d.id, ...d.data() }));
     });
 
