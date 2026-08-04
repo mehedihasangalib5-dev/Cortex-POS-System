@@ -13,6 +13,17 @@ function t(key, fallback) {
 
 const form = document.getElementById('contactForm');
 
+// Enterprise "Contact Sales" button on pricing.html links here with
+// ?type=enterprise so we can flag it distinctly instead of dropping it in
+// with regular support/contact messages. See admin-messages.html, which
+// shows an "Enterprise" badge and a quick link into admin-enterprise.html
+// for anything tagged this way.
+if (form && new URLSearchParams(window.location.search).get('type') === 'enterprise') {
+    form.inquiryType.value = 'enterprise';
+    document.getElementById('enterpriseNotice')?.classList.remove('hidden');
+    if (!form.subject.value) form.subject.value = 'Enterprise plan inquiry';
+}
+
 if (form) {
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -39,6 +50,7 @@ if (form) {
                 email: form.email.value.trim(),
                 subject: form.subject.value.trim(),
                 message: form.message.value.trim(),
+                inquiryType: form.inquiryType.value === 'enterprise' ? 'enterprise' : 'general',
                 status: 'new', // 'new' | 'read' | 'replied' — managed from admin-messages.html
                 createdAt: serverTimestamp(),
             });
