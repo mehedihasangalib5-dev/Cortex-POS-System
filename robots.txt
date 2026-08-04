@@ -1,6 +1,6 @@
 # robots.txt for the CorPOS & IMS
 #
-# IMPORTANT: replace https://your-domain.com below with your real deployed
+# IMPORTANT: replace https://cortex-pos.pro.bd below with your real deployed
 # domain (also update it in sitemap.xml and the canonical/og:url tags in
 # each public HTML page — search for "your-domain.com").
 
@@ -18,4 +18,4 @@ Disallow: /reports.html
 Disallow: /ai-assistant.html
 Disallow: /settings.html
 
-Sitemap: https://your-domain.com/sitemap.xml
+Sitemap: https://cortex-pos.pro.bd/sitemap.xml
