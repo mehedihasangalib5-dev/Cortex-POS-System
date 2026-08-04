@@ -18,6 +18,17 @@ let businessName = 'CorPOS & IMS';
 requireAuth((user, ctx) => {
     const businessId = ctx.businessId;
     businessName = ctx.ownerData?.businessName || businessName;
+
+    // PDF/Excel exports are a Pro/Enterprise perk (see pricing.html — Starter
+    // is CSV-only); Trial/Starter keep the CSV button and see an upgrade hint
+    // in place of the other two instead of buttons that would silently work
+    // anyway.
+    const plan = ctx.ownerData?.plan || 'trial';
+    const advancedExports = plan === 'pro' || plan === 'enterprise';
+    document.getElementById('exportSalesPdfBtn').classList.toggle('hidden', !advancedExports);
+    document.getElementById('exportSalesExcelBtn').classList.toggle('hidden', !advancedExports);
+    const hint = document.getElementById('exportUpgradeHint');
+    if (hint) hint.classList.toggle('hidden', advancedExports);
     onSnapshot(query(collection(db, 'sales'), where('businessId', '==', businessId), orderBy('createdAt', 'desc'), limit(1000)), (snap) => {
         sales = [];
         snap.forEach((d) => sales.push({ id: d.id, ...d.data() }));

@@ -48,8 +48,9 @@ requireAuth(async (user, ctx) => {
     document.getElementById('accName').value = user.displayName || '';
     document.getElementById('accEmail').value = user.email || '';
 
-    await loadBillingStatus();
+    const plan = await loadBillingStatus();
     applyOwnerOnlyUI();
+    applyAiSectionUI(plan);
 
     if (currentRole === 'owner') {
         try {
@@ -81,6 +82,8 @@ requireAuth(async (user, ctx) => {
             document.getElementById('bizAddress').value = data.address || '';
             document.getElementById('bizCurrency').value = data.currencySymbol || '৳';
             document.getElementById('bizReceiptNote').value = data.receiptFooterNote || '';
+            document.getElementById('aiProvider').value = data.aiProvider || '';
+            document.getElementById('aiApiKey').value = data.aiApiKey || '';
         } else {
             document.getElementById('bizCurrency').value = '৳';
         }
@@ -94,7 +97,21 @@ requireAuth(async (user, ctx) => {
 
     document.getElementById('businessForm').addEventListener('submit', onSaveBusiness);
     document.getElementById('accountForm').addEventListener('submit', (e) => onSaveAccount(e, user));
+    document.getElementById('aiForm').addEventListener('submit', onSaveAi);
 });
+
+/**
+ * Locks the AI Assistant connection form for plans that don't include the
+ * feature (Trial/Starter — matches PLAN_FEATURES in plan-features.js and
+ * the pricing.html card copy). Pro/Enterprise can freely connect a key.
+ */
+function applyAiSectionUI(plan) {
+    const included = plan === 'pro' || plan === 'enterprise';
+    document.getElementById('aiLockedNote').classList.toggle('hidden', included);
+    const form = document.getElementById('aiForm');
+    form.querySelectorAll('input, select, button').forEach((el) => { el.disabled = !included; });
+    form.classList.toggle('opacity-60', !included);
+}
 
 function applyOwnerOnlyUI() {
     const isOwner = currentRole === 'owner';
@@ -649,6 +666,42 @@ async function onSaveBusiness(e) {
     } finally {
         btn.disabled = false;
         btn.textContent = 'Save Business Profile';
+    }
+}
+
+async function onSaveAi(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('aiFormError');
+    const okEl = document.getElementById('aiFormSuccess');
+    errEl.classList.add('hidden');
+    okEl.classList.add('hidden');
+    const btn = document.getElementById('aiSubmitBtn');
+    const provider = document.getElementById('aiProvider').value;
+    const apiKey = document.getElementById('aiApiKey').value.trim();
+
+    if (provider && !apiKey) {
+        errEl.textContent = 'Add an API key, or set the provider back to "Not connected".';
+        errEl.classList.remove('hidden');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+    try {
+        await setDoc(doc(db, 'settings', currentBusinessId), {
+            aiProvider: provider,
+            aiApiKey: provider ? apiKey : '',
+            updatedAt: serverTimestamp(),
+        }, { merge: true });
+        okEl.textContent = provider ? `Connected to ${provider === 'openai' ? 'OpenAI' : 'Google Gemini'}. Try the AI Assistant now.` : 'Disconnected — the AI Assistant will use the built-in offline lookup.';
+        okEl.classList.remove('hidden');
+    } catch (err) {
+        console.error(err);
+        errEl.textContent = 'Could not save AI settings. Please try again.';
+        errEl.classList.remove('hidden');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save AI Settings';
     }
 }
 

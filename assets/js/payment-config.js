@@ -9,7 +9,7 @@ export const PAYMENT_METHODS = [
     {
         id: "bkash",
         label: "bKash",
-        number: "01806105457",       // TODO: put your real bKash number here
+        number: "01XXXXXXXXX",       // TODO: put your real bKash number here
         type: "Personal",             // "Personal" or "Merchant/Agent"
         icon: "fa-solid fa-mobile-screen",
         color: "#E2136E",
@@ -17,7 +17,7 @@ export const PAYMENT_METHODS = [
     {
         id: "nagad",
         label: "Nagad",
-        number: "01612336485",       // TODO: put your real Nagad number here
+        number: "01XXXXXXXXX",       // TODO: put your real Nagad number here
         type: "Personal",             // "Personal" or "Merchant/Agent"
         icon: "fa-solid fa-mobile-screen",
         color: "#F6921E",
@@ -27,7 +27,7 @@ export const PAYMENT_METHODS = [
 // UIDs allowed to see /admin-payments.html and approve/reject orders.
 // Find your UID: sign in once, then Firebase Console → Authentication → Users.
 export const ADMIN_UIDS = [
-    "6q238xgdsBSf8Q0ZnPwLbqswrxR2",
+    "I50u3zwtzAWyeNYFJpvRTTE5Mtl1",
 ];
 
 // Must match firestore.rules `isAdmin()` list and functions PLAN_PRICES.
