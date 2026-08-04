@@ -325,6 +325,14 @@ onAuthStateChanged(auth, (user) => {
     }
     document.getElementById('adminView').classList.remove('hidden');
     loadEnterpriseList();
+
+    // Arrived from admin-messages.html's "Grant Enterprise access" button
+    // on a tagged lead — prefill and search automatically.
+    const prefillEmail = new URLSearchParams(window.location.search).get('email');
+    if (prefillEmail) {
+        document.getElementById('searchEmail').value = prefillEmail;
+        findAccount();
+    }
 });
 </script>
 </body>

@@ -126,6 +126,7 @@
 <p class="text-lg" data-i18n="k034" style="color:var(--text-secondary)">Questions about pricing, features, or setup — we're happy to help.</p>
 </div>
 <div class="surface p-7" data-aos="fade-up" data-aos-delay="75">
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-primary/10 text-primary border border-primary/20" id="enterpriseNotice"><i class="fa-solid fa-building mr-1.5"></i><span data-i18n="k300">You're inquiring about the Enterprise (custom) plan — tell us about your business below and our team will get back to you with custom pricing.</span></div>
 <div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="formAlert"></div>
 <div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-emerald-50 text-emerald-700 border border-emerald-200" data-i18n="k035" id="formSuccess">Thanks — your message has been sent. We'll be in touch soon.</div>
 <form id="contactForm">
@@ -134,6 +135,11 @@
 <label data-i18n="k036">Leave this field empty</label>
 <input autocomplete="off" name="website" tabindex="-1" type="text"/>
 </div>
+<!-- Set by the small inline script below when arriving via pricing.html's
+     Enterprise "Contact Sales" button (?type=enterprise). Lets
+     admin-messages.html tag and fast-track these as sales leads instead of
+     regular support messages. -->
+<input name="inquiryType" type="hidden" value="general"/>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
 <div>
 <label class="block text-sm font-medium mb-1.5" data-i18n="k037">Your name</label>
