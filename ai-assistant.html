@@ -99,7 +99,8 @@
 <main class="flex-1 min-w-0 px-6 py-8 w-full">
 <div class="mb-6">
 <h1 class="font-display text-2xl font-bold mb-1">AI Assistant</h1>
-<p class="text-sm" style="color:var(--text-secondary)">Ask about today's sales, low stock, dues, payroll, and more — answered live from your data.</p>
+<p class="text-sm mb-3" style="color:var(--text-secondary)">Ask about today's sales, low stock, dues, payroll, and more — answered live from your data.</p>
+<p class="text-xs" id="aiStatusBanner" style="color:var(--text-secondary)"></p>
 </div>
 
 <div class="surface flex flex-col" style="height:calc(100vh - 260px); min-height:420px">
@@ -110,7 +111,7 @@
 <button class="btn-primary !py-2.5 !px-4" type="submit"><i class="fa-solid fa-paper-plane"></i></button>
 </form>
 </div>
-<p class="text-xs mt-3" style="color:var(--text-secondary)"><i class="fa-solid fa-circle-info mr-1"></i>This assistant reads live figures from your Firestore data (sales, inventory, expenses, customers, staff) and answers with pattern matching — no data leaves your browser.</p>
+<p class="text-xs mt-3" style="color:var(--text-secondary)"><i class="fa-solid fa-circle-info mr-1"></i>This assistant reads live figures from your data (sales, inventory, expenses, customers, staff). Without a connected API key everything stays in your browser; once you connect one in <a class="underline" href="settings.html">Settings</a>, your question and a summary of these figures are sent directly to your chosen provider using your own key.</p>
 </main>
 </div>
 

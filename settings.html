@@ -222,6 +222,33 @@
 </form>
 </div>
 
+<!-- AI Assistant -->
+<div class="surface p-6 mb-6" id="aiAssistantSection">
+<h2 class="font-display text-lg font-bold mb-1">AI Assistant</h2>
+<p class="text-sm mb-4" style="color:var(--text-secondary)">Connect your own OpenAI or Gemini API key so the AI Assistant answers with a real model instead of just the built-in offline lookup.</p>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm" id="aiLockedNote" style="background:var(--bg-surface-alt); color:var(--text-secondary)"><i class="fa-solid fa-lock mr-1.5"></i>The AI Assistant is included on the Pro and Enterprise plans. <a class="text-primary font-medium underline" href="pricing.html">View plans</a>.</div>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-red-50 text-red-700 border border-red-200" id="aiFormError"></div>
+<div class="hidden mb-4 rounded-lg px-4 py-3 text-sm bg-emerald/10 text-emerald border border-emerald/20" id="aiFormSuccess"></div>
+<form id="aiForm">
+<div class="grid sm:grid-cols-2 gap-3 mb-3">
+<div>
+<label class="block text-sm font-medium mb-1.5">Provider</label>
+<select class="input-field" id="aiProvider">
+<option value="">Not connected (offline assistant)</option>
+<option value="openai">OpenAI</option>
+<option value="gemini">Google Gemini</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium mb-1.5">API Key</label>
+<input autocomplete="off" class="input-field" id="aiApiKey" placeholder="sk-… or AIza…" type="password"/>
+</div>
+</div>
+<p class="text-xs mb-4" style="color:var(--text-secondary)"><i class="fa-solid fa-circle-info mr-1"></i>Your key is saved on your business's own settings record and is sent straight from your browser to the provider you choose — it never passes through our servers. Leave the provider as "Not connected" to keep using the free built-in assistant.</p>
+<button class="btn-primary" id="aiSubmitBtn" type="submit">Save AI Settings</button>
+</form>
+</div>
+
 <!-- Your Account -->
 <div class="surface p-6 mb-6">
 <h2 class="font-display text-lg font-bold mb-1">Your Account</h2>

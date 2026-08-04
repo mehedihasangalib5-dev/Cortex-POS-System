@@ -7,7 +7,7 @@ service cloud.firestore {
     // panel (admin-payments.html) won't be able to write anything.
     function isAdmin() {
       return request.auth != null && request.auth.uid in [
-        '6q238xgdsBSf8Q0ZnPwLbqswrxR2'
+        'I50u3zwtzAWyeNYFJpvRTTE5Mtl1'
       ];
     }
 
