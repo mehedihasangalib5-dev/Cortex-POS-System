@@ -9,6 +9,19 @@
 // "dashboard" and "settings" are not module-gated — every signed-in user
 // can always reach them (settings is where they see/upgrade their plan).
 // ---------------------------------------------------------------------------
+
+/**
+ * Every lookup below keys off this. Defends against a `plan` value that
+ * isn't an exact-case match to trial/starter/pro/enterprise — e.g. a stray
+ * "Enterprise" or " enterprise" typed by hand into Firestore (rather than
+ * granted through admin-enterprise.html, which always writes the plan
+ * select's lowercase value) — silently falling back to the trial limits
+ * instead of the plan the account is actually supposed to be on.
+ */
+function normalizePlan(plan) {
+    return String(plan || 'trial').trim().toLowerCase();
+}
+
 export const PLAN_FEATURES = {
     trial: ['pos', 'inventory', 'warehouses', 'customers', 'reports'],
     starter: ['pos', 'inventory', 'warehouses', 'customers', 'reports'],
@@ -32,7 +45,7 @@ export const FEATURE_LABELS = {
 
 export function pageAllowedForPlan(page, plan) {
     if (!page || UNGATED_PAGES.includes(page)) return true;
-    const features = PLAN_FEATURES[plan] || PLAN_FEATURES.trial;
+    const features = PLAN_FEATURES[normalizePlan(plan)] || PLAN_FEATURES.trial;
     return features.includes(page);
 }
 
@@ -57,10 +70,12 @@ export const LOGIN_LIMITS = {
 };
 
 export function productLimitFor(plan) {
+    plan = normalizePlan(plan);
     return PRODUCT_LIMITS[plan] ?? PRODUCT_LIMITS.trial;
 }
 
 export function loginLimitFor(plan) {
+    plan = normalizePlan(plan);
     return LOGIN_LIMITS[plan] ?? LOGIN_LIMITS.trial;
 }
 
@@ -80,5 +95,6 @@ export const WAREHOUSE_LIMITS = {
 };
 
 export function warehouseLimitFor(plan) {
+    plan = normalizePlan(plan);
     return WAREHOUSE_LIMITS[plan] ?? WAREHOUSE_LIMITS.trial;
 }
