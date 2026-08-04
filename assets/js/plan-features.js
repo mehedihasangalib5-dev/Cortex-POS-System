@@ -67,11 +67,15 @@ export function loginLimitFor(plan) {
 // ---------------------------------------------------------------------------
 // How many warehouses/locations each plan can create. `null` = unlimited.
 // Enforced client-side in warehouses.js when adding a new warehouse.
+//
+// Pro and Enterprise are BOTH unlimited — matches "Unlimited warehouses" on
+// the Pro pricing card and the FAQ's "every plan above Starter supports
+// unlimited warehouses/locations" (pricing.html / faq.html).
 // ---------------------------------------------------------------------------
 export const WAREHOUSE_LIMITS = {
     trial: 1,
     starter: 2,
-    pro: 5,
+    pro: null,
     enterprise: null,
 };
 
